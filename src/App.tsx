@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/sections/Navbar"
 import { HeroSection } from "@/components/sections/HeroSection"
+import { SponsorsSection } from "@/components/sections/SponsorsSection"
 import { PurposeSection } from "@/components/sections/PurposeSection"
 import { RouteSection } from "@/components/sections/RouteSection"
 import { RegistrationSection } from "@/components/sections/RegistrationSection"
@@ -13,6 +14,7 @@ const App = () => {
       <Navbar />
       <main className="flex-1">
         <HeroSection />
+        <SponsorsSection />
         <PurposeSection />
         <RouteSection />
         <RegistrationSection />

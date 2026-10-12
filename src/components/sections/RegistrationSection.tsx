@@ -20,7 +20,8 @@ import {
   Check,
   ShieldCheck,
   X,
-  FileText
+  FileText,
+  Building2
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -280,17 +281,25 @@ export const RegistrationSection = () => {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
-          <Badge variant="pink" className="mb-3 px-3.5 py-1 text-xs uppercase tracking-wider font-bold">
-            Formulario Oficial
-          </Badge>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
+              <Building2 className="h-3.5 w-3.5 mr-1 text-[#0284C7]" />
+              Host: Dream Home
+            </Badge>
+            <Badge variant="pink" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold">
+              Inscripción Oficial
+            </Badge>
+          </div>
 
           <h2 className="font-sport font-black uppercase text-4xl sm:text-6xl md:text-7xl leading-[0.95] text-[#121316] tracking-tight">
             INSCRÍBETE
-            <span className="block text-[#E91E63]">Y RENACE HOY</span>
+            <span className="block text-transparent bg-gradient-to-r from-[#E91E63] via-[#FF69B4] to-[#0284C7] bg-clip-text">
+              Y RENACE HOY
+            </span>
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-[#525866] leading-relaxed">
-            Completa tus datos personales, información de contacto para emergencias y adjunta tu comprobante de pago para reservar tu cupo oficial.
+            Completa tus datos personales, información de contacto para emergencias y adjunta tu comprobante de pago para reservar tu cupo oficial con Dream Home Venezuela.
           </p>
         </div>
 

@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { MapPin, Navigation, Droplets, Music, Flag, Shield, Info, Check, Clock } from "lucide-react"
+import { MapPin, Navigation, Droplets, Music, Flag, Shield, Clock, Building2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 interface Checkpoint {
@@ -24,7 +24,7 @@ const CHECKPOINTS: Checkpoint[] = [
     kmValue: 0.0,
     title: "Punto de Salida: Forum Charallave",
     subtitle: "Vía principal La Pitahaya",
-    description: "Concentración a las 6:00 AM. Calentamiento físico grupal, bendición de la caminata y arco de salida oficial con ambientación musical.",
+    description: "Concentración a las 6:00 AM. Calentamiento físico grupal con Dream Home, bendición de la caminata y arco de salida oficial con ambientación musical.",
     landmark: "Forum Charallave",
     isStart: true,
     highlightBadge: "Concentración 6:00 AM / Salida 7:00 AM",
@@ -112,35 +112,43 @@ export const RouteSection = () => {
 
   return (
     <section id="ruta" className="py-20 md:py-28 bg-white relative overflow-hidden">
-      {/* Background soft pink elements */}
-      <div className="pointer-events-none absolute top-10 right-0 h-96 w-96 rounded-full bg-[#FFF0F4] blur-3xl opacity-70" />
-      <div className="pointer-events-none absolute bottom-10 left-0 h-96 w-96 rounded-full bg-[#FDF2F4] blur-3xl opacity-70" />
+      {/* Background soft pink and fresh celeste elements */}
+      <div className="pointer-events-none absolute top-10 right-0 h-96 w-96 rounded-full bg-[#E0F2FE] blur-3xl opacity-60" />
+      <div className="pointer-events-none absolute bottom-10 left-0 h-96 w-96 rounded-full bg-[#FDF2F4] blur-3xl opacity-60" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-          <Badge variant="pink" className="mb-3 px-3.5 py-1 text-xs uppercase tracking-wider font-bold">
-            Recorrido Oficial Charallave
-          </Badge>
+          <div className="flex items-center justify-center gap-2 mb-3">
+            <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
+              <Building2 className="h-3.5 w-3.5 mr-1 text-[#0284C7]" />
+              Circuito Oficial Dream Home
+            </Badge>
+            <Badge variant="pink" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold">
+              Charallave 5K
+            </Badge>
+          </div>
 
           <h2 className="font-sport font-black uppercase text-4xl sm:text-6xl md:text-7xl leading-[0.95] text-[#121316] tracking-tight">
             MAPA 5K
-            <span className="block text-[#E91E63]">INTERACTIVO</span>
+            <span className="block text-transparent bg-gradient-to-r from-[#0284C7] via-[#38BDF8] to-[#E91E63] bg-clip-text">
+              INTERACTIVO
+            </span>
           </h2>
 
           <p className="mt-4 text-base sm:text-lg text-[#525866] leading-relaxed">
             Conoce los 8 puntos clave de nuestra ruta por las principales arterias viales de Charallave.
-            Un circuito 100% asfaltado, resguardado y diseñado para disfrutar en familia.
+            Un circuito 100% asfaltado, resguardado, con hidratación celeste y diseñado para disfrutar en familia.
           </p>
         </div>
 
-        {/* Route Metric Stats Bar */}
+        {/* Route Metric Stats Bar with Celeste Highlights */}
         <div className="mb-12 grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 max-w-4xl mx-auto">
-          <div className="rounded-2xl border border-[#F4D7DE] bg-[#FAF7F8] p-4 text-center">
-            <span className="block font-sport text-3xl sm:text-4xl font-black text-[#E91E63]">
+          <div className="rounded-2xl border border-[#BAE6FD] bg-[#F0F9FF] p-4 text-center">
+            <span className="block font-sport text-3xl sm:text-4xl font-black text-[#0284C7]">
               5,0 KM
             </span>
-            <span className="text-xs uppercase font-bold tracking-wider text-[#525866]">
+            <span className="text-xs uppercase font-bold tracking-wider text-[#0369A1]">
               Distancia Total
             </span>
           </div>
@@ -154,17 +162,17 @@ export const RouteSection = () => {
             </span>
           </div>
 
-          <div className="rounded-2xl border border-[#F4D7DE] bg-[#FAF7F8] p-4 text-center">
-            <span className="block font-sport text-3xl sm:text-4xl font-black text-[#D5006D]">
+          <div className="rounded-2xl border border-[#BAE6FD] bg-[#F0F9FF] p-4 text-center">
+            <span className="block font-sport text-3xl sm:text-4xl font-black text-[#0284C7]">
               3 PUNTOS
             </span>
-            <span className="text-xs uppercase font-bold tracking-wider text-[#525866]">
+            <span className="text-xs uppercase font-bold tracking-wider text-[#0369A1]">
               Hidratación
             </span>
           </div>
 
           <div className="rounded-2xl border border-[#F4D7DE] bg-[#FAF7F8] p-4 text-center">
-            <span className="block font-sport text-3xl sm:text-4xl font-black text-[#121316]">
+            <span className="block font-sport text-3xl sm:text-4xl font-black text-[#E91E63]">
               ~55 MIN
             </span>
             <span className="text-xs uppercase font-bold tracking-wider text-[#525866]">
@@ -176,15 +184,15 @@ export const RouteSection = () => {
         {/* Interactive Map Visualizer & Detail Panel */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* Left Column (Span 7): Interactive Visual Timeline / Map Canvas */}
-          <div className="lg:col-span-7 rounded-3xl border border-[#F4D7DE] bg-gradient-to-b from-[#FAF7F8] to-white p-6 sm:p-8 shadow-xl shadow-[#D5006D]/5">
-            <div className="flex items-center justify-between pb-4 border-b border-[#F4D7DE]">
+          <div className="lg:col-span-7 rounded-3xl border border-[#BAE6FD] bg-gradient-to-b from-[#F0F9FF]/60 via-white to-white p-6 sm:p-8 shadow-xl shadow-[#0284C7]/5">
+            <div className="flex items-center justify-between pb-4 border-b border-[#BAE6FD]">
               <div className="flex items-center gap-2">
-                <Navigation className="h-5 w-5 text-[#E91E63]" />
+                <Navigation className="h-5 w-5 text-[#0284C7]" />
                 <h3 className="font-bold text-sm sm:text-base text-[#121316]">
                   Línea de Carrera: Forum ➔ El Campito
                 </h3>
               </div>
-              <span className="text-xs font-bold text-[#E91E63] bg-[#FDF2F4] px-3 py-1 rounded-full">
+              <span className="text-xs font-bold text-[#0369A1] bg-[#E0F2FE] px-3 py-1 rounded-full border border-[#BAE6FD]">
                 Haz clic en cualquier hito
               </span>
             </div>
@@ -201,16 +209,16 @@ export const RouteSection = () => {
                 >
                   <defs>
                     <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#E91E63" />
+                      <stop offset="0%" stopColor="#0284C7" />
                       <stop offset="50%" stopColor="#FF69B4" />
-                      <stop offset="100%" stopColor="#D5006D" />
+                      <stop offset="100%" stopColor="#E91E63" />
                     </linearGradient>
                   </defs>
 
                   {/* Road Base Track */}
                   <path
                     d="M 30 110 Q 120 40, 210 90 T 390 60 T 570 100"
-                    stroke="#2A2E39"
+                    stroke="#1E293B"
                     strokeWidth="14"
                     strokeLinecap="round"
                   />
@@ -249,7 +257,7 @@ export const RouteSection = () => {
                             cx={pos.x}
                             cy={pos.y}
                             r="16"
-                            fill="#FF69B4"
+                            fill="#38BDF8"
                             opacity="0.35"
                             className="animate-ping"
                           />
@@ -258,14 +266,14 @@ export const RouteSection = () => {
                           cx={pos.x}
                           cy={pos.y}
                           r={isSelected ? "11" : "8"}
-                          fill={isSelected ? "#E91E63" : "#FFFFFF"}
-                          stroke={isSelected ? "#FFFFFF" : "#E91E63"}
+                          fill={isSelected ? "#0284C7" : "#FFFFFF"}
+                          stroke={isSelected ? "#FFFFFF" : cp.isHydration ? "#38BDF8" : "#E91E63"}
                           strokeWidth="3"
                         />
                         <text
                           x={pos.x}
                           y={pos.y - 15}
-                          fill={isSelected ? "#FF69B4" : "#9CA3AF"}
+                          fill={isSelected ? "#38BDF8" : "#94A3B8"}
                           fontSize="10"
                           fontWeight="bold"
                           textAnchor="middle"
@@ -279,11 +287,11 @@ export const RouteSection = () => {
 
                 {/* Road Labels */}
                 <div className="mt-4 flex items-center justify-between text-xs text-white/80 font-bold px-2">
-                  <div className="flex items-center gap-1.5 text-[#FF69B4]">
+                  <div className="flex items-center gap-1.5 text-[#38BDF8]">
                     <Flag className="h-4 w-4" />
                     <span>Salida: Forum Charallave</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#FFC0CB]">
+                  <div className="flex items-center gap-1.5 text-[#FF69B4]">
                     <span>Meta: El Campito</span>
                     <Flag className="h-4 w-4" />
                   </div>
@@ -301,13 +309,13 @@ export const RouteSection = () => {
                     onClick={() => handleSelectPoint(cp)}
                     className={`p-2.5 rounded-xl text-left border text-xs transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-[#E91E63] text-white border-[#E91E63] shadow-md shadow-[#E91E63]/30 scale-[1.02]"
-                        : "bg-white text-[#121316] border-[#F4D7DE] hover:border-[#FF69B4] hover:bg-[#FDF2F4]"
+                        ? "bg-[#0284C7] text-white border-[#0284C7] shadow-md shadow-[#0284C7]/30 scale-[1.02]"
+                        : "bg-white text-[#121316] border-[#BAE6FD]/80 hover:border-[#0284C7] hover:bg-[#F0F9FF]"
                     }`}
                   >
                     <div className="flex items-center justify-between font-sport font-black text-xs uppercase tracking-wider">
                       <span>Punto {cp.id}</span>
-                      <span className={isSelected ? "text-white" : "text-[#E91E63]"}>
+                      <span className={isSelected ? "text-white" : cp.isHydration ? "text-[#0284C7]" : "text-[#E91E63]"}>
                         {cp.km}
                       </span>
                     </div>
@@ -329,12 +337,12 @@ export const RouteSection = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: 0.3 }}
-                className="rounded-3xl border border-[#F4D7DE] bg-white p-6 sm:p-8 shadow-xl shadow-[#D5006D]/5"
+                className="rounded-3xl border border-[#BAE6FD] bg-white p-6 sm:p-8 shadow-xl shadow-[#0284C7]/5"
               >
                 {/* Checkpoint Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-[#F4D7DE]">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#E91E63] text-white font-bold text-xs">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0284C7] text-white font-bold text-xs">
                       #{selectedPoint.id}
                     </span>
                     <Badge variant="sport" className="text-xs">
@@ -343,7 +351,7 @@ export const RouteSection = () => {
                   </div>
 
                   {selectedPoint.isHydration && (
-                    <span className="inline-flex items-center gap-1 rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-bold text-[#0284C7]">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[#E0F2FE] px-3 py-1 text-xs font-bold text-[#0284C7] border border-[#BAE6FD]">
                       <Droplets className="h-3.5 w-3.5" />
                       <span>Hidratación</span>
                     </span>
@@ -360,14 +368,14 @@ export const RouteSection = () => {
                 {/* Point Title */}
                 <div className="mt-5">
                   {selectedPoint.highlightBadge && (
-                    <span className="inline-block text-xs font-bold uppercase tracking-wider text-[#E91E63] mb-1">
+                    <span className="inline-block text-xs font-bold uppercase tracking-wider text-[#0284C7] mb-1">
                       {selectedPoint.highlightBadge}
                     </span>
                   )}
                   <h4 className="font-sport uppercase text-2xl sm:text-3xl font-black text-[#121316] leading-tight">
                     {selectedPoint.title}
                   </h4>
-                  <p className="text-xs font-bold text-[#D5006D] mt-1 flex items-center gap-1.5">
+                  <p className="text-xs font-bold text-[#0369A1] mt-1 flex items-center gap-1.5">
                     <MapPin className="h-3.5 w-3.5" />
                     <span>{selectedPoint.subtitle}</span>
                   </p>
@@ -379,13 +387,13 @@ export const RouteSection = () => {
                 </p>
 
                 {/* Safety & Logistics Info */}
-                <div className="mt-6 rounded-2xl bg-[#FAF7F8] border border-[#F4D7DE] p-4 space-y-2.5">
+                <div className="mt-6 rounded-2xl bg-[#F0F9FF] border border-[#BAE6FD] p-4 space-y-2.5">
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#121316]">
-                    <Shield className="h-4 w-4 text-[#E91E63] shrink-0" />
+                    <Shield className="h-4 w-4 text-[#0284C7] shrink-0" />
                     <span>Custodiado por Policía Municipal & Tránsito Terrestre</span>
                   </div>
                   <div className="flex items-center gap-2 text-xs font-semibold text-[#121316]">
-                    <Clock className="h-4 w-4 text-[#E91E63] shrink-0" />
+                    <Clock className="h-4 w-4 text-[#0284C7] shrink-0" />
                     <span>Control de paso y cronometraje amigable</span>
                   </div>
                 </div>
@@ -400,7 +408,7 @@ export const RouteSection = () => {
                       const nextIndex = (selectedPoint.id % CHECKPOINTS.length)
                       setSelectedPoint(CHECKPOINTS[nextIndex])
                     }}
-                    className="text-xs font-extrabold text-[#E91E63] hover:text-[#D5006D] flex items-center gap-1 cursor-pointer"
+                    className="text-xs font-extrabold text-[#0284C7] hover:text-[#0369A1] flex items-center gap-1 cursor-pointer"
                   >
                     <span>Siguiente Punto</span>
                     <span>→</span>

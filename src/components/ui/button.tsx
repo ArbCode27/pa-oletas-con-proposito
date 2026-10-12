@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   asChild?: boolean
-  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "sport" | "glass"
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "sport" | "glass" | "celeste"
   size?: "default" | "sm" | "lg" | "icon" | "xl"
 }
 
@@ -24,6 +24,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       link: "text-[#E91E63] underline-offset-4 hover:underline",
       sport: "bg-gradient-to-r from-[#E91E63] via-[#FF69B4] to-[#D5006D] text-white uppercase tracking-wider font-extrabold shadow-lg shadow-[#E91E63]/30 hover:shadow-xl hover:shadow-[#E91E63]/50 hover:brightness-105",
       glass: "bg-white/80 backdrop-blur-md text-[#121316] border border-white/70 hover:bg-white shadow-sm hover:shadow-md",
+      celeste: "bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-white hover:from-[#0369A1] hover:to-[#0284C7] shadow-lg shadow-[#0284C7]/25 hover:shadow-xl hover:shadow-[#0284C7]/40",
     }
 
     const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
