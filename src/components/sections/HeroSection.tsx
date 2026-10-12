@@ -166,50 +166,50 @@ export const HeroSection = () => {
         {/* Solid Graphic Visual Section: Sports & Awareness Showcase */}
         <div className="relative mt-12 sm:mt-16 max-w-5xl mx-auto">
           {/* Main Hero Showcase Card */}
-          <div className="relative rounded-3xl overflow-hidden border border-[#F8BFDC] bg-gradient-to-r from-[#121316] via-[#1A1828] to-[#251322] p-6 sm:p-10 text-white shadow-2xl">
+          <div className="relative rounded-3xl overflow-hidden border-2 border-[#F8BFDC] bg-gradient-to-br from-white via-[#FDF0F6]/90 to-[#E8FAFD]/70 p-6 sm:p-10 text-[#121316] shadow-xl shadow-[#EF007E]/5">
             {/* Background Pattern */}
-            <div className="absolute inset-0 bg-[radial-gradient(#2FC7EA_1px,transparent_1px)] [background-size:20px_20px] opacity-15" />
-            <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-[#EF007E]/25 blur-3xl pointer-events-none" />
-            <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-[#2FC7EA]/20 blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(#2FC7EA_1px,transparent_1px)] [background-size:20px_20px] opacity-25" />
+            <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-[#EF007E]/10 blur-3xl pointer-events-none" />
+            <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-[#2FC7EA]/10 blur-3xl pointer-events-none" />
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               {/* Left Column: Mission text & stats */}
               <div className="md:col-span-7 space-y-5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-[#FF3B9E] border border-white/15">
+                  <div className="inline-flex items-center gap-2 rounded-full bg-[#FDF0F6] px-3 py-1 text-xs font-bold text-[#EF007E] border border-[#F8BFDC]">
                     <Heart className="h-3.5 w-3.5 fill-[#EF007E]" />
                     <span>Caminata con Sentido Benéfico</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#2FC7EA]/20 px-3 py-1 text-xs font-semibold text-[#2FC7EA] border border-[#2FC7EA]/40">
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#E8FAFD] px-3 py-1 text-xs font-bold text-[#0E8EA8] border border-[#AEEAF7]">
                     <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 rounded-full object-contain" />
                     <span>Inmobiliaria Dream Home</span>
                   </div>
                 </div>
 
-                <h2 className="font-sport uppercase text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-none text-white">
+                <h2 className="font-sport uppercase text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-none text-[#121316]">
                   CADA PASO ES UN HOMENAJE A LA VIDA
                 </h2>
 
-                <p className="text-white/80 text-sm sm:text-base leading-relaxed">
+                <p className="text-[#525866] text-sm sm:text-base leading-relaxed">
                   Lleva tu pañoleta rosa con orgullo en las calles de Charallave. Celebramos la resiliencia de las guerreras,
                   fomentamos la prevención temprana y cerramos con una explosiva sesión de bailoterapia en la meta.
                 </p>
 
                 {/* Micro Stats with Celeste + Fucsia highlights */}
-                <div className="pt-2 grid grid-cols-3 gap-3 border-t border-white/15">
+                <div className="pt-2 grid grid-cols-3 gap-3 border-t border-[#F4D7DE]">
                   <div>
-                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#2FC7EA]">
+                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#0E8EA8]">
                       5.0 KM
                     </span>
-                    <span className="text-[11px] text-white/70 uppercase tracking-wider">
+                    <span className="text-[11px] text-[#6B7280] font-medium uppercase tracking-wider">
                       Circuito Seguro
                     </span>
                   </div>
                   <div>
-                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-white">
+                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#121316]">
                       3 PUNTOS
                     </span>
-                    <span className="text-[11px] text-white/70 uppercase tracking-wider">
+                    <span className="text-[11px] text-[#6B7280] font-medium uppercase tracking-wider">
                       Hidratación
                     </span>
                   </div>
@@ -217,7 +217,7 @@ export const HeroSection = () => {
                     <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#EF007E]">
                       100%
                     </span>
-                    <span className="text-[11px] text-white/70 uppercase tracking-wider">
+                    <span className="text-[11px] text-[#6B7280] font-medium uppercase tracking-wider">
                       Propósito & Vida
                     </span>
                   </div>
@@ -226,17 +226,17 @@ export const HeroSection = () => {
 
               {/* Right Column: Visual Ribbon & Badge Mockup */}
               <div className="md:col-span-5 flex flex-col items-center justify-center text-center p-4">
-                <div className="relative w-full max-w-xs p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl flex flex-col items-center">
-                  <RibbonDecor width={80} height={105} glow={true} />
+                <div className="relative w-full max-w-xs p-6 sm:p-8 rounded-3xl bg-white/90 backdrop-blur-md border border-[#F8BFDC] shadow-lg flex flex-col items-center">
+                  <RibbonDecor width={95} height={114} glow={true} />
 
                   <div className="mt-4">
-                    <span className="inline-block font-sport uppercase tracking-widest text-xs font-black text-[#2FC7EA]">
+                    <span className="inline-block font-sport uppercase tracking-widest text-xs font-black text-[#0E8EA8]">
                       Kit Incluye
                     </span>
-                    <h4 className="text-lg font-extrabold text-white">
+                    <h4 className="text-lg font-extrabold text-[#121316]">
                       Pañoleta Rosa Conmemorativa
                     </h4>
-                    <p className="text-xs text-white/70 mt-1">
+                    <p className="text-xs text-[#525866] mt-1 font-medium">
                       + Número Dorsal Oficial + Hidratación
                     </p>
                   </div>

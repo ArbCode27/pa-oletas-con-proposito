@@ -199,14 +199,14 @@ export const RouteSection = () => {
 
             {/* Visual Circuit SVG Route Tracker */}
             <div className="py-6">
-              <div className="relative w-full rounded-2xl bg-[#121316] p-4 sm:p-6 text-white overflow-hidden shadow-inner">
+              <div className="relative w-full rounded-2xl bg-gradient-to-br from-white via-[#FDF0F6]/40 to-[#E8FAFD]/40 border-2 border-[#AEEAF7] p-4 sm:p-6 text-[#121316] overflow-hidden shadow-sm">
                 {/* Horizontal Route Track Graphic (Desktop & Tablet) */}
                 <div className="hidden sm:block">
                   <svg
                     viewBox="0 0 600 160"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-full h-auto drop-shadow"
+                    className="w-full h-auto drop-shadow-sm"
                   >
                     <defs>
                       <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -219,7 +219,7 @@ export const RouteSection = () => {
                     {/* Road Base Track */}
                     <path
                       d="M 30 110 Q 120 40, 210 90 T 390 60 T 570 100"
-                      stroke="#1E293B"
+                      stroke="#E2E8F0"
                       strokeWidth="14"
                       strokeLinecap="round"
                     />
@@ -267,14 +267,14 @@ export const RouteSection = () => {
                             cx={pos.x}
                             cy={pos.y}
                             r={isSelected ? "11" : "8"}
-                            fill={isSelected ? "#2FC7EA" : "#FFFFFF"}
-                            stroke={isSelected ? "#FFFFFF" : cp.isHydration ? "#2FC7EA" : "#EF007E"}
+                            fill={isSelected ? "#EF007E" : "#FFFFFF"}
+                            stroke={isSelected ? "#EF007E" : cp.isHydration ? "#2FC7EA" : "#F8BFDC"}
                             strokeWidth="3"
                           />
                           <text
                             x={pos.x}
                             y={pos.y - 15}
-                            fill={isSelected ? "#2FC7EA" : "#94A3B8"}
+                            fill={isSelected ? "#EF007E" : "#64748B"}
                             fontSize="10"
                             fontWeight="bold"
                             textAnchor="middle"
@@ -287,8 +287,8 @@ export const RouteSection = () => {
                   </svg>
 
                   {/* Road Labels (Desktop) */}
-                  <div className="mt-4 flex items-center justify-between text-xs text-white/80 font-bold px-2">
-                    <div className="flex items-center gap-1.5 text-[#2FC7EA]">
+                  <div className="mt-4 flex items-center justify-between text-xs text-[#525866] font-bold px-2">
+                    <div className="flex items-center gap-1.5 text-[#0E8EA8]">
                       <Flag className="h-4 w-4" />
                       <span>Salida: Forum Charallave</span>
                     </div>
@@ -301,12 +301,12 @@ export const RouteSection = () => {
 
                 {/* Vertical Route Track Graphic (Mobile - optimized for vertical scrolling & readability) */}
                 <div className="block sm:hidden">
-                  <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10 text-xs font-bold px-1">
-                    <div className="flex items-center gap-1.5 text-[#2FC7EA]">
+                  <div className="flex items-center justify-between pb-3 mb-2 border-b border-[#F4D7DE] text-xs font-bold px-1">
+                    <div className="flex items-center gap-1.5 text-[#0E8EA8]">
                       <Flag className="h-4 w-4 shrink-0" />
                       <span>Salida: Forum Charallave</span>
                     </div>
-                    <span className="text-[10px] font-black uppercase text-[#2FC7EA] bg-[#2FC7EA]/20 px-2.5 py-0.5 rounded-full border border-[#2FC7EA]/30">
+                    <span className="text-[10px] font-black uppercase text-[#0E8EA8] bg-[#E8FAFD] px-2.5 py-0.5 rounded-full border border-[#AEEAF7]">
                       0,0 KM
                     </span>
                   </div>
@@ -315,7 +315,7 @@ export const RouteSection = () => {
                     viewBox="0 0 320 565"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-full h-auto drop-shadow"
+                    className="w-full h-auto drop-shadow-sm"
                   >
                     <defs>
                       <linearGradient id="verticalRouteGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -328,7 +328,7 @@ export const RouteSection = () => {
                     {/* Road Base Track (Vertical S-Curve) */}
                     <path
                       d="M 75 40 C 175 40, 235 75, 235 110 C 235 145, 80 145, 80 180 C 80 215, 240 215, 240 250 C 240 285, 85 285, 85 320 C 85 355, 235 355, 235 390 C 235 425, 80 425, 80 460 C 80 495, 220 495, 220 525"
-                      stroke="#1E293B"
+                      stroke="#E2E8F0"
                       strokeWidth="16"
                       strokeLinecap="round"
                     />
@@ -370,7 +370,7 @@ export const RouteSection = () => {
                             width="308"
                             height="46"
                             rx="12"
-                            fill={isSelected ? "#2FC7EA" : "#1E293B"}
+                            fill={isSelected ? "#2FC7EA" : "#FAF7F8"}
                             fillOpacity={isSelected ? "0.15" : "0"}
                             stroke={isSelected ? "#2FC7EA" : "transparent"}
                             strokeWidth="1"
@@ -382,7 +382,7 @@ export const RouteSection = () => {
                             <circle
                               cx={pos.x}
                               cy={pos.y}
-                              r="18"
+                              r={18}
                               fill="#2FC7EA"
                               opacity="0.35"
                               className="animate-ping"
@@ -394,8 +394,8 @@ export const RouteSection = () => {
                             cx={pos.x}
                             cy={pos.y}
                             r={isSelected ? "13" : "10"}
-                            fill={isSelected ? "#2FC7EA" : "#121316"}
-                            stroke={isSelected ? "#FFFFFF" : cp.isHydration ? "#2FC7EA" : "#EF007E"}
+                            fill={isSelected ? "#EF007E" : "#FFFFFF"}
+                            stroke={isSelected ? "#EF007E" : cp.isHydration ? "#2FC7EA" : "#F8BFDC"}
                             strokeWidth="3"
                           />
 
@@ -404,7 +404,7 @@ export const RouteSection = () => {
                             x={pos.x}
                             y={pos.y + 3.5}
                             textAnchor="middle"
-                            fill={isSelected ? "#072430" : "#FFFFFF"}
+                            fill={isSelected ? "#FFFFFF" : "#121316"}
                             fontSize="9"
                             fontWeight="900"
                           >
@@ -418,7 +418,7 @@ export const RouteSection = () => {
                                 x={pos.x + 22}
                                 y={pos.y - 2}
                                 textAnchor="start"
-                                fill={isSelected ? "#2FC7EA" : cp.isHydration ? "#2FC7EA" : cp.isFinish ? "#EF007E" : "#FFFFFF"}
+                                fill={isSelected ? "#EF007E" : cp.isHydration ? "#0E8EA8" : cp.isFinish ? "#EF007E" : "#121316"}
                                 fontSize="12"
                                 fontWeight="900"
                               >
@@ -428,7 +428,7 @@ export const RouteSection = () => {
                                 x={pos.x + 22}
                                 y={pos.y + 12}
                                 textAnchor="start"
-                                fill={isSelected ? "#FFFFFF" : "#94A3B8"}
+                                fill={isSelected ? "#121316" : "#64748B"}
                                 fontSize="10"
                                 fontWeight="600"
                               >
@@ -441,7 +441,7 @@ export const RouteSection = () => {
                                 x={pos.x - 22}
                                 y={pos.y - 2}
                                 textAnchor="end"
-                                fill={isSelected ? "#2FC7EA" : cp.isHydration ? "#2FC7EA" : cp.isFinish ? "#EF007E" : "#FFFFFF"}
+                                fill={isSelected ? "#EF007E" : cp.isHydration ? "#0E8EA8" : cp.isFinish ? "#EF007E" : "#121316"}
                                 fontSize="12"
                                 fontWeight="900"
                               >
@@ -451,7 +451,7 @@ export const RouteSection = () => {
                                 x={pos.x - 22}
                                 y={pos.y + 12}
                                 textAnchor="end"
-                                fill={isSelected ? "#FFFFFF" : "#94A3B8"}
+                                fill={isSelected ? "#121316" : "#64748B"}
                                 fontSize="10"
                                 fontWeight="600"
                               >
@@ -464,12 +464,12 @@ export const RouteSection = () => {
                     })}
                   </svg>
 
-                  <div className="flex items-center justify-between pt-3 mt-2 border-t border-white/10 text-xs font-bold px-1">
+                  <div className="flex items-center justify-between pt-3 mt-2 border-t border-[#F4D7DE] text-xs font-bold px-1">
                     <div className="flex items-center gap-1.5 text-[#EF007E]">
                       <Flag className="h-4 w-4 shrink-0" />
                       <span>Meta: C.C. El Campito</span>
                     </div>
-                    <span className="text-[10px] font-black uppercase text-[#EF007E] bg-[#EF007E]/20 px-2.5 py-0.5 rounded-full border border-[#EF007E]/30">
+                    <span className="text-[10px] font-black uppercase text-[#EF007E] bg-[#FDF0F6] px-2.5 py-0.5 rounded-full border border-[#F8BFDC]">
                       5,0 KM
                     </span>
                   </div>
@@ -487,17 +487,17 @@ export const RouteSection = () => {
                     onClick={() => handleSelectPoint(cp)}
                     className={`p-2.5 rounded-xl text-left border text-xs transition-all cursor-pointer ${
                       isSelected
-                        ? "bg-[#2FC7EA] text-[#072430] border-[#2FC7EA] shadow-md shadow-[#2FC7EA]/30 scale-[1.02] font-bold"
+                        ? "bg-gradient-to-r from-[#EF007E] to-[#2FC7EA] text-white border-transparent shadow-md shadow-[#EF007E]/20 scale-[1.02] font-bold"
                         : "bg-white text-[#121316] border-[#AEEAF7]/80 hover:border-[#2FC7EA] hover:bg-[#E8FAFD]"
                     }`}
                   >
                     <div className="flex items-center justify-between font-sport font-black text-xs uppercase tracking-wider">
                       <span>Punto {cp.id}</span>
-                      <span className={isSelected ? "text-[#072430]" : cp.isHydration ? "text-[#2FC7EA]" : "text-[#EF007E]"}>
+                      <span className={isSelected ? "text-white" : cp.isHydration ? "text-[#0E8EA8]" : "text-[#EF007E]"}>
                         {cp.km}
                       </span>
                     </div>
-                    <p className={`text-[11px] font-semibold truncate mt-0.5 ${isSelected ? "text-[#072430]/90" : "text-[#525866]"}`}>
+                    <p className={`text-[11px] font-semibold truncate mt-0.5 ${isSelected ? "text-white/95" : "text-[#525866]"}`}>
                       {cp.landmark}
                     </p>
                   </button>
@@ -520,7 +520,7 @@ export const RouteSection = () => {
                 {/* Checkpoint Header */}
                 <div className="flex items-center justify-between pb-4 border-b border-[#F8BFDC]">
                   <div className="flex items-center gap-2">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2FC7EA] text-[#072430] font-black text-xs">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#2FC7EA] text-white font-black text-xs shadow-sm">
                       #{selectedPoint.id}
                     </span>
                     <Badge variant="sport" className="text-xs">

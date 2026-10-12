@@ -78,7 +78,7 @@ export const Navbar = () => {
                 alt="Inmobiliaria Dream Home"
                 className="h-full w-full object-contain rounded-full shadow-md shadow-[#EF007E]/20"
               />
-              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-[#121316] text-[8px] sm:text-[9px] font-black text-[#2FC7EA] border border-white">
+              <span className="absolute -top-1 -right-1 flex h-3.5 w-3.5 sm:h-4 sm:w-4 items-center justify-center rounded-full bg-[#EF007E] text-[8px] sm:text-[9px] font-black text-white border border-white shadow-xs">
                 5K
               </span>
             </div>

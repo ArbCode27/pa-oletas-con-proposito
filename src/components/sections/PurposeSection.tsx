@@ -41,7 +41,7 @@ export const PurposeSection = () => {
                     <Heart className="h-3.5 w-3.5 fill-[#EF007E]" />
                     <span>Símbolo de Conciencia</span>
                   </span>
-                  <RibbonDecor width={36} height={46} glow={false} />
+                  <RibbonDecor width={42} height={50} glow={false} />
                 </div>
 
                 <h3 className="font-sport uppercase text-2xl sm:text-3xl lg:text-4xl font-black text-[#121316] leading-tight">
@@ -82,36 +82,36 @@ export const PurposeSection = () => {
             </SpotlightCard>
           </div>
 
-          {/* Card 2 (Span 5): 5K Salud Integral (Secondary Celeste & Deep Theme) */}
+          {/* Card 2 (Span 5): 5K Salud Integral (Secondary Celeste & Pink Soft Theme) */}
           <div className="lg:col-span-5 flex flex-col">
-            <SpotlightCard className="h-full flex flex-col justify-between bg-gradient-to-br from-[#072430] via-[#0b1b24] to-[#121316] text-white border-[#2FC7EA]/35">
+            <SpotlightCard className="h-full flex flex-col justify-between bg-gradient-to-br from-white via-[#E8FAFD]/60 to-[#FDF0F6]/40 text-[#121316] border-2 border-[#AEEAF7] shadow-sm">
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <Badge variant="celeste" className="bg-[#2FC7EA] text-[#072430] border-none font-black">
+                  <Badge variant="celeste" className="bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7] font-black">
                     Salud Integral
                   </Badge>
                   {/* Athletic badge */}
-                  <div className="flex items-center gap-1 text-xs font-black text-[#2FC7EA] bg-white/10 px-3 py-1 rounded-full border border-white/10">
+                  <div className="flex items-center gap-1 text-xs font-black text-[#0E8EA8] bg-white px-3 py-1 rounded-full border border-[#AEEAF7]">
                     <Droplets className="h-3.5 w-3.5 text-[#2FC7EA]" />
                     <span>5K OFICIAL CHARALLAVE</span>
                   </div>
                 </div>
 
                 <div className="my-3">
-                  <span className="text-4xl sm:text-5xl font-sport font-black text-[#2FC7EA] block">
+                  <span className="text-4xl sm:text-5xl font-sport font-black text-[#0E8EA8] block">
                     5 KILÓMETROS
                   </span>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-white mt-1">
+                  <h3 className="text-xl sm:text-2xl font-extrabold text-[#121316] mt-1">
                     Caminata por la Vida & el Renacer
                   </h3>
                 </div>
 
-                <p className="text-sm text-white/80 leading-relaxed mt-2">
+                <p className="text-sm text-[#525866] leading-relaxed mt-2">
                   La actividad física moderada contribuye directamente a regular los niveles hormonales,
                   estimular el sistema inmunológico y disminuir factores de riesgo oncológico.
                 </p>
 
-                <ul className="mt-5 space-y-2.5 text-xs sm:text-sm text-white/90">
+                <ul className="mt-5 space-y-2.5 text-xs sm:text-sm text-[#121316]">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-[#2FC7EA] shrink-0" />
                     <span>Apto para todas las edades, niños y familias</span>
@@ -127,9 +127,9 @@ export const PurposeSection = () => {
                 </ul>
               </div>
 
-              <div className="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-white/70">
+              <div className="mt-6 pt-4 border-t border-[#AEEAF7] flex items-center justify-between text-xs text-[#525866]">
                 <span>Asfalto Urbano Plano</span>
-                <span className="font-bold text-[#2FC7EA]">Dificultad: Baja / Familiar</span>
+                <span className="font-bold text-[#0E8EA8]">Dificultad: Baja / Familiar</span>
               </div>
             </SpotlightCard>
           </div>

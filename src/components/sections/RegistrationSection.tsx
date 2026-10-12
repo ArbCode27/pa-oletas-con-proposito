@@ -699,69 +699,69 @@ export const RegistrationSection = () => {
                 </div>
 
                 {/* Card de Datos Bancarios Oficiales */}
-                <div className="rounded-3xl bg-gradient-to-br from-[#072430] via-[#0b1b24] to-[#121316] text-white p-6 shadow-xl relative overflow-hidden border border-[#2FC7EA]/30">
-                  <div className="absolute right-0 top-0 w-48 h-48 bg-[#EF007E]/20 rounded-full blur-2xl pointer-events-none" />
+                <div className="rounded-3xl bg-gradient-to-br from-[#E8FAFD]/60 via-white to-[#FDF0F6]/60 text-[#121316] p-6 shadow-md relative overflow-hidden border-2 border-[#AEEAF7]">
+                  <div className="absolute right-0 top-0 w-48 h-48 bg-[#EF007E]/10 rounded-full blur-2xl pointer-events-none" />
 
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <CreditCard className="h-5 w-5 text-[#2FC7EA]" />
-                      <span className="font-bold text-xs uppercase tracking-wider text-[#2FC7EA]">
+                      <CreditCard className="h-5 w-5 text-[#0E8EA8]" />
+                      <span className="font-extrabold text-xs uppercase tracking-wider text-[#0E8EA8]">
                         Pago Móvil Oficial
                       </span>
                     </div>
-                    <Badge variant="celeste" className="text-[11px] font-bold">
+                    <Badge variant="celeste" className="text-[11px] font-bold bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7]">
                       Kit Benéfico 5K
                     </Badge>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                     <div>
-                      <span className="block text-white/60">Banco Receptor:</span>
-                      <strong className="text-sm font-black text-white">
+                      <span className="block text-[#6B7280] font-medium">Banco Receptor:</span>
+                      <strong className="text-sm font-black text-[#121316]">
                         Banesco (0134) / Banco Mercantil (0105)
                       </strong>
                     </div>
 
                     <div>
-                      <span className="block text-white/60">Cédula / RIF:</span>
-                      <strong className="text-sm font-black text-white">
+                      <span className="block text-[#6B7280] font-medium">Cédula / RIF:</span>
+                      <strong className="text-sm font-black text-[#121316]">
                         J-50123456-7
                       </strong>
                     </div>
 
                     <div>
-                      <span className="block text-white/60">Teléfono Pago Móvil:</span>
-                      <strong className="text-sm font-black text-[#2FC7EA]">
+                      <span className="block text-[#6B7280] font-medium">Teléfono Pago Móvil:</span>
+                      <strong className="text-sm font-black text-[#EF007E]">
                         0424-112.87.78
                       </strong>
                     </div>
 
                     <div>
-                      <span className="block text-white/60">Beneficiario:</span>
-                      <strong className="text-sm font-black text-white">
+                      <span className="block text-[#6B7280] font-medium">Beneficiario:</span>
+                      <strong className="text-sm font-black text-[#121316]">
                         Inmobiliaria Dream Home Venezuela C.A.
                       </strong>
                     </div>
                   </div>
 
-                  <div className="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-3">
+                  <div className="mt-5 pt-4 border-t border-[#F4D7DE] flex flex-wrap items-center justify-between gap-3">
                     <div className="text-xs">
-                      <span className="text-white/70">Aporte Benéfico: </span>
-                      <strong className="text-white font-extrabold">
+                      <span className="text-[#6B7280]">Aporte Benéfico: </span>
+                      <strong className="text-[#121316] font-extrabold">
                         Ref. $10 / Tasa oficial BCV
                       </strong>
                     </div>
 
                     <Button
                       type="button"
-                      variant="glass"
+                      variant="outline"
                       size="sm"
                       onClick={handleCopyPaymentInfo}
-                      className="bg-white/10 text-white border-white/20 hover:bg-white hover:text-[#121316] text-xs h-8"
+                      className="bg-white text-[#121316] border-[#AEEAF7] hover:bg-[#E8FAFD] hover:text-[#0E8EA8] text-xs h-8 font-bold"
                     >
                       {copiedBank ? (
                         <>
-                          <Check className="h-3.5 w-3.5 text-emerald-400 mr-1.5" />
+                          <Check className="h-3.5 w-3.5 text-emerald-600 mr-1.5" />
                           <span>¡Copiado!</span>
                         </>
                       ) : (

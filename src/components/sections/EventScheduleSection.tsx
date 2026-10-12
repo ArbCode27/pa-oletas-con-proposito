@@ -114,7 +114,7 @@ export const EventScheduleSection = () => {
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
                       item.isCeleste
-                        ? "bg-[#E8FAFD] text-[#2FC7EA] group-hover:bg-[#2FC7EA] group-hover:text-[#072430]"
+                        ? "bg-[#E8FAFD] text-[#2FC7EA] group-hover:bg-[#2FC7EA] group-hover:text-white"
                         : "bg-[#FDF0F6] text-[#EF007E] group-hover:bg-[#EF007E] group-hover:text-white"
                     }`}
                   >
