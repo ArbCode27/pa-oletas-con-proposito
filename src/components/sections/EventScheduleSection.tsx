@@ -1,52 +1,61 @@
-import { Clock, CheckCircle2, Flame, Trophy, Sparkles, MapPin, Building2, Droplets } from "lucide-react"
+import { Clock, MapPin, Coffee, Trophy, Music, Award, CheckCircle2, Building2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-const SCHEDULE_ITEMS = [
+interface ScheduleItem {
+  time: string
+  title: string
+  location: string
+  description: string
+  icon: typeof Clock
+  isCeleste?: boolean
+}
+
+const SCHEDULE_ITEMS: ScheduleItem[] = [
   {
     time: "06:00 AM",
-    title: "Concentración & Entrega de Dorsales",
-    location: "Forum Charallave (Vía La Pitahaya)",
-    description: "Recepción de caminantes, validación de inscripciones de última hora e hidratación inicial.",
-    icon: Clock,
+    title: "Concentración & Entrega de Últimos Kits",
+    location: "Estacionamiento Forum Charallave",
+    description: "Llegada de participantes, verificación de números dorsales, colocación de pañoletas rosas y música para energizar la mañana.",
+    icon: Coffee,
     isCeleste: true,
   },
   {
     time: "06:30 AM",
-    title: "Calentamiento & Palabras de Apertura",
-    location: "Tarima de Salida",
-    description: "Activación muscular con preparadores físicos y bienvenida del equipo de Inmobiliaria Dream Home.",
-    icon: Flame,
-    isCeleste: false,
-  },
-  {
-    time: "07:00 AM",
-    title: "¡Salida Oficial 5K!",
-    location: "Arco de Salida Forum",
-    description: "Comienzo del recorrido de 5 kilómetros por la ruta de Charallave con acompañamiento de seguridad.",
-    icon: Sparkles,
-    isCeleste: true,
-  },
-  {
-    time: "08:30 AM",
-    title: "Llegada a Meta & Punto de Frutas",
-    location: "C.C. / Res. El Campito",
-    description: "Recepción con aplausos, entrega de medallas simbólicas, hidratación y frutas para recargar energía.",
+    title: "Calentamiento Funcional & Estiramiento",
+    location: "Tarima Principal Forum",
+    description: "Sesión guiada por instructores certificados de fitness de los Valles del Tuy para preparar articulaciones y músculos.",
     icon: Trophy,
     isCeleste: false,
   },
   {
-    time: "08:45 AM",
-    title: "Gran Bailoterapia Rosa",
-    location: "Tarima Principal El Campito",
-    description: "Sesión especial de baile y fitness con los mejores instructores de los Valles del Tuy.",
-    icon: Flame,
+    time: "07:00 AM",
+    title: "Arco de Salida Oficial 5K",
+    location: "Vía La Pitahaya (Frente a Forum)",
+    description: "Conteo regresivo oficial de Dream Home, bendición comunitaria y arranque de la caminata con resguardo policial.",
+    icon: Clock,
+    isCeleste: true,
+  },
+  {
+    time: "07:45 AM",
+    title: "Llegada Progresiva a Meta",
+    location: "C.C. & Residencias El Campito",
+    description: "Recepción de caminantes con música, hidratación especial fría, entrega de reconocimientos y zona de fotografías conmemorativas.",
+    icon: Award,
     isCeleste: false,
   },
   {
-    time: "09:45 AM",
-    title: "Rifas de Patrocinadores & Cierre",
-    location: "Tarima Principal",
-    description: "Sorteos de las marcas patrocinantes, agradecimiento a los participantes y foto oficial Dream Home.",
+    time: "08:15 AM",
+    title: "Gran Bailoterapia Rosa & Animación",
+    location: "Tarima de Celebración El Campito",
+    description: "Hora completa de baile, fitness grupal, alegría y energía rosa para celebrar la salud, la vida y el renacer.",
+    icon: Music,
+    isCeleste: false,
+  },
+  {
+    time: "09:30 AM",
+    title: "Sorteos de Dream Home & Clausura",
+    location: "Tarima de Celebración El Campito",
+    description: "Rifas de premios especiales cortesía de Inmobiliaria Dream Home y patrocinantes, palabras de agradecimiento y cierre oficial.",
     icon: CheckCircle2,
     isCeleste: true,
   },
@@ -58,9 +67,9 @@ export const EventScheduleSection = () => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-14">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
-              <Building2 className="h-3.5 w-3.5 mr-1 text-[#0284C7]" />
-              Host: Dream Home
+            <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold flex items-center">
+              <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 mr-1.5 rounded-full object-contain" />
+              Inmobiliaria Dream Home
             </Badge>
             <Badge variant="blush" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold">
               Sábado 31 de Octubre de 2026
@@ -69,7 +78,7 @@ export const EventScheduleSection = () => {
 
           <h2 className="font-sport font-black uppercase text-4xl sm:text-6xl md:text-7xl leading-[0.95] text-[#121316] tracking-tight">
             CRONOGRAMA
-            <span className="block text-transparent bg-gradient-to-r from-[#0284C7] via-[#FF69B4] to-[#E91E63] bg-clip-text">
+            <span className="block text-transparent bg-gradient-to-r from-[#2FC7EA] via-[#FF3B9E] to-[#EF007E] bg-clip-text">
               DE LA MAÑANA
             </span>
           </h2>
@@ -88,16 +97,16 @@ export const EventScheduleSection = () => {
                 key={index}
                 className={`relative rounded-3xl border bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group ${
                   item.isCeleste
-                    ? "border-[#BAE6FD] hover:border-[#0284C7]"
-                    : "border-[#F4D7DE] hover:border-[#E91E63]"
+                    ? "border-[#AEEAF7] hover:border-[#2FC7EA]"
+                    : "border-[#F8BFDC] hover:border-[#EF007E]"
                 }`}
               >
                 <div className="flex items-center justify-between mb-4">
                   <span
                     className={`font-sport text-2xl font-black transition-colors ${
                       item.isCeleste
-                        ? "text-[#0284C7] group-hover:text-[#0369A1]"
-                        : "text-[#E91E63] group-hover:text-[#D5006D]"
+                        ? "text-[#2FC7EA] group-hover:text-[#0E8EA8]"
+                        : "text-[#EF007E] group-hover:text-[#D4006E]"
                     }`}
                   >
                     {item.time}
@@ -105,8 +114,8 @@ export const EventScheduleSection = () => {
                   <div
                     className={`flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
                       item.isCeleste
-                        ? "bg-[#E0F2FE] text-[#0284C7] group-hover:bg-[#0284C7] group-hover:text-white"
-                        : "bg-[#FDF2F4] text-[#E91E63] group-hover:bg-[#E91E63] group-hover:text-white"
+                        ? "bg-[#E8FAFD] text-[#2FC7EA] group-hover:bg-[#2FC7EA] group-hover:text-[#072430]"
+                        : "bg-[#FDF0F6] text-[#EF007E] group-hover:bg-[#EF007E] group-hover:text-white"
                     }`}
                   >
                     <Icon className="h-5 w-5" />
@@ -119,7 +128,7 @@ export const EventScheduleSection = () => {
 
                 <p
                   className={`text-xs font-bold mt-1 flex items-center gap-1.5 ${
-                    item.isCeleste ? "text-[#0369A1]" : "text-[#D5006D]"
+                    item.isCeleste ? "text-[#0E8EA8]" : "text-[#EF007E]"
                   }`}
                 >
                   <MapPin className="h-3.5 w-3.5 shrink-0" />

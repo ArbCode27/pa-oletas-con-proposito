@@ -210,7 +210,7 @@ export const RegistrationSection = () => {
         particleCount: 120,
         spread: 80,
         origin: { y: 0.6 },
-        colors: ["#E91E63", "#FF69B4", "#D5006D", "#FFC0CB", "#FFFFFF"],
+        colors: ["#EF007E", "#2FC7EA", "#FF3B9E", "#E8FAFD", "#FFFFFF"],
       })
     } catch {
       // Ignorar si canvas-confetti falla
@@ -277,14 +277,14 @@ export const RegistrationSection = () => {
   }
 
   return (
-    <section id="registro" className="py-20 md:py-28 bg-[#FFF5F7] relative">
+    <section id="registro" className="py-20 md:py-28 bg-[#FAF7F8] relative">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-2xl mx-auto mb-10 sm:mb-14">
           <div className="flex items-center justify-center gap-2 mb-3">
-            <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
-              <Building2 className="h-3.5 w-3.5 mr-1 text-[#0284C7]" />
-              Host: Dream Home
+            <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold flex items-center">
+              <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 mr-1.5 rounded-full object-contain" />
+              Inmobiliaria Dream Home
             </Badge>
             <Badge variant="pink" className="px-3.5 py-1 text-xs uppercase tracking-wider font-bold">
               Inscripción Oficial
@@ -293,7 +293,7 @@ export const RegistrationSection = () => {
 
           <h2 className="font-sport font-black uppercase text-4xl sm:text-6xl md:text-7xl leading-[0.95] text-[#121316] tracking-tight">
             INSCRÍBETE
-            <span className="block text-transparent bg-gradient-to-r from-[#E91E63] via-[#FF69B4] to-[#0284C7] bg-clip-text">
+            <span className="block text-transparent bg-gradient-to-r from-[#EF007E] via-[#FF3B9E] to-[#2FC7EA] bg-clip-text">
               Y RENACE HOY
             </span>
           </h2>
@@ -306,9 +306,9 @@ export const RegistrationSection = () => {
         {/* Multi-step progress indicator */}
         <div className="mb-8 max-w-xl mx-auto">
           <div className="flex items-center justify-between relative">
-            <div className="absolute top-1/2 left-0 right-0 h-1 bg-[#F4D7DE] -translate-y-1/2 z-0" />
+            <div className="absolute top-1/2 left-0 right-0 h-1 bg-[#F8BFDC] -translate-y-1/2 z-0" />
             <div
-              className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-[#E91E63] to-[#FF69B4] -translate-y-1/2 z-0 transition-all duration-500"
+              className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-[#EF007E] to-[#2FC7EA] -translate-y-1/2 z-0 transition-all duration-500"
               style={{
                 width: activeStep === 1 ? "0%" : activeStep === 2 ? "50%" : "100%",
               }}
@@ -319,8 +319,8 @@ export const RegistrationSection = () => {
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold transition-all ${
                   activeStep >= 1
-                    ? "bg-[#E91E63] text-white shadow-md shadow-[#E91E63]/30 scale-105"
-                    : "bg-white text-[#9CA3AF] border border-[#F4D7DE]"
+                    ? "bg-[#EF007E] text-white shadow-md shadow-[#EF007E]/30 scale-105"
+                    : "bg-white text-[#9CA3AF] border border-[#F8BFDC]"
                 }`}
               >
                 1
@@ -335,8 +335,8 @@ export const RegistrationSection = () => {
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold transition-all ${
                   activeStep >= 2
-                    ? "bg-[#E91E63] text-white shadow-md shadow-[#E91E63]/30 scale-105"
-                    : "bg-white text-[#9CA3AF] border border-[#F4D7DE]"
+                    ? "bg-[#EF007E] text-white shadow-md shadow-[#EF007E]/30 scale-105"
+                    : "bg-white text-[#9CA3AF] border border-[#F8BFDC]"
                 }`}
               >
                 2
@@ -351,8 +351,8 @@ export const RegistrationSection = () => {
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold transition-all ${
                   activeStep === 3
-                    ? "bg-[#E91E63] text-white shadow-md shadow-[#E91E63]/30 scale-105"
-                    : "bg-white text-[#9CA3AF] border border-[#F4D7DE]"
+                    ? "bg-[#EF007E] text-white shadow-md shadow-[#EF007E]/30 scale-105"
+                    : "bg-white text-[#9CA3AF] border border-[#F8BFDC]"
                 }`}
               >
                 3
@@ -365,7 +365,7 @@ export const RegistrationSection = () => {
         </div>
 
         {/* Main Form Card Container */}
-        <div className="rounded-3xl border border-[#F4D7DE] bg-white p-6 sm:p-10 shadow-2xl shadow-[#D5006D]/10">
+        <div className="rounded-3xl border border-[#F8BFDC] bg-white p-6 sm:p-10 shadow-2xl shadow-[#EF007E]/10">
           {submissionError && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-5 w-5" />
@@ -432,7 +432,7 @@ export const RegistrationSection = () => {
                     <select
                       id="cedula_prefix"
                       {...register("cedula_prefix")}
-                      className="flex h-12 w-full rounded-2xl border border-[#F0D1D8] bg-white px-3 py-2 text-sm text-[#121316] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E91E63]"
+                      className="flex h-12 w-full rounded-2xl border border-[#F8BFDC] bg-white px-3 py-2 text-sm text-[#121316] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF007E]"
                     >
                       <option value="V">V - Venezolano</option>
                       <option value="E">E - Extranjero</option>
@@ -545,7 +545,7 @@ export const RegistrationSection = () => {
                         <TooltipTrigger asChild>
                           <button
                             type="button"
-                            className="flex items-center gap-1 text-xs text-[#E91E63] font-bold hover:underline"
+                            className="flex items-center gap-1 text-xs text-[#EF007E] font-bold hover:underline"
                           >
                             <HelpCircle className="h-4 w-4" />
                             <span>¿Por qué se solicita?</span>
@@ -565,15 +565,15 @@ export const RegistrationSection = () => {
                 </div>
 
                 {/* Banner de aclaración exigido en el requerimiento */}
-                <div className="rounded-2xl border border-[#F4D7DE] bg-[#FDF2F4] p-4 flex items-start gap-3">
-                  <ShieldCheck className="h-5 w-5 text-[#E91E63] shrink-0 mt-0.5" />
+                <div className="rounded-2xl border border-[#F8BFDC] bg-[#FDF0F6] p-4 flex items-start gap-3">
+                  <ShieldCheck className="h-5 w-5 text-[#EF007E] shrink-0 mt-0.5" />
                   <div>
                     <h5 className="text-xs font-extrabold text-[#121316]">
                       Aclaratoria importante de seguridad:
                     </h5>
                     <p className="text-xs text-[#525866] mt-0.5">
                       Preferiblemente que sea una persona de confianza que{" "}
-                      <strong className="text-[#D5006D]">no esté participando en el evento</strong>,
+                      <strong className="text-[#EF007E]">no esté participando en el evento</strong>,
                       para facilitar la comunicación inmediata de ser necesario.
                     </p>
                   </div>
@@ -632,7 +632,7 @@ export const RegistrationSection = () => {
 
                 {/* Checkbox Aceptación de Aptitud Física */}
                 <div className="pt-2">
-                  <div className="flex items-start gap-3 rounded-2xl bg-[#FAF7F8] p-4 border border-[#F4D7DE]">
+                  <div className="flex items-start gap-3 rounded-2xl bg-[#FAF7F8] p-4 border border-[#F8BFDC]">
                     <Controller
                       name="accept_terms"
                       control={control}
@@ -642,7 +642,7 @@ export const RegistrationSection = () => {
                           type="checkbox"
                           checked={field.value}
                           onChange={(e) => field.onChange(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-[#F0D1D8] text-[#E91E63] focus:ring-[#E91E63]"
+                          className="mt-1 h-4 w-4 rounded border-[#F8BFDC] text-[#EF007E] focus:ring-[#EF007E]"
                         />
                       )}
                     />
@@ -693,17 +693,17 @@ export const RegistrationSection = () => {
                 </div>
 
                 {/* Card de Datos Bancarios Oficiales */}
-                <div className="rounded-3xl bg-gradient-to-br from-[#121316] to-[#251322] text-white p-6 shadow-xl relative overflow-hidden">
-                  <div className="absolute right-0 top-0 w-48 h-48 bg-[#E91E63]/20 rounded-full blur-2xl pointer-events-none" />
+                <div className="rounded-3xl bg-gradient-to-br from-[#072430] via-[#0b1b24] to-[#121316] text-white p-6 shadow-xl relative overflow-hidden border border-[#2FC7EA]/30">
+                  <div className="absolute right-0 top-0 w-48 h-48 bg-[#EF007E]/20 rounded-full blur-2xl pointer-events-none" />
 
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
-                      <CreditCard className="h-5 w-5 text-[#FF69B4]" />
-                      <span className="font-bold text-xs uppercase tracking-wider text-[#FF69B4]">
+                      <CreditCard className="h-5 w-5 text-[#2FC7EA]" />
+                      <span className="font-bold text-xs uppercase tracking-wider text-[#2FC7EA]">
                         Pago Móvil Oficial
                       </span>
                     </div>
-                    <Badge variant="pink" className="text-[11px] font-bold">
+                    <Badge variant="celeste" className="text-[11px] font-bold">
                       Kit Benéfico 5K
                     </Badge>
                   </div>
@@ -725,7 +725,7 @@ export const RegistrationSection = () => {
 
                     <div>
                       <span className="block text-white/60">Teléfono Pago Móvil:</span>
-                      <strong className="text-sm font-black text-[#FF69B4]">
+                      <strong className="text-sm font-black text-[#2FC7EA]">
                         0414-234.56.78
                       </strong>
                     </div>
@@ -777,10 +777,10 @@ export const RegistrationSection = () => {
                   {!file ? (
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className={`relative flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-8 text-center transition-all cursor-pointer bg-[#FAF7F8] hover:bg-[#FDF2F4] ${
+                      className={`relative flex flex-col items-center justify-center rounded-3xl border-2 border-dashed p-8 text-center transition-all cursor-pointer bg-[#FAF7F8] hover:bg-[#FDF0F6] ${
                         fileError
                           ? "border-red-400 bg-red-50/50"
-                          : "border-[#F0D1D8] hover:border-[#E91E63]"
+                          : "border-[#F8BFDC] hover:border-[#EF007E]"
                       }`}
                     >
                       <input
@@ -791,7 +791,7 @@ export const RegistrationSection = () => {
                         className="hidden"
                         onChange={handleFileChange}
                       />
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm border border-[#F4D7DE] text-[#E91E63] mb-3">
+                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm border border-[#F8BFDC] text-[#EF007E] mb-3">
                         <Upload className="h-6 w-6" />
                       </div>
                       <h4 className="text-sm font-bold text-[#121316]">
@@ -802,16 +802,16 @@ export const RegistrationSection = () => {
                       </p>
                     </div>
                   ) : (
-                    <div className="rounded-2xl border border-[#F4D7DE] bg-white p-4 shadow-sm flex items-center justify-between">
+                    <div className="rounded-2xl border border-[#F8BFDC] bg-white p-4 shadow-sm flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         {filePreview && filePreview !== "pdf" ? (
                           <img
                             src={filePreview}
                             alt="Preview capture"
-                            className="h-14 w-14 rounded-xl object-cover border border-[#F4D7DE]"
+                            className="h-14 w-14 rounded-xl object-cover border border-[#F8BFDC]"
                           />
                         ) : (
-                          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#FDF2F4] text-[#E91E63]">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-[#FDF0F6] text-[#EF007E]">
                             <FileText className="h-7 w-7" />
                           </div>
                         )}
@@ -887,8 +887,8 @@ export const RegistrationSection = () => {
       {/* DIALOG MODAL DE ÉXITO INTERACTIVO (Requerido en las instrucciones) */}
       <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
         <DialogContent className="max-w-lg text-center p-6 sm:p-8">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#FDF2F4] text-[#E91E63] mb-2 shadow-inner">
-            <Heart className="h-8 w-8 fill-[#E91E63]" />
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#FDF0F6] text-[#EF007E] mb-2 shadow-inner">
+            <Heart className="h-8 w-8 fill-[#EF007E]" />
           </div>
 
           <DialogHeader>
@@ -901,25 +901,25 @@ export const RegistrationSection = () => {
           </DialogHeader>
 
           {/* Mensaje de éxito exacto especificado en el requerimiento */}
-          <div className="my-4 rounded-2xl bg-[#FDF2F4] border border-[#F4D7DE] p-4 text-center">
-            <p className="text-sm font-extrabold text-[#D5006D] leading-relaxed">
+          <div className="my-4 rounded-2xl bg-[#FDF0F6] border border-[#F8BFDC] p-4 text-center">
+            <p className="text-sm font-extrabold text-[#EF007E] leading-relaxed">
               «¡Inscripción recibida! Una vez comprobado tu pago, enviaremos tu número asignado para la carrera a tu correo.»
             </p>
           </div>
 
           {registeredData && (
-            <div className="rounded-2xl bg-[#FAF7F8] border border-[#F4D7DE] p-4 text-left text-xs space-y-2">
-              <div className="flex justify-between border-b border-[#F4D7DE] pb-2">
+            <div className="rounded-2xl bg-[#FAF7F8] border border-[#F8BFDC] p-4 text-left text-xs space-y-2">
+              <div className="flex justify-between border-b border-[#F8BFDC] pb-2">
                 <span className="text-[#6B7280]">Participante:</span>
                 <strong className="text-[#121316]">
                   {registeredData.first_name} {registeredData.last_name}
                 </strong>
               </div>
-              <div className="flex justify-between border-b border-[#F4D7DE] pb-2">
+              <div className="flex justify-between border-b border-[#F8BFDC] pb-2">
                 <span className="text-[#6B7280]">Cédula:</span>
                 <strong className="text-[#121316]">{registeredData.cedula}</strong>
               </div>
-              <div className="flex justify-between border-b border-[#F4D7DE] pb-2">
+              <div className="flex justify-between border-b border-[#F8BFDC] pb-2">
                 <span className="text-[#6B7280]">Correo:</span>
                 <strong className="text-[#121316]">{registeredData.email}</strong>
               </div>

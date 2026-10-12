@@ -11,14 +11,14 @@ export const Badge = ({
   ...props
 }: BadgeProps) => {
   const variantStyles: Record<NonNullable<BadgeProps["variant"]>, string> = {
-    default: "bg-[#E91E63] text-white",
-    secondary: "bg-[#F8E1E1] text-[#D5006D]",
+    default: "bg-[#EF007E] text-white",
+    secondary: "bg-[#FDF0F6] text-[#EF007E]",
     destructive: "bg-red-500 text-white",
-    outline: "border border-[#E91E63] text-[#E91E63] bg-transparent",
-    pink: "bg-gradient-to-r from-[#FF69B4] to-[#E91E63] text-white shadow-sm shadow-[#FF69B4]/30",
-    sport: "bg-[#121316] text-[#FF69B4] font-bold tracking-wider uppercase text-[11px]",
-    blush: "bg-[#FDF2F4] text-[#E91E63] border border-[#F4D7DE] font-semibold",
-    celeste: "bg-[#E0F2FE] text-[#0369A1] border border-[#BAE6FD] font-bold shadow-sm shadow-[#38BDF8]/15",
+    outline: "border border-[#EF007E] text-[#EF007E] bg-transparent",
+    pink: "bg-gradient-to-r from-[#FF3B9E] to-[#EF007E] text-white shadow-sm shadow-[#EF007E]/30",
+    sport: "bg-[#121316] text-[#2FC7EA] font-bold tracking-wider uppercase text-[11px]",
+    blush: "bg-[#FDF0F6] text-[#EF007E] border border-[#F8BFDC] font-semibold",
+    celeste: "bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7] font-bold shadow-sm shadow-[#2FC7EA]/15",
   }
 
   return (

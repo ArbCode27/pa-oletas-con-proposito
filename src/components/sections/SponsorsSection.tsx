@@ -2,32 +2,33 @@ import { Sparkles, Building2, Handshake, ArrowUpRight } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
-interface SponsorPlaceholder {
+interface SponsorItem {
   id: number
   tier: "ORO" | "PLATA" | "DIAMANTE" | "HIDRATACIÓN" | "ALIADO"
-  label: string
+  name: string
+  category: string
 }
 
-const SPONSORS_ROW_1: SponsorPlaceholder[] = [
-  { id: 1, tier: "DIAMANTE", label: "LOGO 01" },
-  { id: 2, tier: "ORO", label: "LOGO 02" },
-  { id: 3, tier: "HIDRATACIÓN", label: "LOGO 03" },
-  { id: 4, tier: "PLATA", label: "LOGO 04" },
-  { id: 5, tier: "ALIADO", label: "LOGO 05" },
-  { id: 6, tier: "ORO", label: "LOGO 06" },
-  { id: 7, tier: "DIAMANTE", label: "LOGO 07" },
-  { id: 8, tier: "ALIADO", label: "LOGO 08" },
+const SPONSORS_ROW_1: SponsorItem[] = [
+  { id: 1, tier: "DIAMANTE", name: "Dream Home", category: "Inmobiliaria Oficial" },
+  { id: 2, tier: "ORO", name: "Dream Home", category: "Valles del Tuy" },
+  { id: 3, tier: "HIDRATACIÓN", name: "Dream Home", category: "Puntos de Hidratación" },
+  { id: 4, tier: "PLATA", name: "Dream Home", category: "Aliado Comercial" },
+  { id: 5, tier: "ALIADO", name: "Dream Home", category: "Charallave Centro" },
+  { id: 6, tier: "ORO", name: "Dream Home", category: "División Inversiones" },
+  { id: 7, tier: "DIAMANTE", name: "Dream Home", category: "Sponsor Principal" },
+  { id: 8, tier: "ALIADO", name: "Dream Home", category: "Comunidad Rosa" },
 ]
 
-const SPONSORS_ROW_2: SponsorPlaceholder[] = [
-  { id: 9, tier: "ORO", label: "LOGO 09" },
-  { id: 10, tier: "ALIADO", label: "LOGO 10" },
-  { id: 11, tier: "DIAMANTE", label: "LOGO 11" },
-  { id: 12, tier: "HIDRATACIÓN", label: "LOGO 12" },
-  { id: 13, tier: "PLATA", label: "LOGO 13" },
-  { id: 14, tier: "ORO", label: "LOGO 14" },
-  { id: 15, tier: "ALIADO", label: "LOGO 15" },
-  { id: 16, tier: "PLATA", label: "LOGO 16" },
+const SPONSORS_ROW_2: SponsorItem[] = [
+  { id: 9, tier: "ORO", name: "Dream Home", category: "Bienes Raíces" },
+  { id: 10, tier: "ALIADO", name: "Dream Home", category: "Desarrollo Social" },
+  { id: 11, tier: "DIAMANTE", name: "Dream Home", category: "Líder Inmobiliario" },
+  { id: 12, tier: "HIDRATACIÓN", name: "Dream Home", category: "Salud Integral" },
+  { id: 13, tier: "PLATA", name: "Dream Home", category: "Patrocinante Oficial" },
+  { id: 14, tier: "ORO", name: "Dream Home", category: "Miranda & Tuy" },
+  { id: 15, tier: "ALIADO", name: "Dream Home", category: "Campaña Rosa" },
+  { id: 16, tier: "PLATA", name: "Dream Home", category: "Compromiso Social" },
 ]
 
 export const SponsorsSection = () => {
@@ -39,20 +40,20 @@ export const SponsorsSection = () => {
   }
 
   return (
-    <section id="patrocinantes" className="py-16 md:py-24 bg-white relative overflow-hidden border-y border-[#F4D7DE]">
-      {/* Background soft celeste and pink glows */}
-      <div className="pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 h-72 w-72 rounded-full bg-[#E0F2FE] blur-3xl opacity-60" />
-      <div className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 h-72 w-72 rounded-full bg-[#FDF2F4] blur-3xl opacity-60" />
+    <section id="patrocinantes" className="py-16 md:py-24 bg-white relative overflow-hidden border-y border-[#F8BFDC]/60">
+      {/* Background soft secondary celeste and primary fucsia glows */}
+      <div className="pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 h-72 w-72 rounded-full bg-[#E8FAFD] blur-3xl opacity-70" />
+      <div className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 h-72 w-72 rounded-full bg-[#FDF0F6] blur-3xl opacity-70" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-10 text-center">
         {/* Badges */}
         <div className="flex items-center justify-center gap-2 mb-3">
           <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
-            <Building2 className="h-3.5 w-3.5 mr-1 text-[#0284C7]" />
+            <Building2 className="h-3.5 w-3.5 mr-1 text-[#2FC7EA]" />
             Alianzas Comerciales
           </Badge>
           <Badge variant="blush" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
-            <Sparkles className="h-3.5 w-3.5 mr-1 text-[#E91E63]" />
+            <Sparkles className="h-3.5 w-3.5 mr-1 text-[#EF007E]" />
             Sponsors Oficiales
           </Badge>
         </div>
@@ -60,7 +61,7 @@ export const SponsorsSection = () => {
         {/* Section Heading with athletic condensed font */}
         <h2 className="font-sport uppercase text-4xl sm:text-5xl md:text-6xl font-black text-[#121316] tracking-tight leading-tight">
           MARCAS QUE RENACEN
-          <span className="block text-transparent bg-gradient-to-r from-[#0284C7] via-[#38BDF8] to-[#E91E63] bg-clip-text">
+          <span className="block text-transparent bg-gradient-to-r from-[#2FC7EA] via-[#18A9CC] to-[#EF007E] bg-clip-text">
             CON DREAM HOME
           </span>
         </h2>
@@ -81,20 +82,29 @@ export const SponsorsSection = () => {
           {[...SPONSORS_ROW_1, ...SPONSORS_ROW_1].map((sponsor, index) => (
             <div
               key={`row1-${sponsor.id}-${index}`}
-              className="flex-shrink-0 w-48 sm:w-56 h-24 sm:h-28 rounded-2xl border-2 border-dashed border-[#BAE6FD] bg-[#F0F9FF]/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-[#0284C7] hover:bg-white hover:shadow-md transition-all group cursor-default"
+              className="flex-shrink-0 w-56 sm:w-64 h-24 sm:h-28 rounded-2xl border border-[#AEEAF7] bg-white/95 backdrop-blur-sm p-3.5 flex items-center gap-3.5 shadow-sm hover:border-[#2FC7EA] hover:shadow-md transition-all group cursor-default"
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="h-2 w-2 rounded-full bg-[#38BDF8] group-hover:bg-[#0284C7] transition-colors" />
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0369A1]">
-                  {sponsor.tier}
+              <div className="relative flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-[#E8FAFD] p-1 border border-[#AEEAF7] shadow-inner transition-transform group-hover:scale-105">
+                <img
+                  src="/logo-dream-home.png"
+                  alt={sponsor.name}
+                  className="h-full w-full object-contain rounded-full"
+                />
+              </div>
+              <div className="flex flex-col text-left overflow-hidden">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="h-2 w-2 rounded-full bg-[#2FC7EA]" />
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0E8EA8]">
+                    {sponsor.tier}
+                  </span>
+                </div>
+                <span className="font-sport uppercase text-base sm:text-lg font-black text-[#121316] leading-tight truncate group-hover:text-[#2FC7EA] transition-colors">
+                  {sponsor.name}
+                </span>
+                <span className="text-[10px] text-[#6B7280] font-medium tracking-wide truncate">
+                  {sponsor.category}
                 </span>
               </div>
-              <span className="font-sport uppercase text-2xl sm:text-3xl font-black text-[#121316] tracking-wider group-hover:text-[#0284C7] transition-colors">
-                {sponsor.label}
-              </span>
-              <span className="text-[10px] text-[#6B7280] font-medium tracking-wide">
-                Patrocinador Oficial
-              </span>
             </div>
           ))}
         </div>
@@ -109,20 +119,29 @@ export const SponsorsSection = () => {
           {[...SPONSORS_ROW_2, ...SPONSORS_ROW_2].map((sponsor, index) => (
             <div
               key={`row2-${sponsor.id}-${index}`}
-              className="flex-shrink-0 w-48 sm:w-56 h-24 sm:h-28 rounded-2xl border-2 border-dashed border-[#F4D7DE] bg-[#FDF2F4]/80 backdrop-blur-sm p-4 flex flex-col items-center justify-center text-center shadow-sm hover:border-[#E91E63] hover:bg-white hover:shadow-md transition-all group cursor-default"
+              className="flex-shrink-0 w-56 sm:w-64 h-24 sm:h-28 rounded-2xl border border-[#F8BFDC] bg-white/95 backdrop-blur-sm p-3.5 flex items-center gap-3.5 shadow-sm hover:border-[#EF007E] hover:shadow-md transition-all group cursor-default"
             >
-              <div className="flex items-center gap-1.5 mb-1">
-                <span className="h-2 w-2 rounded-full bg-[#FF69B4] group-hover:bg-[#E91E63] transition-colors" />
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#D5006D]">
-                  {sponsor.tier}
+              <div className="relative flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-[#FDF0F6] p-1 border border-[#F8BFDC] shadow-inner transition-transform group-hover:scale-105">
+                <img
+                  src="/logo-dream-home.png"
+                  alt={sponsor.name}
+                  className="h-full w-full object-contain rounded-full"
+                />
+              </div>
+              <div className="flex flex-col text-left overflow-hidden">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span className="h-2 w-2 rounded-full bg-[#EF007E]" />
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#EF007E]">
+                    {sponsor.tier}
+                  </span>
+                </div>
+                <span className="font-sport uppercase text-base sm:text-lg font-black text-[#121316] leading-tight truncate group-hover:text-[#EF007E] transition-colors">
+                  {sponsor.name}
+                </span>
+                <span className="text-[10px] text-[#6B7280] font-medium tracking-wide truncate">
+                  {sponsor.category}
                 </span>
               </div>
-              <span className="font-sport uppercase text-2xl sm:text-3xl font-black text-[#121316] tracking-wider group-hover:text-[#E91E63] transition-colors">
-                {sponsor.label}
-              </span>
-              <span className="text-[10px] text-[#6B7280] font-medium tracking-wide">
-                Marca Aliada 2026
-              </span>
             </div>
           ))}
         </div>
@@ -130,10 +149,10 @@ export const SponsorsSection = () => {
 
       {/* Sponsor Invitation Callout Card */}
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-10">
-        <div className="rounded-3xl border border-[#BAE6FD] bg-gradient-to-r from-[#F0F9FF] via-white to-[#FDF2F4] p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-5">
+        <div className="rounded-3xl border border-[#AEEAF7] bg-gradient-to-r from-[#E8FAFD] via-white to-[#FDF0F6] p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-5">
           <div className="space-y-1 text-center sm:text-left">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0369A1] uppercase tracking-wider">
-              <Handshake className="h-4 w-4 text-[#0284C7]" />
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0E8EA8] uppercase tracking-wider">
+              <Handshake className="h-4 w-4 text-[#2FC7EA]" />
               <span>Oportunidad para Marcas y Empresas</span>
             </div>
             <h4 className="font-sport uppercase text-2xl font-black text-[#121316]">

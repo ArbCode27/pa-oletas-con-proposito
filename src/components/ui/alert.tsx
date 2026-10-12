@@ -2,16 +2,17 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "destructive" | "success" | "pink"
+  variant?: "default" | "destructive" | "success" | "pink" | "celeste"
 }
 
 export const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
   ({ className, variant = "default", ...props }, ref) => {
     const variantStyles: Record<NonNullable<AlertProps["variant"]>, string> = {
-      default: "bg-[#FDF2F4] text-[#121316] border-[#F4D7DE]",
+      default: "bg-[#FDF0F6] text-[#121316] border-[#F8BFDC]",
       destructive: "border-red-300 bg-red-50 text-red-900 [&>svg]:text-red-600",
       success: "border-emerald-200 bg-emerald-50 text-emerald-900 [&>svg]:text-emerald-600",
-      pink: "border-[#FF69B4]/30 bg-gradient-to-r from-[#FDF2F4] to-[#F8E1E1] text-[#D5006D] [&>svg]:text-[#E91E63]",
+      pink: "border-[#EF007E]/30 bg-gradient-to-r from-[#FDF0F6] to-[#F8BFDC]/50 text-[#EF007E] [&>svg]:text-[#EF007E]",
+      celeste: "border-[#2FC7EA]/30 bg-gradient-to-r from-[#E8FAFD] to-[#AEEAF7]/50 text-[#0E8EA8] [&>svg]:text-[#2FC7EA]",
     }
 
     return (

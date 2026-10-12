@@ -1,15 +1,15 @@
-import { Heart, Phone, Mail, MapPin, Building2 } from "lucide-react"
+import { Heart, MapPin, Phone, Mail } from "lucide-react"
 import { RibbonDecor } from "@/components/animations/RibbonDecor"
 
-const InstagramIcon = ({ className = "h-4 w-4" }: { className?: string }) => (
+const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
+    className={className}
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
     strokeLinejoin="round"
-    className={className}
   >
     <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
     <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
@@ -26,25 +26,29 @@ export const Footer = () => {
   }
 
   return (
-    <footer className="bg-[#121316] text-white pt-16 pb-12 relative overflow-hidden border-t-4 border-[#0284C7]">
+    <footer className="bg-[#121316] text-white pt-16 pb-12 relative overflow-hidden border-t-4 border-[#2FC7EA]">
       {/* Background ambient ribbon and celeste glow */}
-      <div className="absolute top-0 right-10 w-96 h-96 bg-[#0284C7]/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-96 h-96 bg-[#E91E63]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-0 right-10 w-96 h-96 bg-[#2FC7EA]/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-10 w-96 h-96 bg-[#EF007E]/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           {/* Brand & Purpose (Span 5) */}
           <div className="md:col-span-5 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-tr from-[#0284C7] via-[#FF69B4] to-[#E91E63] text-white shadow-lg shadow-[#0284C7]/30">
-                <Heart className="h-6 w-6 fill-white" />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white p-0.5 border border-white/20 shadow-lg shadow-[#2FC7EA]/20">
+                <img
+                  src="/logo-dream-home.png"
+                  alt="Inmobiliaria Dream Home"
+                  className="h-full w-full object-contain rounded-full"
+                />
               </div>
               <div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] uppercase tracking-widest font-black text-[#38BDF8] bg-[#0284C7]/20 px-2 py-0.5 rounded-full">
-                    Host Oficial
+                  <span className="text-[10px] uppercase tracking-widest font-black text-[#2FC7EA] bg-[#2FC7EA]/20 px-2 py-0.5 rounded-full">
+                    Caminata 5K
                   </span>
-                  <span className="text-[10px] uppercase tracking-widest font-black text-[#FF69B4]">
+                  <span className="text-[10px] uppercase tracking-widest font-black text-[#EF007E]">
                     Mes Rosa 2026
                   </span>
                 </div>
@@ -76,7 +80,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={() => handleScrollTo("hero")}
-                  className="hover:text-[#38BDF8] transition-colors cursor-pointer"
+                  className="hover:text-[#2FC7EA] transition-colors cursor-pointer"
                 >
                   Inicio
                 </button>
@@ -84,7 +88,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={() => handleScrollTo("patrocinantes")}
-                  className="hover:text-[#38BDF8] transition-colors cursor-pointer text-[#38BDF8] font-bold"
+                  className="hover:text-[#2FC7EA] transition-colors cursor-pointer text-[#2FC7EA] font-bold"
                 >
                   Marcas Patrocinantes
                 </button>
@@ -92,7 +96,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={() => handleScrollTo("proposito")}
-                  className="hover:text-[#FF69B4] transition-colors cursor-pointer"
+                  className="hover:text-[#EF007E] transition-colors cursor-pointer"
                 >
                   Propósito del Evento
                 </button>
@@ -100,7 +104,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={() => handleScrollTo("ruta")}
-                  className="hover:text-[#38BDF8] transition-colors cursor-pointer"
+                  className="hover:text-[#2FC7EA] transition-colors cursor-pointer"
                 >
                   Ruta 5K & Puntos Clave
                 </button>
@@ -108,7 +112,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={() => handleScrollTo("cronograma")}
-                  className="hover:text-[#FF69B4] transition-colors cursor-pointer"
+                  className="hover:text-[#EF007E] transition-colors cursor-pointer"
                 >
                   Cronograma & Horarios
                 </button>
@@ -116,7 +120,7 @@ export const Footer = () => {
               <li>
                 <button
                   onClick={() => handleScrollTo("registro")}
-                  className="hover:text-[#FF69B4] transition-colors cursor-pointer text-[#FF69B4] font-bold"
+                  className="hover:text-[#EF007E] transition-colors cursor-pointer text-[#EF007E] font-bold"
                 >
                   Formulario de Inscripción
                 </button>
@@ -131,21 +135,21 @@ export const Footer = () => {
             </h4>
             <div className="space-y-2.5 text-xs text-white/80">
               <div className="flex items-start gap-2.5">
-                <MapPin className="h-4 w-4 text-[#38BDF8] shrink-0 mt-0.5" />
+                <MapPin className="h-4 w-4 text-[#2FC7EA] shrink-0 mt-0.5" />
                 <span>
                   Charallave, Municipio Cristóbal Rojas, Estado Miranda, Venezuela.
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-[#38BDF8] shrink-0" />
+                <Phone className="h-4 w-4 text-[#2FC7EA] shrink-0" />
                 <span>+58 (414) 234-5678 / +58 (424) 100-2026</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-[#38BDF8] shrink-0" />
+                <Mail className="h-4 w-4 text-[#2FC7EA] shrink-0" />
                 <span>caminata5k@dreamhomevenezuela.com</span>
               </div>
               <div className="flex items-center gap-2.5">
-                <InstagramIcon className="h-4 w-4 text-[#FF69B4] shrink-0" />
+                <InstagramIcon className="h-4 w-4 text-[#EF007E] shrink-0" />
                 <span>@inmobiliariadreamhome</span>
               </div>
             </div>
@@ -155,11 +159,11 @@ export const Footer = () => {
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-white/60 gap-4">
           <p>
-            © 2026 Inmobiliaria Dream Home Venezuela (Host Oficial). Todos los derechos reservados.
+            © 2026 Inmobiliaria Dream Home Venezuela. Todos los derechos reservados.
           </p>
           <div className="flex items-center gap-2 text-white/70">
             <span>Organizado con</span>
-            <Heart className="h-3.5 w-3.5 text-[#E91E63] fill-[#E91E63]" />
+            <Heart className="h-3.5 w-3.5 text-[#EF007E] fill-[#EF007E]" />
             <span>por la vida y la salud en los Valles del Tuy</span>
           </div>
         </div>

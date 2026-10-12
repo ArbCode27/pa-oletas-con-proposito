@@ -17,7 +17,7 @@ export const RibbonDecor = ({
     <div className={`relative inline-flex items-center justify-center ${className}`}>
       {glow && (
         <div
-          className="absolute inset-0 bg-[#FF69B4]/30 rounded-full blur-xl pointer-events-none transform scale-125"
+          className="absolute inset-0 bg-[#EF007E]/30 rounded-full blur-xl pointer-events-none transform scale-125"
           aria-hidden="true"
         />
       )}
@@ -33,13 +33,13 @@ export const RibbonDecor = ({
       >
         <defs>
           <linearGradient id="ribbonGrad1" x1="10%" y1="0%" x2="90%" y2="100%">
-            <stop offset="0%" stopColor="#FF69B4" />
-            <stop offset="50%" stopColor="#E91E63" />
-            <stop offset="100%" stopColor="#D5006D" />
+            <stop offset="0%" stopColor="#FF3B9E" />
+            <stop offset="50%" stopColor="#EF007E" />
+            <stop offset="100%" stopColor="#C9006A" />
           </linearGradient>
           <linearGradient id="ribbonGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFA4C4" />
-            <stop offset="100%" stopColor="#E91E63" />
+            <stop offset="0%" stopColor="#2FC7EA" />
+            <stop offset="100%" stopColor="#EF007E" />
           </linearGradient>
           <linearGradient id="ribbonShine" x1="0%" y1="0%" x2="0%" y2="100%">
             <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.6" />

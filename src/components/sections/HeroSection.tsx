@@ -14,15 +14,15 @@ export const HeroSection = () => {
   return (
     <section
       id="hero"
-      className="relative min-h-screen pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-gradient-to-b from-[#F0F9FF] via-[#FAF7F8] to-[#FFF0F4]"
+      className="relative min-h-screen pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-gradient-to-b from-[#E8FAFD]/70 via-[#FAF7F8] to-[#FDF0F6]"
     >
-      {/* Background ambient glows: Soft Pink & Fresh Celeste */}
+      {/* Background ambient glows: Secondary Celeste & Primary Fucsia */}
       <div
-        className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-[#38BDF8]/20 via-[#FF69B4]/15 to-[#E91E63]/10 blur-3xl"
+        className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-[#2FC7EA]/25 via-[#FF3B9E]/15 to-[#EF007E]/15 blur-3xl"
         aria-hidden="true"
       />
       <div
-        className="pointer-events-none absolute top-1/4 -right-40 h-[550px] w-[550px] rounded-full bg-gradient-to-bl from-[#E0F2FE]/60 via-[#F8E1E1]/50 to-[#D5006D]/10 blur-3xl"
+        className="pointer-events-none absolute top-1/4 -right-40 h-[550px] w-[550px] rounded-full bg-gradient-to-bl from-[#E8FAFD]/70 via-[#F8BFDC]/50 to-[#EF007E]/10 blur-3xl"
         aria-hidden="true"
       />
       <div
@@ -30,19 +30,14 @@ export const HeroSection = () => {
         aria-hidden="true"
       />
 
-      {/* Subtle Athletic Grid Pattern */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.035] bg-[radial-gradient(#0284C7_1px,transparent_1px)] [background-size:24px_24px]" />
+      {/* Subtle Athletic Grid Pattern with Celeste Accent */}
+      <div className="pointer-events-none absolute inset-0 opacity-[0.04] bg-[radial-gradient(#2FC7EA_1px,transparent_1px)] [background-size:24px_24px]" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* Top Badges Row: Dream Home as Host & Event Details */}
+        {/* Top Badges Row: Dream Home & Event Details */}
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-6 sm:mb-8">
-          <Badge variant="celeste" className="gap-1.5 px-4 py-1.5 text-xs uppercase tracking-wider font-black shadow-sm">
-            <Building2 className="h-3.5 w-3.5 text-[#0284C7]" />
-            <span>Host Oficial del Evento</span>
-          </Badge>
-
-          <div className="inline-flex items-center gap-2 rounded-full border border-[#BAE6FD] bg-white/95 px-4 py-1.5 text-xs font-extrabold text-[#0369A1] shadow-sm backdrop-blur-sm">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-[#0284C7] animate-pulse" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-[#AEEAF7] bg-white/95 px-3.5 py-1.5 text-xs font-extrabold text-[#0E8EA8] shadow-sm backdrop-blur-sm">
+            <img src="/logo-dream-home.png" alt="Dream Home" className="h-4.5 w-4.5 rounded-full object-contain" />
             <span>Inmobiliaria Dream Home Venezuela</span>
           </div>
 
@@ -62,20 +57,20 @@ export const HeroSection = () => {
             {/* Athletic Big Display Title: "CAMINA Y RENACE CON DREAM HOME" */}
             <h1 className="font-sport uppercase text-5xl sm:text-7xl md:text-8xl lg:text-9xl leading-[0.88] tracking-tight text-[#121316]">
               CAMINA Y RENACE
-              <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-[#E91E63] via-[#FF69B4] to-[#0284C7] bg-clip-text text-transparent italic drop-shadow-sm">
+              <span className="block mt-1 sm:mt-2 bg-gradient-to-r from-[#EF007E] via-[#FF3B9E] to-[#2FC7EA] bg-clip-text text-transparent italic drop-shadow-sm">
                 CON DREAM HOME
               </span>
             </h1>
 
-            {/* Campaign Subtitle Ribbon with Celeste Accent */}
+            {/* Campaign Subtitle Ribbon with Primary Fucsia and Secondary Celeste Accent */}
             <div className="mt-4 sm:mt-6 flex flex-wrap items-center justify-center gap-2">
-              <span className="text-base sm:text-xl md:text-2xl font-black tracking-tight text-[#D5006D]">
+              <span className="text-base sm:text-xl md:text-2xl font-black tracking-tight text-[#EF007E]">
                 «Una Pañoleta con Propósito»
               </span>
               <span className="hidden sm:inline-block text-[#9CA3AF]">•</span>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E0F2FE] px-3 py-0.5 text-xs sm:text-sm font-bold text-[#0369A1] border border-[#BAE6FD]">
-                <Building2 className="h-3.5 w-3.5 text-[#0284C7]" />
-                Host: Inmobiliaria Dream Home
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8FAFD] px-3.5 py-1 text-xs sm:text-sm font-bold text-[#0E8EA8] border border-[#AEEAF7]">
+                <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 rounded-full object-contain" />
+                Inmobiliaria Dream Home
               </span>
             </div>
           </div>
@@ -88,10 +83,10 @@ export const HeroSection = () => {
               en las calles de Charallave.
             </p>
 
-            {/* Event Key Highlights Grid with Celeste Accents */}
+            {/* Event Key Highlights Grid with Fucsia & Celeste Accents */}
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-2xl mx-auto">
-              <div className="flex items-center gap-3 rounded-2xl bg-white/95 border border-[#F4D7DE] p-3.5 text-left shadow-sm backdrop-blur-md hover:border-[#E91E63] transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF2F4] text-[#E91E63]">
+              <div className="flex items-center gap-3 rounded-2xl bg-white/95 border border-[#F8BFDC] p-3.5 text-left shadow-sm backdrop-blur-md hover:border-[#EF007E] transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF0F6] text-[#EF007E]">
                   <Calendar className="h-5 w-5" />
                 </div>
                 <div>
@@ -104,12 +99,12 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 rounded-2xl bg-white/95 border border-[#BAE6FD] p-3.5 text-left shadow-sm backdrop-blur-md hover:border-[#0284C7] transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E0F2FE] text-[#0284C7]">
+              <div className="flex items-center gap-3 rounded-2xl bg-white/95 border border-[#AEEAF7] p-3.5 text-left shadow-sm backdrop-blur-md hover:border-[#2FC7EA] transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#E8FAFD] text-[#2FC7EA]">
                   <MapPin className="h-5 w-5" />
                 </div>
                 <div>
-                  <span className="block text-[11px] font-bold uppercase tracking-wider text-[#0369A1]">
+                  <span className="block text-[11px] font-bold uppercase tracking-wider text-[#0E8EA8]">
                     Ruta Charallave
                   </span>
                   <span className="text-xs sm:text-sm font-extrabold text-[#121316]">
@@ -118,8 +113,8 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              <div className="flex items-center gap-3 rounded-2xl bg-white/95 border border-[#F4D7DE] p-3.5 text-left shadow-sm backdrop-blur-md hover:border-[#E91E63] transition-colors">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF2F4] text-[#E91E63]">
+              <div className="flex items-center gap-3 rounded-2xl bg-white/95 border border-[#F8BFDC] p-3.5 text-left shadow-sm backdrop-blur-md hover:border-[#EF007E] transition-colors">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FDF0F6] text-[#EF007E]">
                   <Activity className="h-5 w-5" />
                 </div>
                 <div>
@@ -139,7 +134,7 @@ export const HeroSection = () => {
                 size="xl"
                 variant="sport"
                 onClick={() => handleScrollTo("registro")}
-                className="w-full sm:w-auto text-base sm:text-lg font-black tracking-wider py-4 px-9 shadow-xl shadow-[#E91E63]/30 hover:shadow-2xl hover:shadow-[#E91E63]/50 group"
+                className="w-full sm:w-auto text-base sm:text-lg font-black tracking-wider py-4 px-9 shadow-xl shadow-[#EF007E]/30 hover:shadow-2xl hover:shadow-[#EF007E]/50 group"
               >
                 <span>Inscríbete Aquí</span>
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
@@ -159,7 +154,7 @@ export const HeroSection = () => {
                 size="lg"
                 variant="glass"
                 onClick={() => handleScrollTo("patrocinantes")}
-                className="w-full sm:w-auto font-bold text-sm text-[#121316] hover:text-[#0284C7] border border-[#BAE6FD]"
+                className="w-full sm:w-auto font-bold text-sm text-[#121316] hover:text-[#2FC7EA] border border-[#AEEAF7]"
               >
                 <span>Patrocinadores</span>
                 <ChevronRight className="ml-1 h-4 w-4" />
@@ -168,26 +163,26 @@ export const HeroSection = () => {
           </div>
         </div>
 
-        {/* Solid Graphic Visual Section: Sports & Awareness Showcase (No floating bobbing) */}
+        {/* Solid Graphic Visual Section: Sports & Awareness Showcase */}
         <div className="relative mt-12 sm:mt-16 max-w-5xl mx-auto">
           {/* Main Hero Showcase Card */}
-          <div className="relative rounded-3xl overflow-hidden border border-[#F4D7DE] bg-gradient-to-r from-[#121316] via-[#1A1828] to-[#251322] p-6 sm:p-10 text-white shadow-2xl">
+          <div className="relative rounded-3xl overflow-hidden border border-[#F8BFDC] bg-gradient-to-r from-[#121316] via-[#1A1828] to-[#251322] p-6 sm:p-10 text-white shadow-2xl">
             {/* Background Pattern */}
-            <div className="absolute inset-0 bg-[radial-gradient(#0284C7_1px,transparent_1px)] [background-size:20px_20px] opacity-15" />
-            <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-[#E91E63]/25 blur-3xl pointer-events-none" />
-            <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-[#0284C7]/20 blur-3xl pointer-events-none" />
+            <div className="absolute inset-0 bg-[radial-gradient(#2FC7EA_1px,transparent_1px)] [background-size:20px_20px] opacity-15" />
+            <div className="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-[#EF007E]/25 blur-3xl pointer-events-none" />
+            <div className="absolute -left-20 -top-20 w-80 h-80 rounded-full bg-[#2FC7EA]/20 blur-3xl pointer-events-none" />
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               {/* Left Column: Mission text & stats */}
               <div className="md:col-span-7 space-y-5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-[#FF69B4] border border-white/15">
-                    <Heart className="h-3.5 w-3.5 fill-[#FF69B4]" />
+                  <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-[#FF3B9E] border border-white/15">
+                    <Heart className="h-3.5 w-3.5 fill-[#EF007E]" />
                     <span>Caminata con Sentido Benéfico</span>
                   </div>
-                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#0284C7]/30 px-3 py-1 text-xs font-semibold text-[#38BDF8] border border-[#38BDF8]/30">
-                    <Building2 className="h-3.5 w-3.5" />
-                    <span>Dream Home Host</span>
+                  <div className="inline-flex items-center gap-1.5 rounded-full bg-[#2FC7EA]/20 px-3 py-1 text-xs font-semibold text-[#2FC7EA] border border-[#2FC7EA]/40">
+                    <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 rounded-full object-contain" />
+                    <span>Inmobiliaria Dream Home</span>
                   </div>
                 </div>
 
@@ -200,10 +195,10 @@ export const HeroSection = () => {
                   fomentamos la prevención temprana y cerramos con una explosiva sesión de bailoterapia en la meta.
                 </p>
 
-                {/* Micro Stats with Celeste + Pink highlights */}
+                {/* Micro Stats with Celeste + Fucsia highlights */}
                 <div className="pt-2 grid grid-cols-3 gap-3 border-t border-white/15">
                   <div>
-                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#38BDF8]">
+                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#2FC7EA]">
                       5.0 KM
                     </span>
                     <span className="text-[11px] text-white/70 uppercase tracking-wider">
@@ -219,7 +214,7 @@ export const HeroSection = () => {
                     </span>
                   </div>
                   <div>
-                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#FF69B4]">
+                    <span className="block font-sport text-2xl sm:text-3xl font-extrabold text-[#EF007E]">
                       100%
                     </span>
                     <span className="text-[11px] text-white/70 uppercase tracking-wider">
@@ -229,13 +224,13 @@ export const HeroSection = () => {
                 </div>
               </div>
 
-              {/* Right Column: Visual Ribbon & Badge Mockup (Steady solid card, without floating animations) */}
+              {/* Right Column: Visual Ribbon & Badge Mockup */}
               <div className="md:col-span-5 flex flex-col items-center justify-center text-center p-4">
                 <div className="relative w-full max-w-xs p-6 sm:p-8 rounded-3xl bg-white/10 backdrop-blur-xl border border-white/20 shadow-2xl flex flex-col items-center">
                   <RibbonDecor width={80} height={105} glow={true} />
 
                   <div className="mt-4">
-                    <span className="inline-block font-sport uppercase tracking-widest text-xs font-black text-[#FF69B4]">
+                    <span className="inline-block font-sport uppercase tracking-widest text-xs font-black text-[#2FC7EA]">
                       Kit Incluye
                     </span>
                     <h4 className="text-lg font-extrabold text-white">
@@ -246,7 +241,7 @@ export const HeroSection = () => {
                     </p>
                   </div>
 
-                  <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#E91E63] to-[#0284C7] px-4 py-1.5 text-xs font-bold text-white shadow-md">
+                  <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-[#EF007E] to-[#2FC7EA] px-4 py-1.5 text-xs font-bold text-white shadow-md">
                     <ShieldCheck className="h-3.5 w-3.5" />
                     <span>Inscripción Abierta 2026</span>
                   </div>
@@ -255,10 +250,10 @@ export const HeroSection = () => {
             </div>
           </div>
 
-          {/* Clean Integrated Highlights Bar below showcase (replacing awkward floating badges) */}
+          {/* Clean Integrated Highlights Bar below showcase */}
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 rounded-2xl bg-white border border-[#BAE6FD] p-3.5 shadow-sm">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#E0F2FE] text-[#0284C7] font-black text-xs">
+            <div className="flex items-center gap-3 rounded-2xl bg-white border border-[#AEEAF7] p-3.5 shadow-sm">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#E8FAFD] text-[#2FC7EA] font-black text-xs">
                 5K
               </div>
               <span className="text-xs sm:text-sm font-bold text-[#121316]">
@@ -266,8 +261,8 @@ export const HeroSection = () => {
               </span>
             </div>
 
-            <div className="flex items-center gap-3 rounded-2xl bg-white border border-[#F4D7DE] p-3.5 shadow-sm">
-              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#FDF2F4] text-[#E91E63] font-black text-xs">
+            <div className="flex items-center gap-3 rounded-2xl bg-white border border-[#F8BFDC] p-3.5 shadow-sm">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-[#FDF0F6] text-[#EF007E] font-black text-xs">
                 ♫
               </div>
               <span className="text-xs sm:text-sm font-bold text-[#121316]">

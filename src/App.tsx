@@ -10,7 +10,7 @@ import { Footer } from "@/components/sections/Footer"
 
 const App = () => {
   return (
-    <div className="min-h-screen bg-[#FAF7F8] text-[#121316] flex flex-col font-sans selection:bg-[#E91E63] selection:text-white">
+    <div className="min-h-screen bg-[#FAF7F8] text-[#121316] flex flex-col font-sans selection:bg-[#EF007E] selection:text-white">
       <Navbar />
       <main className="flex-1">
         <HeroSection />

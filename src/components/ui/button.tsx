@@ -13,18 +13,18 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
 
-    const baseStyles = "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E91E63] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:scale-95 select-none"
+    const baseStyles = "inline-flex items-center justify-center whitespace-nowrap rounded-full text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF007E] focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer active:scale-95 select-none"
 
     const variantStyles: Record<NonNullable<ButtonProps["variant"]>, string> = {
-      default: "bg-[#E91E63] text-white hover:bg-[#D5006D] shadow-lg shadow-[#E91E63]/25 hover:shadow-xl hover:shadow-[#D5006D]/35",
+      default: "bg-[#EF007E] text-white hover:bg-[#C9006A] shadow-lg shadow-[#EF007E]/25 hover:shadow-xl hover:shadow-[#C9006A]/35",
       destructive: "bg-red-500 text-white hover:bg-red-600 shadow-md",
-      outline: "border-2 border-[#E91E63] text-[#E91E63] bg-transparent hover:bg-[#E91E63] hover:text-white",
-      secondary: "bg-[#F8E1E1] text-[#D5006D] hover:bg-[#ffd2dc]",
-      ghost: "hover:bg-[#FDF2F4] text-[#121316] hover:text-[#E91E63]",
-      link: "text-[#E91E63] underline-offset-4 hover:underline",
-      sport: "bg-gradient-to-r from-[#E91E63] via-[#FF69B4] to-[#D5006D] text-white uppercase tracking-wider font-extrabold shadow-lg shadow-[#E91E63]/30 hover:shadow-xl hover:shadow-[#E91E63]/50 hover:brightness-105",
+      outline: "border-2 border-[#EF007E] text-[#EF007E] bg-transparent hover:bg-[#EF007E] hover:text-white",
+      secondary: "bg-[#FDF0F6] text-[#EF007E] hover:bg-[#F8BFDC]",
+      ghost: "hover:bg-[#FDF0F6] text-[#121316] hover:text-[#EF007E]",
+      link: "text-[#EF007E] underline-offset-4 hover:underline",
+      sport: "bg-gradient-to-r from-[#EF007E] via-[#FF3B9E] to-[#2FC7EA] text-white uppercase tracking-wider font-extrabold shadow-lg shadow-[#EF007E]/30 hover:shadow-xl hover:shadow-[#EF007E]/50 hover:brightness-105",
       glass: "bg-white/80 backdrop-blur-md text-[#121316] border border-white/70 hover:bg-white shadow-sm hover:shadow-md",
-      celeste: "bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-white hover:from-[#0369A1] hover:to-[#0284C7] shadow-lg shadow-[#0284C7]/25 hover:shadow-xl hover:shadow-[#0284C7]/40",
+      celeste: "bg-gradient-to-r from-[#2FC7EA] to-[#18A9CC] text-white hover:from-[#18A9CC] hover:to-[#0E8EA8] shadow-lg shadow-[#2FC7EA]/25 hover:shadow-xl hover:shadow-[#2FC7EA]/40",
     }
 
     const sizeStyles: Record<NonNullable<ButtonProps["size"]>, string> = {
