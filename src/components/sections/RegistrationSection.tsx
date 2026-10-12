@@ -199,7 +199,7 @@ export const RegistrationSection = () => {
   }
 
   const handleCopyPaymentInfo = () => {
-    const textToCopy = `PAGO MÓVIL BANESCO (0134)\nCI/RIF: J-501234567\nTeléfono: 04142345678\nConcepto: Caminata 5K`
+    const textToCopy = `PAGO MÓVIL BANESCO (0134)\nCI/RIF: J-501234567\nTeléfono: 04241128778\nConcepto: Caminata 5K`
     navigator.clipboard.writeText(textToCopy)
     setCopiedBank(true)
     setTimeout(() => setCopiedBank(false), 2500)
@@ -732,7 +732,7 @@ export const RegistrationSection = () => {
                     <div>
                       <span className="block text-white/60">Teléfono Pago Móvil:</span>
                       <strong className="text-sm font-black text-[#2FC7EA]">
-                        0414-234.56.78
+                        0424-112.87.78
                       </strong>
                     </div>
 

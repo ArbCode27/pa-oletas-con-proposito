@@ -1,4 +1,4 @@
-import { Heart, MapPin, Phone, Mail } from "lucide-react"
+import { Heart, MapPin, Phone, UserCheck } from "lucide-react"
 import { RibbonDecor } from "@/components/animations/RibbonDecor"
 
 const InstagramIcon = ({ className }: { className?: string }) => (
@@ -133,24 +133,61 @@ export const Footer = () => {
             <h4 className="font-sport uppercase text-lg font-black text-white tracking-wider">
               Contacto & Sede Dream Home
             </h4>
-            <div className="space-y-2.5 text-xs text-white/80">
+            <div className="space-y-3 text-xs text-white/80">
               <div className="flex items-start gap-2.5">
                 <MapPin className="h-4 w-4 text-[#2FC7EA] shrink-0 mt-0.5" />
                 <span>
                   Charallave, Municipio Cristóbal Rojas, Estado Miranda, Venezuela.
                 </span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Phone className="h-4 w-4 text-[#2FC7EA] shrink-0" />
-                <span>+58 (414) 234-5678 / +58 (424) 100-2026</span>
+
+              <div className="flex items-start gap-2.5">
+                <UserCheck className="h-4 w-4 text-[#2FC7EA] shrink-0 mt-0.5" />
+                <div className="leading-snug">
+                  <span className="block text-white font-bold">
+                    Master Bróker: Leiris Perdigón
+                  </span>
+                  <a
+                    href="https://instagram.com/leiris.perdigon"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[#2FC7EA] hover:underline font-semibold"
+                  >
+                    @leiris.perdigon
+                  </a>
+                </div>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Mail className="h-4 w-4 text-[#2FC7EA] shrink-0" />
-                <span>caminata5k@dreamhomevenezuela.com</span>
+
+              <div className="flex items-start gap-2.5">
+                <Phone className="h-4 w-4 text-[#2FC7EA] shrink-0 mt-0.5" />
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <span className="font-semibold text-white/70">Teléfonos:</span>
+                  <a
+                    href="tel:04241128778"
+                    className="hover:text-[#2FC7EA] transition-colors font-bold text-white"
+                  >
+                    0424-112.87.78
+                  </a>
+                  <span>/</span>
+                  <a
+                    href="tel:02392484093"
+                    className="hover:text-[#2FC7EA] transition-colors font-bold text-white"
+                  >
+                    0239-248.40.93
+                  </a>
+                </div>
               </div>
+
               <div className="flex items-center gap-2.5">
                 <InstagramIcon className="h-4 w-4 text-[#EF007E] shrink-0" />
-                <span>@inmobiliariadreamhome</span>
+                <a
+                  href="https://instagram.com/inmobiliariadreamhomevenezuela"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[#EF007E] transition-colors font-bold text-white"
+                >
+                  @inmobiliariadreamhomevenezuela
+                </a>
               </div>
             </div>
           </div>

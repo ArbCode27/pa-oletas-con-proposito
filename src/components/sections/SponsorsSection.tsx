@@ -36,7 +36,7 @@ export const SponsorsSection = () => {
     const message = encodeURIComponent(
       "Hola, deseo información para patrocinar la Caminata 5K 'Camina y Renace con Dream Home 2026' con mi marca o empresa."
     )
-    window.open(`https://wa.me/584142345678?text=${message}`, "_blank")
+    window.open(`https://wa.me/584241128778?text=${message}`, "_blank")
   }
 
   return (
