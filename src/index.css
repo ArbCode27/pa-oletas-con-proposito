@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@theme {
+  --color-pink-vibrant: #e91e63;
+  --color-pink-hot: #ff69b4;
+  --color-magenta-deep: #d5006d;
+  --color-blush-soft: #f8e1e1;
+  --color-blush-light: #fdf2f4;
+  --color-rose-soft: #ffc0cb;
+  --color-carbon: #121316;
+  --color-carbon-light: #23272f;
+  --font-display: 'Oswald', 'Impact', sans-serif;
+}
+
+:root {
+  color-scheme: light;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #faf7f8;
+  color: #121316;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #fdf2f4;
+}
+::-webkit-scrollbar-thumb {
+  background: #ff69b4;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #d5006d;
+}
+
+/* Glassmorphism helpers */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.glass-pink {
+  background: rgba(253, 242, 244, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 105, 180, 0.25);
+}
