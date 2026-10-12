@@ -21,7 +21,8 @@ import {
   ShieldCheck,
   X,
   FileText,
-  Building2
+  Building2,
+  ArrowRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -365,7 +366,7 @@ export const RegistrationSection = () => {
         </div>
 
         {/* Main Form Card Container */}
-        <div className="rounded-3xl border border-[#F8BFDC] bg-white p-6 sm:p-10 shadow-2xl shadow-[#EF007E]/10">
+        <div className="rounded-3xl border border-[#F8BFDC] bg-white p-4 sm:p-8 md:p-10 shadow-2xl shadow-[#EF007E]/10">
           {submissionError && (
             <Alert variant="destructive" className="mb-6">
               <AlertCircle className="h-5 w-5" />
@@ -518,15 +519,17 @@ export const RegistrationSection = () => {
                 </div>
 
                 {/* Botón Siguiente */}
-                <div className="pt-4 flex justify-end">
+                <div className="pt-4 flex flex-col sm:flex-row justify-end w-full">
                   <Button
                     type="button"
                     variant="sport"
                     size="lg"
                     onClick={handleNextStep}
+                    className="w-full sm:w-auto shadow-md"
                   >
-                    <span>Continuar a Contacto de Emergencia</span>
-                    <span>→</span>
+                    <span className="hidden sm:inline">Continuar a Contacto de Emergencia</span>
+                    <span className="sm:hidden">Siguiente: Contacto de Emergencia</span>
+                    <ArrowRight className="ml-1.5 h-4 w-4 shrink-0" />
                   </Button>
                 </div>
               </div>
@@ -659,11 +662,12 @@ export const RegistrationSection = () => {
                 </div>
 
                 {/* Botones Navegación */}
-                <div className="pt-4 flex items-center justify-between">
+                <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={handlePrevStep}
+                    className="w-full sm:w-auto justify-center"
                   >
                     ← Volver a Datos
                   </Button>
@@ -672,9 +676,11 @@ export const RegistrationSection = () => {
                     variant="sport"
                     size="lg"
                     onClick={handleNextStep}
+                    className="w-full sm:w-auto shadow-md"
                   >
-                    <span>Ir a Datos de Pago y Comprobante</span>
-                    <span>→</span>
+                    <span className="hidden sm:inline">Ir a Datos de Pago y Comprobante</span>
+                    <span className="sm:hidden">Siguiente: Pago y Capture</span>
+                    <ArrowRight className="ml-1.5 h-4 w-4 shrink-0" />
                   </Button>
                 </div>
               </div>
@@ -848,12 +854,13 @@ export const RegistrationSection = () => {
                 </div>
 
                 {/* Botones Finales */}
-                <div className="pt-4 flex items-center justify-between">
+                <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={handlePrevStep}
                     disabled={isSubmitting}
+                    className="w-full sm:w-auto justify-center"
                   >
                     ← Volver a Contacto
                   </Button>
@@ -861,18 +868,18 @@ export const RegistrationSection = () => {
                   <Button
                     type="submit"
                     variant="sport"
-                    size="xl"
+                    size="lg"
                     disabled={isSubmitting}
-                    className="shadow-xl"
+                    className="w-full sm:w-auto shadow-xl"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                        <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin shrink-0" />
                         <span>Procesando Inscripción...</span>
                       </>
                     ) : (
                       <>
-                        <CheckCircle2 className="mr-2 h-5 w-5" />
+                        <CheckCircle2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 shrink-0" />
                         <span>Confirmar Inscripción 5K</span>
                       </>
                     )}

@@ -16,7 +16,7 @@ export const Badge = ({
     destructive: "bg-red-500 text-white",
     outline: "border border-[#EF007E] text-[#EF007E] bg-transparent",
     pink: "bg-gradient-to-r from-[#FF3B9E] to-[#EF007E] text-white shadow-sm shadow-[#EF007E]/30",
-    sport: "bg-[#121316] text-[#2FC7EA] font-bold tracking-wider uppercase text-[11px]",
+    sport: "bg-[#2FC7EA] text-white font-black tracking-wider uppercase text-[11px] shadow-sm shadow-[#2FC7EA]/25",
     blush: "bg-[#FDF0F6] text-[#EF007E] border border-[#F8BFDC] font-semibold",
     celeste: "bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7] font-bold shadow-sm shadow-[#2FC7EA]/15",
   }

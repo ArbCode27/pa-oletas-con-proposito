@@ -199,101 +199,279 @@ export const RouteSection = () => {
 
             {/* Visual Circuit SVG Route Tracker */}
             <div className="py-6">
-              <div className="relative w-full rounded-2xl bg-[#121316] p-6 text-white overflow-hidden shadow-inner">
-                {/* SVG Route Track Graphic */}
-                <svg
-                  viewBox="0 0 600 160"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-full h-auto drop-shadow"
-                >
-                  <defs>
-                    <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#2FC7EA" />
-                      <stop offset="50%" stopColor="#FF3B9E" />
-                      <stop offset="100%" stopColor="#EF007E" />
-                    </linearGradient>
-                  </defs>
+              <div className="relative w-full rounded-2xl bg-[#121316] p-4 sm:p-6 text-white overflow-hidden shadow-inner">
+                {/* Horizontal Route Track Graphic (Desktop & Tablet) */}
+                <div className="hidden sm:block">
+                  <svg
+                    viewBox="0 0 600 160"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-full h-auto drop-shadow"
+                  >
+                    <defs>
+                      <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" stopColor="#2FC7EA" />
+                        <stop offset="50%" stopColor="#FF3B9E" />
+                        <stop offset="100%" stopColor="#EF007E" />
+                      </linearGradient>
+                    </defs>
 
-                  {/* Road Base Track */}
-                  <path
-                    d="M 30 110 Q 120 40, 210 90 T 390 60 T 570 100"
-                    stroke="#1E293B"
-                    strokeWidth="14"
-                    strokeLinecap="round"
-                  />
-                  {/* Road Active Gradient Track */}
-                  <path
-                    d="M 30 110 Q 120 40, 210 90 T 390 60 T 570 100"
-                    stroke="url(#routeGradient)"
-                    strokeWidth="6"
-                    strokeLinecap="round"
-                    strokeDasharray="8 4"
-                  />
+                    {/* Road Base Track */}
+                    <path
+                      d="M 30 110 Q 120 40, 210 90 T 390 60 T 570 100"
+                      stroke="#1E293B"
+                      strokeWidth="14"
+                      strokeLinecap="round"
+                    />
+                    {/* Road Active Gradient Track */}
+                    <path
+                      d="M 30 110 Q 120 40, 210 90 T 390 60 T 570 100"
+                      stroke="url(#routeGradient)"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      strokeDasharray="8 4"
+                    />
 
-                  {/* Render 8 Checkpoint Dots along the curve */}
-                  {CHECKPOINTS.map((cp, idx) => {
-                    const positions = [
-                      { x: 30, y: 110 },
-                      { x: 95, y: 70 },
-                      { x: 175, y: 75 },
-                      { x: 260, y: 92 },
-                      { x: 345, y: 65 },
-                      { x: 420, y: 68 },
-                      { x: 495, y: 84 },
-                      { x: 570, y: 100 },
-                    ]
-                    const pos = positions[idx]
-                    const isSelected = selectedPoint.id === cp.id
+                    {/* Render 8 Checkpoint Dots along the curve */}
+                    {CHECKPOINTS.map((cp, idx) => {
+                      const positions = [
+                        { x: 30, y: 110 },
+                        { x: 95, y: 70 },
+                        { x: 175, y: 75 },
+                        { x: 260, y: 92 },
+                        { x: 345, y: 65 },
+                        { x: 420, y: 68 },
+                        { x: 495, y: 84 },
+                        { x: 570, y: 100 },
+                      ]
+                      const pos = positions[idx]
+                      const isSelected = selectedPoint.id === cp.id
 
-                    return (
-                      <g
-                        key={cp.id}
-                        className="cursor-pointer transition-transform"
-                        onClick={() => handleSelectPoint(cp)}
-                      >
-                        {isSelected && (
+                      return (
+                        <g
+                          key={cp.id}
+                          className="cursor-pointer transition-transform"
+                          onClick={() => handleSelectPoint(cp)}
+                        >
+                          {isSelected && (
+                            <circle
+                              cx={pos.x}
+                              cy={pos.y}
+                              r="16"
+                              fill="#2FC7EA"
+                              opacity="0.35"
+                              className="animate-ping"
+                            />
+                          )}
                           <circle
                             cx={pos.x}
                             cy={pos.y}
-                            r="16"
-                            fill="#2FC7EA"
-                            opacity="0.35"
-                            className="animate-ping"
+                            r={isSelected ? "11" : "8"}
+                            fill={isSelected ? "#2FC7EA" : "#FFFFFF"}
+                            stroke={isSelected ? "#FFFFFF" : cp.isHydration ? "#2FC7EA" : "#EF007E"}
+                            strokeWidth="3"
                           />
-                        )}
-                        <circle
-                          cx={pos.x}
-                          cy={pos.y}
-                          r={isSelected ? "11" : "8"}
-                          fill={isSelected ? "#2FC7EA" : "#FFFFFF"}
-                          stroke={isSelected ? "#FFFFFF" : cp.isHydration ? "#2FC7EA" : "#EF007E"}
-                          strokeWidth="3"
-                        />
-                        <text
-                          x={pos.x}
-                          y={pos.y - 15}
-                          fill={isSelected ? "#2FC7EA" : "#94A3B8"}
-                          fontSize="10"
-                          fontWeight="bold"
-                          textAnchor="middle"
-                        >
-                          {cp.km}
-                        </text>
-                      </g>
-                    )
-                  })}
-                </svg>
+                          <text
+                            x={pos.x}
+                            y={pos.y - 15}
+                            fill={isSelected ? "#2FC7EA" : "#94A3B8"}
+                            fontSize="10"
+                            fontWeight="bold"
+                            textAnchor="middle"
+                          >
+                            {cp.km}
+                          </text>
+                        </g>
+                      )
+                    })}
+                  </svg>
 
-                {/* Road Labels */}
-                <div className="mt-4 flex items-center justify-between text-xs text-white/80 font-bold px-2">
-                  <div className="flex items-center gap-1.5 text-[#2FC7EA]">
-                    <Flag className="h-4 w-4" />
-                    <span>Salida: Forum Charallave</span>
+                  {/* Road Labels (Desktop) */}
+                  <div className="mt-4 flex items-center justify-between text-xs text-white/80 font-bold px-2">
+                    <div className="flex items-center gap-1.5 text-[#2FC7EA]">
+                      <Flag className="h-4 w-4" />
+                      <span>Salida: Forum Charallave</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 text-[#EF007E]">
+                      <span>Meta: El Campito</span>
+                      <Flag className="h-4 w-4" />
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#EF007E]">
-                    <span>Meta: El Campito</span>
-                    <Flag className="h-4 w-4" />
+                </div>
+
+                {/* Vertical Route Track Graphic (Mobile - optimized for vertical scrolling & readability) */}
+                <div className="block sm:hidden">
+                  <div className="flex items-center justify-between pb-3 mb-2 border-b border-white/10 text-xs font-bold px-1">
+                    <div className="flex items-center gap-1.5 text-[#2FC7EA]">
+                      <Flag className="h-4 w-4 shrink-0" />
+                      <span>Salida: Forum Charallave</span>
+                    </div>
+                    <span className="text-[10px] font-black uppercase text-[#2FC7EA] bg-[#2FC7EA]/20 px-2.5 py-0.5 rounded-full border border-[#2FC7EA]/30">
+                      0,0 KM
+                    </span>
+                  </div>
+
+                  <svg
+                    viewBox="0 0 320 565"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-full h-auto drop-shadow"
+                  >
+                    <defs>
+                      <linearGradient id="verticalRouteGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stopColor="#2FC7EA" />
+                        <stop offset="50%" stopColor="#FF3B9E" />
+                        <stop offset="100%" stopColor="#EF007E" />
+                      </linearGradient>
+                    </defs>
+
+                    {/* Road Base Track (Vertical S-Curve) */}
+                    <path
+                      d="M 75 40 C 175 40, 235 75, 235 110 C 235 145, 80 145, 80 180 C 80 215, 240 215, 240 250 C 240 285, 85 285, 85 320 C 85 355, 235 355, 235 390 C 235 425, 80 425, 80 460 C 80 495, 220 495, 220 525"
+                      stroke="#1E293B"
+                      strokeWidth="16"
+                      strokeLinecap="round"
+                    />
+
+                    {/* Road Active Gradient Track (Vertical) */}
+                    <path
+                      d="M 75 40 C 175 40, 235 75, 235 110 C 235 145, 80 145, 80 180 C 80 215, 240 215, 240 250 C 240 285, 85 285, 85 320 C 85 355, 235 355, 235 390 C 235 425, 80 425, 80 460 C 80 495, 220 495, 220 525"
+                      stroke="url(#verticalRouteGradient)"
+                      strokeWidth="6"
+                      strokeLinecap="round"
+                      strokeDasharray="8 5"
+                    />
+
+                    {/* Render 8 Checkpoint Dots & Labels along the vertical curve */}
+                    {CHECKPOINTS.map((cp, idx) => {
+                      const verticalPositions = [
+                        { x: 75, y: 40, align: "left" as const },
+                        { x: 235, y: 110, align: "right" as const },
+                        { x: 80, y: 180, align: "left" as const },
+                        { x: 240, y: 250, align: "right" as const },
+                        { x: 85, y: 320, align: "left" as const },
+                        { x: 235, y: 390, align: "right" as const },
+                        { x: 80, y: 460, align: "left" as const },
+                        { x: 220, y: 525, align: "right" as const },
+                      ]
+                      const pos = verticalPositions[idx]
+                      const isSelected = selectedPoint.id === cp.id
+
+                      return (
+                        <g
+                          key={`vertical-${cp.id}`}
+                          className="cursor-pointer transition-transform"
+                          onClick={() => handleSelectPoint(cp)}
+                        >
+                          {/* Generous touch target area & active highlight pill */}
+                          <rect
+                            x="6"
+                            y={pos.y - 23}
+                            width="308"
+                            height="46"
+                            rx="12"
+                            fill={isSelected ? "#2FC7EA" : "#1E293B"}
+                            fillOpacity={isSelected ? "0.15" : "0"}
+                            stroke={isSelected ? "#2FC7EA" : "transparent"}
+                            strokeWidth="1"
+                            strokeDasharray={isSelected ? "3 3" : "none"}
+                          />
+
+                          {/* Pinging pulse when selected */}
+                          {isSelected && (
+                            <circle
+                              cx={pos.x}
+                              cy={pos.y}
+                              r="18"
+                              fill="#2FC7EA"
+                              opacity="0.35"
+                              className="animate-ping"
+                            />
+                          )}
+
+                          {/* Checkpoint Dot */}
+                          <circle
+                            cx={pos.x}
+                            cy={pos.y}
+                            r={isSelected ? "13" : "10"}
+                            fill={isSelected ? "#2FC7EA" : "#121316"}
+                            stroke={isSelected ? "#FFFFFF" : cp.isHydration ? "#2FC7EA" : "#EF007E"}
+                            strokeWidth="3"
+                          />
+
+                          {/* Number inside dot */}
+                          <text
+                            x={pos.x}
+                            y={pos.y + 3.5}
+                            textAnchor="middle"
+                            fill={isSelected ? "#072430" : "#FFFFFF"}
+                            fontSize="9"
+                            fontWeight="900"
+                          >
+                            {cp.id}
+                          </text>
+
+                          {/* Labels according to alignment */}
+                          {pos.align === "left" ? (
+                            <>
+                              <text
+                                x={pos.x + 22}
+                                y={pos.y - 2}
+                                textAnchor="start"
+                                fill={isSelected ? "#2FC7EA" : cp.isHydration ? "#2FC7EA" : cp.isFinish ? "#EF007E" : "#FFFFFF"}
+                                fontSize="12"
+                                fontWeight="900"
+                              >
+                                {cp.km} {cp.isHydration ? "• Hidratación" : ""}
+                              </text>
+                              <text
+                                x={pos.x + 22}
+                                y={pos.y + 12}
+                                textAnchor="start"
+                                fill={isSelected ? "#FFFFFF" : "#94A3B8"}
+                                fontSize="10"
+                                fontWeight="600"
+                              >
+                                {cp.landmark}
+                              </text>
+                            </>
+                          ) : (
+                            <>
+                              <text
+                                x={pos.x - 22}
+                                y={pos.y - 2}
+                                textAnchor="end"
+                                fill={isSelected ? "#2FC7EA" : cp.isHydration ? "#2FC7EA" : cp.isFinish ? "#EF007E" : "#FFFFFF"}
+                                fontSize="12"
+                                fontWeight="900"
+                              >
+                                {cp.isHydration ? "Hidratación • " : ""}{cp.km}
+                              </text>
+                              <text
+                                x={pos.x - 22}
+                                y={pos.y + 12}
+                                textAnchor="end"
+                                fill={isSelected ? "#FFFFFF" : "#94A3B8"}
+                                fontSize="10"
+                                fontWeight="600"
+                              >
+                                {cp.landmark}
+                              </text>
+                            </>
+                          )}
+                        </g>
+                      )
+                    })}
+                  </svg>
+
+                  <div className="flex items-center justify-between pt-3 mt-2 border-t border-white/10 text-xs font-bold px-1">
+                    <div className="flex items-center gap-1.5 text-[#EF007E]">
+                      <Flag className="h-4 w-4 shrink-0" />
+                      <span>Meta: C.C. El Campito</span>
+                    </div>
+                    <span className="text-[10px] font-black uppercase text-[#EF007E] bg-[#EF007E]/20 px-2.5 py-0.5 rounded-full border border-[#EF007E]/30">
+                      5,0 KM
+                    </span>
                   </div>
                 </div>
               </div>

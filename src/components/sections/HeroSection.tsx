@@ -46,7 +46,7 @@ export const HeroSection = () => {
             <span>Campaña Oficial Mes Rosa 2026</span>
           </Badge>
 
-          <Badge variant="sport" className="px-3.5 py-1.5 text-[11px]">
+          <Badge variant="sport" className="px-3.5 py-1.5 text-[11px] bg-[#2FC7EA] text-white font-black tracking-wider uppercase shadow-sm shadow-[#2FC7EA]/30">
             Caminata 5K Charallave
           </Badge>
         </div>
@@ -134,19 +134,19 @@ export const HeroSection = () => {
                 size="xl"
                 variant="sport"
                 onClick={() => handleScrollTo("registro")}
-                className="w-full sm:w-auto text-base sm:text-lg font-black tracking-wider py-4 px-9 shadow-xl shadow-[#EF007E]/30 hover:shadow-2xl hover:shadow-[#EF007E]/50 group"
+                className="w-full sm:w-auto text-sm sm:text-lg font-black tracking-normal sm:tracking-wider py-3.5 sm:py-4 px-6 sm:px-9 shadow-xl shadow-[#EF007E]/30 hover:shadow-2xl hover:shadow-[#EF007E]/50 group"
               >
                 <span>Inscríbete Aquí</span>
-                <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
               </Button>
 
               <Button
                 size="lg"
                 variant="celeste"
                 onClick={() => handleScrollTo("ruta")}
-                className="w-full sm:w-auto font-bold text-sm tracking-wide"
+                className="w-full sm:w-auto font-bold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-3"
               >
-                <Droplets className="mr-1.5 h-4 w-4" />
+                <Droplets className="mr-1.5 h-4 w-4 shrink-0" />
                 <span>Ver Recorrido & Puntos</span>
               </Button>
 
@@ -154,10 +154,10 @@ export const HeroSection = () => {
                 size="lg"
                 variant="glass"
                 onClick={() => handleScrollTo("patrocinantes")}
-                className="w-full sm:w-auto font-bold text-sm text-[#121316] hover:text-[#2FC7EA] border border-[#AEEAF7]"
+                className="w-full sm:w-auto font-bold text-xs sm:text-sm text-[#121316] hover:text-[#2FC7EA] border border-[#AEEAF7] px-5 sm:px-7 py-3"
               >
                 <span>Patrocinadores</span>
-                <ChevronRight className="ml-1 h-4 w-4" />
+                <ChevronRight className="ml-1 h-4 w-4 shrink-0" />
               </Button>
             </div>
           </div>
