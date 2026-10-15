@@ -1,5 +1,9 @@
-import { Heart, MapPin, Phone, UserCheck } from "lucide-react"
+import { Heart, MapPin, Phone, UserCheck, ShieldCheck } from "lucide-react"
 import { RibbonDecor } from "@/components/animations/RibbonDecor"
+
+interface FooterProps {
+  onOpenAdmin?: () => void
+}
 
 const InstagramIcon = ({ className }: { className?: string }) => (
   <svg
@@ -17,7 +21,7 @@ const InstagramIcon = ({ className }: { className?: string }) => (
   </svg>
 )
 
-export const Footer = () => {
+export const Footer = ({ onOpenAdmin }: FooterProps = {}) => {
   const handleScrollTo = (id: string) => {
     const el = document.getElementById(id)
     if (el) {
@@ -195,9 +199,21 @@ export const Footer = () => {
 
         {/* Bottom copyright row */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#6B7280] gap-4">
-          <p>
-            © 2026 Inmobiliaria Dream Home Venezuela. Todos los derechos reservados.
-          </p>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+            <span>© 2026 Inmobiliaria Dream Home Venezuela. Todos los derechos reservados.</span>
+            <span className="hidden sm:inline text-gray-300">•</span>
+            <button
+              onClick={() => {
+                window.location.hash = "#/admin"
+                onOpenAdmin?.()
+              }}
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-[#6B7280] hover:text-[#EF007E] transition-colors cursor-pointer"
+              title="Panel Administrativo de Validación de Inscripciones y Comprobantes"
+            >
+              <ShieldCheck className="h-3.5 w-3.5" />
+              <span>Panel Admin</span>
+            </button>
+          </div>
           <div className="flex items-center gap-2 text-[#525866]">
             <span>Organizado con</span>
             <Heart className="h-3.5 w-3.5 text-[#EF007E] fill-[#EF007E]" />
