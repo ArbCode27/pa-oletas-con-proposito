@@ -172,8 +172,12 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         `🎽 Número Oficial de Dorsal: #${bibStr}\n` +
         `📦 Modalidad de Kit: ${kitStr}\n` +
         `📅 Fecha: Sábado 31 de Octubre de 2026\n` +
-        `⏰ Hora de Convocatoria: 7:00 AM\n` +
-        `📍 Salida: Fórum Charallave, Edo. Miranda\n\n` +
+        `⏰ Inicio: 7:00 AM (Bailoterapia en el Fórum)\n` +
+        `🏃 Salida Oficial 5K: 8:00 AM puntual\n` +
+        `🎉 Llegada, Salud & Premiación: 10:00 AM a 11:00 AM\n` +
+        `💃 Bailoterapia de Cierre: 11:00 AM a 12:00 M\n` +
+        `🏁 Cierre del Evento: 12:00 M\n` +
+        `📍 Salida: Fórum Charallave ➔ Meta: El Campito\n\n` +
         `📄 Te adjuntamos tu Comprobante Oficial en formato PDF para que lo tengas a mano y lo presentes al retirar tu kit físico. ¡Nos vemos en la meta!`
 
       // Generar el archivo PDF
@@ -1282,7 +1286,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   : "Kit Básico ($10)"}
               </span>
               <span className="text-[11px] text-[#525866] font-medium block mt-0.5">
-                Caminata 5K • Sábado 31 de Octubre • Fórum Charallave
+                Caminata 5K • Sábado 31 de Octubre • Inicio 7:00 AM • Salida 8:00 AM • Cierre 12:00 M
               </span>
             </div>
 

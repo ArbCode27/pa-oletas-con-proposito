@@ -1,4 +1,4 @@
-import { Clock, MapPin, Coffee, Trophy, Music, Award, CheckCircle2, Building2 } from "lucide-react"
+import { Clock, MapPin, Trophy, Music, Award, CheckCircle2, HeartHandshake, Sparkles, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 interface ScheduleItem {
@@ -12,52 +12,44 @@ interface ScheduleItem {
 
 const SCHEDULE_ITEMS: ScheduleItem[] = [
   {
-    time: "06:00 AM",
-    title: "Concentración & Entrega de Últimos Kits",
-    location: "Estacionamiento Forum Charallave",
-    description: "Llegada de participantes, verificación de números dorsales, colocación de pañoletas rosas y música para energizar la mañana.",
-    icon: Coffee,
-    isCeleste: true,
-  },
-  {
-    time: "06:30 AM",
-    title: "Calentamiento Funcional & Estiramiento",
-    location: "Tarima Principal Forum",
-    description: "Sesión guiada por instructores certificados de fitness de los Valles del Tuy para preparar articulaciones y músculos.",
-    icon: Trophy,
-    isCeleste: false,
-  },
-  {
     time: "07:00 AM",
-    title: "Arco de Salida Oficial 5K",
-    location: "Vía La Pitahaya (Frente a Forum)",
-    description: "Conteo regresivo oficial de Dream Home, bendición comunitaria y arranque de la caminata con resguardo policial.",
-    icon: Clock,
-    isCeleste: true,
-  },
-  {
-    time: "07:45 AM",
-    title: "Llegada Progresiva a Meta",
-    location: "C.C. & Residencias El Campito",
-    description: "Recepción de caminantes con música, hidratación especial fría, entrega de reconocimientos y zona de fotografías conmemorativas.",
-    icon: Award,
-    isCeleste: false,
-  },
-  {
-    time: "08:15 AM",
-    title: "Gran Bailoterapia Rosa & Animación",
-    location: "Tarima de Celebración El Campito",
-    description: "Hora completa de baile, fitness grupal, alegría y energía rosa para celebrar la salud, la vida y el renacer.",
+    title: "Inicio en el Fórum & Bailoterapia",
+    location: "Estacionamiento Fórum Charallave",
+    description: "Concentración de participantes, ambientación musical y gran sesión de bailoterapia matutina para calentar motores con alegría y energía rosa.",
     icon: Music,
     isCeleste: false,
   },
   {
-    time: "09:30 AM",
-    title: "Sorteos de Dream Home & Clausura",
-    location: "Tarima de Celebración El Campito",
-    description: "Rifas de premios especiales cortesía de Inmobiliaria Dream Home y patrocinantes, palabras de agradecimiento y cierre oficial.",
-    icon: CheckCircle2,
+    time: "08:00 AM",
+    title: "Salida Oficial Caminata 5K",
+    location: "Arco de Salida Fórum Charallave",
+    description: "Conteo regresivo oficial de Dream Home, bendición comunitaria del Mes Rosa y arranque de la caminata con resguardo vial y puntos de hidratación en ruta.",
+    icon: Clock,
     isCeleste: true,
+  },
+  {
+    time: "10:00 AM - 11:00 AM",
+    title: "Llegada, Marcas, Salud y Premiación",
+    location: "Meta: C.C. & Residencias El Campito",
+    description: "Llegada triunfal de caminantes, hidratación fría, feria de activación de marcas patrocinantes, jornadas de salud y despistaje preventivo, y acto de premiación.",
+    icon: Award,
+    isCeleste: false,
+  },
+  {
+    time: "11:00 AM - 12:00 M",
+    title: "Bailoterapia de Cierre",
+    location: "Tarima Principal El Campito",
+    description: "Explosiva hora de bailoterapia, coreografías, sorpresas y celebración rosa de la vida junto a instructores certificados de los Valles del Tuy.",
+    icon: Sparkles,
+    isCeleste: true,
+  },
+  {
+    time: "12:00 M",
+    title: "Clausura y Cierre del Evento",
+    location: "Tarima Principal El Campito",
+    description: "Palabras de agradecimiento por parte de Inmobiliaria Dream Home y conclusión puntual de las actividades según los permisos autorizados.",
+    icon: CheckCircle2,
+    isCeleste: false,
   },
 ]
 
@@ -141,6 +133,15 @@ export const EventScheduleSection = () => {
               </div>
             )
           })}
+        </div>
+
+        {/* Nota informativa de cumplimiento de horario */}
+        <div className="mt-10 max-w-3xl mx-auto rounded-2xl bg-gradient-to-r from-[#FDF0F6] via-white to-[#E8FAFD] border border-[#F8BFDC] p-4 text-center shadow-sm">
+          <p className="text-xs sm:text-sm text-[#121316] font-medium leading-relaxed">
+            <strong className="text-[#EF007E] font-bold">Importante:</strong> La jornada deportiva y festiva inicia puntualmente a las{" "}
+            <span className="font-bold text-[#0E8EA8]">7:00 AM</span> con la bailoterapia en el Fórum Charallave y culmina a las{" "}
+            <span className="font-bold text-[#EF007E]">12:00 M</span> en estricto apego a los permisos otorgados por las autoridades municipales.
+          </p>
         </div>
       </div>
     </section>

@@ -24,10 +24,10 @@ const CHECKPOINTS: Checkpoint[] = [
     kmValue: 0.0,
     title: "Punto de Salida: Forum Charallave",
     subtitle: "Vía principal La Pitahaya",
-    description: "Concentración a las 6:00 AM. Calentamiento físico grupal con Dream Home, bendición de la caminata y arco de salida oficial con ambientación musical.",
+    description: "Inicio a las 7:00 AM con Gran Bailoterapia de apertura en el Fórum. Calentamiento físico grupal con Dream Home, bendición comunitaria y salida oficial de la caminata a las 8:00 AM.",
     landmark: "Forum Charallave",
     isStart: true,
-    highlightBadge: "Concentración 6:00 AM / Salida 7:00 AM",
+    highlightBadge: "Bailoterapia 7:00 AM / Salida 8:00 AM",
   },
   {
     id: 2,
@@ -94,12 +94,12 @@ const CHECKPOINTS: Checkpoint[] = [
     km: "5,0 KM",
     kmValue: 5.0,
     title: "Punto de Llegada: C.C. / Residencias El Campito",
-    subtitle: "Meta, Tarima, Bailoterapia y Cierre",
-    description: "¡Arco de Meta triunfal! Entrega de medallas simbólicas, frutas frescas, bebidas isotónicas, gran sesión de bailoterapia y rifas sorpresa de Dream Home.",
+    subtitle: "Meta, Marcas, Salud, Premiación y Bailoterapia",
+    description: "¡Arco de Meta triunfal! Llegada de 10:00 a 11:00 AM con activación de marcas patrocinantes, jornadas de salud y premiación. De 11:00 AM a 12:00 M gran bailoterapia de cierre. Finaliza puntual a las 12:00 M.",
     landmark: "El Campito",
     isFinish: true,
     isHydration: true,
-    highlightBadge: "Meta & Gran Bailoterapia",
+    highlightBadge: "Llegada 10:00 AM • Cierre 12:00 M",
   },
 ]
 

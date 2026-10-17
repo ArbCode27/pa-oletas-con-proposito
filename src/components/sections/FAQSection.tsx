@@ -29,8 +29,12 @@ const FAQS: FAQItem[] = [
     answer: "Al llenar el formulario y adjuntar tu comprobante de Pago Móvil o Transferencia, nuestro equipo administrativo verificará el ingreso bancario en un lapso de 24 a 48 horas. Recibirás en tu correo electrónico la confirmación formal junto a tu número dorsal asignado.",
   },
   {
+    question: "¿Cuál es el cronograma y horario oficial de la jornada?",
+    answer: "Iniciamos puntualmente a las 7:00 AM en el Fórum Charallave con la primera bailoterapia rosa y calentamiento. La salida oficial de los 5K es a las 8:00 AM. La llegada a la meta (El Campito) se estima entre 10:00 y 11:00 AM con activación de marcas, jornadas de salud y premiación. De 11:00 AM a 12:00 M disfrutaremos de la gran bailoterapia de cierre, finalizando todo a las 12:00 M según los permisos autorizados.",
+  },
+  {
     question: "¿Qué debo llevar el día del evento (31 de Octubre)?",
-    answer: "Ropa deportiva cómoda, calzado para caminar, tu pañoleta rosa Dream Home visible, tu número dorsal fijado y mucha energía positiva. La hidratación y la música corren por nuestra cuenta.",
+    answer: "Ropa deportiva cómoda, calzado para caminar, tu pañoleta rosa Dream Home visible, tu número dorsal fijado y mucha energía positiva. Recuerda llegar a las 7:00 AM al Fórum Charallave para disfrutar la bailoterapia de apertura. La hidratación y la música corren por nuestra cuenta.",
   },
 ]
 

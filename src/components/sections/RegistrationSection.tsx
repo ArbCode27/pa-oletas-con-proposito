@@ -437,7 +437,7 @@ export const RegistrationSection = () => {
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-[#525866] leading-relaxed">
-            Sábado 31 de octubre • 7:00 am • Salida: Fórum Charallave (con Bailoterapia 💃🎶).
+            Sábado 31 de octubre • Inicio 7:00 am (Bailoterapia en el Fórum) • Salida 8:00 am • Cierre 12:00 m 💃🎶.
             Selecciona tu kit, completa tus datos y asegura tu dorsal oficial. ¡Cupos limitados!
           </p>
         </div>

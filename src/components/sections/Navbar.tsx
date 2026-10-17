@@ -24,8 +24,8 @@ export const Navbar = () => {
   }, [])
 
   useEffect(() => {
-    // Event Date: Saturday October 31, 2026, 06:30 AM VET (UTC-4)
-    const targetDate = new Date("2026-10-31T06:30:00-04:00").getTime()
+    // Event Date: Saturday October 31, 2026, 07:00 AM VET (UTC-4) - Inicio con Bailoterapia en el Fórum
+    const targetDate = new Date("2026-10-31T07:00:00-04:00").getTime()
 
     const updateCountdown = () => {
       const now = new Date().getTime()

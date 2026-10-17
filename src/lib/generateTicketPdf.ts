@@ -187,8 +187,8 @@ export const buildTicketPdf = async ({ record, bib }: TicketPdfOptions): Promise
 
   rowY = dataY + 16
   addDataRow(114, rowY, "Fecha del Evento:", "Sábado, 31 de Octubre de 2026")
-  addDataRow(114, rowY + 11, "Hora de Concentración:", "7:00 AM (Salida oficial 7:30 AM)")
-  addDataRow(114, rowY + 22, "Lugar de Encuentro:", "Fórum Charallave, Edo. Miranda")
+  addDataRow(114, rowY + 11, "Horario Oficial:", "Inicio 7:00 AM (Bailoterapia) • Salida 8:00 AM")
+  addDataRow(114, rowY + 22, "Lugar de Salida / Meta:", "Fórum Charallave ➔ El Campito")
   addDataRow(
     114,
     rowY + 33,
@@ -237,7 +237,7 @@ export const buildTicketPdf = async ({ record, bib }: TicketPdfOptions): Promise
   doc.setFontSize(7.5)
   doc.setTextColor(107, 114, 128)
   doc.text(
-    "1. Llega puntual con tu ropa deportiva, calzado adecuado y número dorsal visible fijado con imperdibles.\n2. La entrega de kits físicos se realizará en la sede de Inmobiliaria Dream Home Charallave durante la semana previa.\n3. Dudas o consultas: Contáctanos a través de nuestro WhatsApp oficial o vía Instagram @dreamhome.ve.",
+    "1. Inicio puntual a las 7:00 AM con Gran Bailoterapia en Fórum Charallave. Salida oficial 5K a las 8:00 AM.\n2. Llegada de 10:00 a 11:00 AM (activación de marcas, salud y premiación) y bailoterapia de cierre de 11:00 AM a 12:00 M (cierre 12:00 M).\n3. Dudas o consultas: Contáctanos a través de nuestro WhatsApp oficial o vía Instagram @dreamhome.ve.",
     18,
     footerY + 5
   )
