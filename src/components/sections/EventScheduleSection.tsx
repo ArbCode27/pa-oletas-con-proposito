@@ -81,13 +81,21 @@ export const EventScheduleSection = () => {
         </div>
 
         {/* Schedule Timeline Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 max-w-6xl mx-auto">
           {SCHEDULE_ITEMS.map((item, index) => {
             const Icon = item.icon
+            // Centrado de las últimas dos tarjetas en desktop (lg:grid-cols-6) y la última en tablet (md)
+            const placementClasses =
+              index === 3
+                ? "lg:col-span-2 lg:col-start-2"
+                : index === 4
+                ? "md:col-span-2 md:max-w-md md:mx-auto md:w-full lg:col-span-2 lg:col-start-4 lg:max-w-none lg:mx-0"
+                : "lg:col-span-2"
+
             return (
               <div
                 key={index}
-                className={`relative rounded-3xl border bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group ${
+                className={`relative rounded-3xl border bg-white p-6 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group flex flex-col justify-between ${placementClasses} ${
                   item.isCeleste
                     ? "border-[#AEEAF7] hover:border-[#2FC7EA]"
                     : "border-[#F8BFDC] hover:border-[#EF007E]"

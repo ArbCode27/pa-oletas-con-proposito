@@ -25,6 +25,10 @@ const FAQS: FAQItem[] = [
     answer: "¡Por supuesto! Es un circuito totalmente plano y seguro sobre asfalto, diseñado para que participen personas de todas las edades. Contaremos con escolta de las autoridades viales y puntos de descanso e hidratación.",
   },
   {
+    question: "¿Se aceptan mascotas en la caminata? (¿Es Pet Friendly?)",
+    answer: "¡Sí, totalmente bienvenidos! Las mascotas son parte de la familia y pueden acompañarte durante los 5K. Solo te pedimos llevar a tu peludo con su correa o pechera, llevarle su envase personal para agua y bolsitas para recoger sus desechos, asegurando la comodidad y convivencia de todos los participantes.",
+  },
+  {
     question: "¿Cómo confirmo que mi inscripción fue validada tras pagar?",
     answer: "Al llenar el formulario y adjuntar tu comprobante de Pago Móvil o Transferencia, nuestro equipo administrativo verificará el ingreso bancario en un lapso de 24 a 48 horas. Recibirás en tu correo electrónico la confirmación formal junto a tu número dorsal asignado.",
   },
