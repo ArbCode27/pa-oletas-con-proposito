@@ -19,17 +19,30 @@ create table if not exists public.registrations (
   email text not null,
   emergency_contact_phone text not null,
   emergency_contact_name text not null,
+  -- Modalidad de Kit y Pago
+  kit_type text not null default 'basico' check (kit_type in ('basico', 'premium')),
+  shirt_size text null,
+  payment_reference text not null default '',
+  payment_amount numeric not null default 10,
+  -- Comprobante y Estado
   payment_proof_url text not null,
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
   bib_number integer null unique,
   notes text null
 );
 
--- 3. Crear índices para optimizar búsquedas por cédula, email y estado
+-- Si la tabla ya existía previamente, agregar las columnas si faltan:
+alter table public.registrations add column if not exists kit_type text not null default 'basico' check (kit_type in ('basico', 'premium'));
+alter table public.registrations add column if not exists shirt_size text null;
+alter table public.registrations add column if not exists payment_reference text not null default '';
+alter table public.registrations add column if not exists payment_amount numeric not null default 10;
+
+-- 3. Crear índices para optimizar búsquedas por cédula, email, estado y referencia
 create index if not exists idx_registrations_cedula on public.registrations(cedula);
 create index if not exists idx_registrations_email on public.registrations(email);
 create index if not exists idx_registrations_status on public.registrations(status);
 create index if not exists idx_registrations_created_at on public.registrations(created_at desc);
+create index if not exists idx_registrations_payment_ref on public.registrations(payment_reference);
 
 -- 4. Habilitar Row Level Security (RLS)
 alter table public.registrations enable row level security;
@@ -41,18 +54,19 @@ create policy "Permitir inserción pública de registros"
   to anon, authenticated
   with check (true);
 
--- Política para permitir lectura pública únicamente de confirmación por ID (o restringida a administradores)
+-- Política para permitir lectura pública / admin de registros
 create policy "Permitir lectura individual pública"
   on public.registrations
   for select
   to anon, authenticated
   using (true);
 
--- Política para que administradores o servicio puedan actualizar (ej. asignar bib_number y cambiar status)
-create policy "Permitir actualización a usuarios autenticados / admin"
+-- Política para actualizar registros (aprobar, rechazar, asignar dorsal)
+drop policy if exists "Permitir actualización a usuarios autenticados / admin" on public.registrations;
+create policy "Permitir actualización de registros"
   on public.registrations
   for update
-  to authenticated
+  to anon, authenticated
   using (true)
   with check (true);
 

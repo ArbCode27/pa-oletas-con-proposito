@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo, useCallback } from "react"
+import confetti from "canvas-confetti"
 import {
   ArrowLeft,
   CheckCircle,
@@ -20,6 +21,9 @@ import {
   MessageCircle,
   AlertCircle,
   FileSpreadsheet,
+  ShoppingBag,
+  Shirt,
+  Sparkles,
 } from "lucide-react"
 import {
   getRegistrations,
@@ -39,6 +43,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all")
+  const [kitFilter, setKitFilter] = useState<"all" | "basico" | "premium">("all")
   const [sortBy, setSortBy] = useState<"date_desc" | "date_asc" | "name" | "bib">("date_desc")
 
   // Modal para inspección de comprobante
@@ -48,6 +53,12 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [adminNotes, setAdminNotes] = useState("")
   const [customBib, setCustomBib] = useState<string>("")
   const [actionLoading, setActionLoading] = useState(false)
+
+  // Modal de "Cliente Confirmado" con Número de Participante
+  const [confirmedData, setConfirmedData] = useState<{
+    record: RegistrationRecord
+    bib: number
+  } | null>(null)
 
   // Feedback de copiado al portapapeles
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -73,6 +84,20 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     if (usedBibs.length === 0) return 101
     return Math.max(...usedBibs) + 1
   }, [records])
+
+  // Disparar confeti al confirmar cliente
+  const fireSuccessConfetti = () => {
+    try {
+      confetti({
+        particleCount: 110,
+        spread: 75,
+        origin: { y: 0.6 },
+        colors: ["#EF007E", "#2FC7EA", "#10B981", "#FF3B9E", "#FDF0F6"],
+      })
+    } catch {
+      // Ignorar si canvas-confetti falla
+    }
+  }
 
   // Abrir modal de inspección
   const handleOpenInspect = (record: RegistrationRecord) => {
@@ -124,20 +149,26 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       return
     }
 
-    if (updated) {
-      setRecords((prev) => prev.map((item) => (item.id === record.id ? updated : item)))
-    } else {
-      setRecords((prev) =>
-        prev.map((item) =>
-          item.id === record.id
-            ? { ...item, status: newStatus, bib_number: bib, notes: notesToSave ?? item.notes }
-            : item
-        )
-      )
+    const updatedRecord: RegistrationRecord = updated || {
+      ...record,
+      status: newStatus,
+      bib_number: bib,
+      notes: notesToSave ?? record.notes,
     }
+
+    setRecords((prev) => prev.map((item) => (item.id === record.id ? updatedRecord : item)))
 
     if (inspectRecord && inspectRecord.id === record.id) {
       handleCloseInspect()
+    }
+
+    // Si fue aprobado con dorsal, mostrar el modal de Cliente Confirmado
+    if (newStatus === "approved" && bib) {
+      setConfirmedData({
+        record: updatedRecord,
+        bib,
+      })
+      fireSuccessConfetti()
     }
   }
 
@@ -148,6 +179,10 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     const headers = [
       "ID",
       "Fecha Registro",
+      "Modalidad Kit",
+      "Talla Camisa",
+      "Inversión $",
+      "Ref. Bancaria",
       "Nombres",
       "Apellidos",
       "Cédula",
@@ -158,13 +193,17 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       "Tel. Emergencia",
       "Estado",
       "Dorsal Oficial",
-      "Notas / Ref",
+      "Notas / Observaciones",
       "URL Comprobante",
     ]
 
     const rows = records.map((r) => [
       r.id || "",
       r.created_at ? new Date(r.created_at).toLocaleString("es-VE") : "",
+      r.kit_type === "premium" ? "Kit Premium" : "Kit Básico",
+      r.shirt_size || "N/A",
+      r.payment_amount || (r.kit_type === "premium" ? 15 : 10),
+      `"${r.payment_reference || ""}"`,
       `"${r.first_name.replace(/"/g, '""')}"`,
       `"${r.last_name.replace(/"/g, '""')}"`,
       `"${r.cedula}"`,
@@ -201,11 +240,13 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         r.cedula.toLowerCase().includes(q) ||
         r.phone.toLowerCase().includes(q) ||
         r.email.toLowerCase().includes(q) ||
+        (r.payment_reference || "").toLowerCase().includes(q) ||
         String(r.bib_number || "").includes(q)
 
       const matchesStatus = statusFilter === "all" || r.status === statusFilter
+      const matchesKit = kitFilter === "all" || r.kit_type === kitFilter
 
-      return matchesSearch && matchesStatus
+      return matchesSearch && matchesStatus && matchesKit
     })
 
     result = [...result].sort((a, b) => {
@@ -225,7 +266,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     })
 
     return result
-  }, [records, searchQuery, statusFilter, sortBy])
+  }, [records, searchQuery, statusFilter, kitFilter, sortBy])
 
   // Métricas rápidas
   const stats = useMemo(() => {
@@ -233,19 +274,24 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     const pending = records.filter((r) => r.status === "pending").length
     const approved = records.filter((r) => r.status === "approved").length
     const rejected = records.filter((r) => r.status === "rejected").length
-    const estimatedRaised = approved * 10
 
-    return { total, pending, approved, rejected, estimatedRaised }
+    const basicoCount = records.filter((r) => r.kit_type === "basico").length
+    const premiumCount = records.filter((r) => r.kit_type === "premium").length
+
+    // Recaudación de los aprobados
+    const estimatedRaised = records
+      .filter((r) => r.status === "approved")
+      .reduce((acc, r) => acc + (r.payment_amount || (r.kit_type === "premium" ? 15 : 10)), 0)
+
+    return { total, pending, approved, rejected, basicoCount, premiumCount, estimatedRaised }
   }, [records])
 
-  // Función para formatear teléfono a enlace WhatsApp
-  const formatWhatsAppLink = (phone: string) => {
+  // Formatear WhatsApp
+  const formatWhatsAppLink = (phone: string, text?: string) => {
     const cleaned = phone.replace(/\D/g, "")
-    // Si empieza con 0 (ej. 0424), cambiar por 58
     const intlNumber = cleaned.startsWith("0") ? `58${cleaned.slice(1)}` : cleaned.startsWith("58") ? cleaned : `58${cleaned}`
-    return `https://wa.me/${intlNumber}?text=${encodeURIComponent(
-      "Hola! Te escribimos de Inmobiliaria Dream Home respecto a tu inscripción en la Caminata 5K 'Camina y Renace'."
-    )}`
+    const defaultMsg = "Hola! Te escribimos de Inmobiliaria Dream Home respecto a tu inscripción en la Caminata 5K 'Camina y Renace'."
+    return `https://wa.me/${intlNumber}?text=${encodeURIComponent(text || defaultMsg)}`
   }
 
   return (
@@ -282,7 +328,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Indicador de conexión Supabase */}
             {isSupabaseConfigured ? (
               <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold">
                 <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -333,10 +378,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               <div>
                 <strong className="block font-bold">Actualmente en modo de almacenamiento local:</strong>
                 <p className="text-amber-800/90 mt-0.5 leading-relaxed">
-                  Para guardar y sincronizar los datos en tiempo real con Supabase en la nube, crea un archivo{" "}
-                  <code className="bg-white px-1.5 py-0.5 rounded font-mono border border-amber-200">.env</code> con{" "}
-                  <code className="bg-white px-1.5 py-0.5 rounded font-mono border border-amber-200">VITE_SUPABASE_URL</code> y{" "}
-                  <code className="bg-white px-1.5 py-0.5 rounded font-mono border border-amber-200">VITE_SUPABASE_ANON_KEY</code>.
+                  Para guardar y sincronizar los datos en tiempo real con Supabase en la nube, coloca tus credenciales en el archivo{" "}
+                  <code className="bg-white px-1.5 py-0.5 rounded font-mono border border-amber-200">.env</code>.
                 </p>
               </div>
             </div>
@@ -366,7 +409,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               <span className="font-sport text-3xl sm:text-4xl font-black text-[#121316]">
                 {stats.total}
               </span>
-              <span className="text-[11px] text-[#6B7280] block mt-0.5">Participantes en base</span>
+              <span className="text-[11px] text-[#6B7280] block mt-0.5">
+                {stats.basicoCount} Básicos • {stats.premiumCount} Premium
+              </span>
             </div>
           </div>
 
@@ -426,7 +471,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
           <div className="col-span-2 lg:col-span-1 rounded-2xl bg-gradient-to-br from-[#E8FAFD] via-white to-[#FDF0F6] border border-[#AEEAF7] p-4 shadow-sm flex flex-col justify-between">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold uppercase tracking-wider text-[#0E8EA8]">
-                Recaudación Est.
+                Recaudación Validada
               </span>
               <div className="h-7 w-7 rounded-lg bg-[#E8FAFD] text-[#2FC7EA] font-black flex items-center justify-center text-xs">
                 $
@@ -436,7 +481,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               <span className="font-sport text-3xl sm:text-4xl font-black text-[#0E8EA8]">
                 ${stats.estimatedRaised}
               </span>
-              <span className="text-[11px] text-[#525866] block mt-0.5">Ref. $10 por cupo válido</span>
+              <span className="text-[11px] text-[#525866] block mt-0.5">Total recaudado</span>
             </div>
           </div>
         </div>
@@ -449,7 +494,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               <Search className="absolute left-3.5 top-3 h-4 w-4 text-[#9CA3AF]" />
               <input
                 type="text"
-                placeholder="Buscar por cédula, nombre, teléfono, correo o número dorsal..."
+                placeholder="Buscar por cédula, nombre, teléfono, ref. bancaria o dorsal..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-xs sm:text-sm bg-[#FAF7F8] border border-[#F8BFDC]/80 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#EF007E]/30 focus:border-[#EF007E] transition-all"
@@ -480,51 +525,83 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
             </div>
           </div>
 
-          {/* Filtros por pestaña de estado */}
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1">
-            <button
-              onClick={() => setStatusFilter("all")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                statusFilter === "all"
-                  ? "bg-[#121316] text-white shadow-sm"
-                  : "bg-[#FAF7F8] text-[#525866] hover:bg-[#FDF0F6] border border-[#F4D7DE]"
-              }`}
-            >
-              Todos ({records.length})
-            </button>
-            <button
-              onClick={() => setStatusFilter("pending")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                statusFilter === "pending"
-                  ? "bg-amber-600 text-white shadow-sm"
-                  : "bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200"
-              }`}
-            >
-              <Clock className="h-3 w-3" />
-              Pendientes ({stats.pending})
-            </button>
-            <button
-              onClick={() => setStatusFilter("approved")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                statusFilter === "approved"
-                  ? "bg-emerald-600 text-white shadow-sm"
-                  : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200"
-              }`}
-            >
-              <CheckCircle className="h-3 w-3" />
-              Aprobados ({stats.approved})
-            </button>
-            <button
-              onClick={() => setStatusFilter("rejected")}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
-                statusFilter === "rejected"
-                  ? "bg-rose-600 text-white shadow-sm"
-                  : "bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200"
-              }`}
-            >
-              <XCircle className="h-3 w-3" />
-              Rechazados ({stats.rejected})
-            </button>
+          {/* Filtros por pestaña de estado y kits */}
+          <div className="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-[#F4D7DE]">
+            {/* Filtro Estado */}
+            <div className="flex items-center gap-1.5 overflow-x-auto py-1">
+              <button
+                onClick={() => setStatusFilter("all")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  statusFilter === "all"
+                    ? "bg-[#121316] text-white shadow-sm"
+                    : "bg-[#FAF7F8] text-[#525866] hover:bg-[#FDF0F6] border border-[#F4D7DE]"
+                }`}
+              >
+                Todos ({records.length})
+              </button>
+              <button
+                onClick={() => setStatusFilter("pending")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                  statusFilter === "pending"
+                    ? "bg-amber-600 text-white shadow-sm"
+                    : "bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200"
+                }`}
+              >
+                <Clock className="h-3 w-3" />
+                Pendientes ({stats.pending})
+              </button>
+              <button
+                onClick={() => setStatusFilter("approved")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                  statusFilter === "approved"
+                    ? "bg-emerald-600 text-white shadow-sm"
+                    : "bg-emerald-50 text-emerald-800 hover:bg-emerald-100 border border-emerald-200"
+                }`}
+              >
+                <CheckCircle className="h-3 w-3" />
+                Aprobados ({stats.approved})
+              </button>
+              <button
+                onClick={() => setStatusFilter("rejected")}
+                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer whitespace-nowrap flex items-center gap-1 ${
+                  statusFilter === "rejected"
+                    ? "bg-rose-600 text-white shadow-sm"
+                    : "bg-rose-50 text-rose-800 hover:bg-rose-100 border border-rose-200"
+                }`}
+              >
+                <XCircle className="h-3 w-3" />
+                Rechazados ({stats.rejected})
+              </button>
+            </div>
+
+            {/* Filtro Modalidad Kit */}
+            <div className="flex items-center gap-1.5 py-1">
+              <span className="text-[11px] font-bold text-[#6B7280]">Kit:</span>
+              <button
+                onClick={() => setKitFilter("all")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                  kitFilter === "all" ? "bg-[#2FC7EA] text-[#072430]" : "text-[#525866] hover:bg-[#E8FAFD]"
+                }`}
+              >
+                Ambos
+              </button>
+              <button
+                onClick={() => setKitFilter("basico")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                  kitFilter === "basico" ? "bg-[#2FC7EA] text-[#072430]" : "text-[#525866] hover:bg-[#E8FAFD]"
+                }`}
+              >
+                Básico ($10)
+              </button>
+              <button
+                onClick={() => setKitFilter("premium")}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-colors ${
+                  kitFilter === "premium" ? "bg-[#EF007E] text-white" : "text-[#525866] hover:bg-[#FDF0F6]"
+                }`}
+              >
+                Premium ($15)
+              </button>
+            </div>
           </div>
         </div>
 
@@ -537,11 +614,11 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   <th className="p-4">Dorsal</th>
                   <th className="p-4">Participante</th>
                   <th className="p-4">Cédula</th>
-                  <th className="p-4">Teléfono & Contacto</th>
-                  <th className="p-4">Contacto Emergencia</th>
-                  <th className="p-4">Comprobante Pago</th>
+                  <th className="p-4">Modalidad Kit</th>
+                  <th className="p-4">Ref. Bancaria & Tel.</th>
+                  <th className="p-4">Comprobante</th>
                   <th className="p-4">Estado</th>
-                  <th className="p-4 text-center">Validación</th>
+                  <th className="p-4 text-center">Acciones</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#F4D7DE]">
@@ -561,7 +638,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                         <p className="text-xs text-[#6B7280]">
                           {searchQuery
                             ? "No hay coincidencias con los términos de búsqueda aplicados."
-                            : "Aún no se han registrado inscripciones en esta categoría."}
+                            : "Aún no se han registrado inscripciones con este filtro."}
                         </p>
                         {searchQuery && (
                           <Button size="sm" variant="outline" onClick={() => setSearchQuery("")} className="mt-2 text-xs">
@@ -574,6 +651,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 ) : (
                   filteredAndSortedRecords.map((record) => {
                     const isCopied = copiedId === record.id
+                    const isRefCopied = copiedId === `ref-${record.id}`
 
                     return (
                       <tr key={record.id || record.cedula} className="hover:bg-[#FAF7F8]/80 transition-colors">
@@ -615,32 +693,65 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                           </div>
                         </td>
 
-                        {/* Teléfono & WhatsApp */}
+                        {/* Modalidad Kit */}
                         <td className="p-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <span className="font-semibold text-xs text-[#121316]">{record.phone}</span>
-                            {record.phone && (
-                              <a
-                                href={formatWhatsAppLink(record.phone)}
-                                target="_blank"
-                                rel="noreferrer"
-                                title="Escribir por WhatsApp"
-                                className="h-6 w-6 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-colors"
-                              >
-                                <MessageCircle className="h-3.5 w-3.5" />
-                              </a>
-                            )}
-                          </div>
+                          {record.kit_type === "premium" ? (
+                            <div className="space-y-0.5">
+                              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FDF0F6] text-[#EF007E] border border-[#F8BFDC]">
+                                <Sparkles className="h-3 w-3" /> Kit Premium ($15)
+                              </span>
+                              {record.shirt_size && (
+                                <span className="block text-[10px] font-bold text-[#525866] pl-1">
+                                  Talla Camisa: <strong className="text-[#121316]">{record.shirt_size}</strong>
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7]">
+                              Kit Básico ($10)
+                            </span>
+                          )}
                         </td>
 
-                        {/* Contacto Emergencia */}
-                        <td className="p-4">
-                          <span className="block font-medium text-xs text-[#121316]">
-                            {record.emergency_contact_name || "—"}
-                          </span>
-                          <span className="text-[11px] text-[#6B7280] block">
-                            {record.emergency_contact_phone || ""}
-                          </span>
+                        {/* Ref. Bancaria & Teléfono */}
+                        <td className="p-4 whitespace-nowrap">
+                          <div className="space-y-1">
+                            {record.payment_reference ? (
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-mono font-bold text-xs text-[#121316] bg-[#FAF7F8] px-2 py-0.5 rounded border border-[#F4D7DE]">
+                                  Ref: {record.payment_reference}
+                                </span>
+                                <button
+                                  onClick={() => handleCopyText(record.payment_reference, `ref-${record.id}`)}
+                                  title="Copiar número de referencia"
+                                  className="text-[#9CA3AF] hover:text-[#0E8EA8] p-1"
+                                >
+                                  {isRefCopied ? (
+                                    <Check className="h-3 w-3 text-emerald-600" />
+                                  ) : (
+                                    <Copy className="h-3 w-3" />
+                                  )}
+                                </button>
+                              </div>
+                            ) : (
+                              <span className="text-[11px] text-[#9CA3AF] italic">Sin referencia</span>
+                            )}
+
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-xs text-[#525866]">{record.phone}</span>
+                              {record.phone && (
+                                <a
+                                  href={formatWhatsAppLink(record.phone)}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  title="Escribir por WhatsApp"
+                                  className="h-5 w-5 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center hover:bg-emerald-600 hover:text-white transition-colors"
+                                >
+                                  <MessageCircle className="h-3 w-3" />
+                                </a>
+                              )}
+                            </div>
+                          </div>
                         </td>
 
                         {/* Comprobante de Pago */}
@@ -734,7 +845,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         </div>
       </main>
 
-      {/* Modal Completo de Inspección del Comprobante */}
+      {/* ============================================================== */}
+      {/* MODAL 1: INSPECCIÓN Y VALIDACIÓN DEL COMPROBANTE */}
+      {/* ============================================================== */}
       {inspectRecord && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-200">
           <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-[#F8BFDC] overflow-hidden">
@@ -751,7 +864,11 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   <div className="flex items-center gap-2 text-xs text-[#525866]">
                     <span>Cédula: {inspectRecord.cedula}</span>
                     <span>•</span>
-                    <span>Tel: {inspectRecord.phone}</span>
+                    <span className="font-bold text-[#EF007E]">
+                      {inspectRecord.kit_type === "premium"
+                        ? `Kit Premium ($15)${inspectRecord.shirt_size ? ` - Talla ${inspectRecord.shirt_size}` : ""}`
+                        : "Kit Básico ($10)"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -764,7 +881,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               </button>
             </div>
 
-            {/* Cuerpo del modal (2 Columnas: Comprobante a la izquierda, Controles a la derecha) */}
+            {/* Cuerpo del modal (2 Columnas) */}
             <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-12 gap-6 p-6">
               {/* Columna Izquierda: Visor del Comprobante (Span 7) */}
               <div className="md:col-span-7 flex flex-col">
@@ -829,13 +946,46 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 </div>
               </div>
 
-              {/* Columna Derecha: Datos del Participante y Validación (Span 5) */}
+              {/* Columna Derecha: Datos y Validación (Span 5) */}
               <div className="md:col-span-5 flex flex-col justify-between space-y-4">
                 <div className="space-y-4">
-                  <div className="rounded-2xl bg-[#FAF7F8] border border-[#F4D7DE] p-4 text-xs space-y-2.5">
+                  {/* Resumen del Kit & Referencia Bancaria */}
+                  <div className="rounded-2xl bg-gradient-to-br from-[#E8FAFD]/50 to-[#FDF0F6]/50 border border-[#AEEAF7] p-4 text-xs space-y-2">
                     <span className="font-bold uppercase tracking-wider text-[10px] text-[#0E8EA8] block">
-                      Datos de la Ficha
+                      Detalles de la Inscripción
                     </span>
+
+                    <div className="flex justify-between border-b border-[#F4D7DE] pb-1.5">
+                      <span className="text-[#6B7280]">Kit Registrado:</span>
+                      <strong className="text-[#EF007E] font-bold">
+                        {inspectRecord.kit_type === "premium" ? "Kit Premium ($15)" : "Kit Básico ($10)"}
+                      </strong>
+                    </div>
+
+                    {inspectRecord.shirt_size && (
+                      <div className="flex justify-between border-b border-[#F4D7DE] pb-1.5">
+                        <span className="text-[#6B7280]">Talla Camisa:</span>
+                        <strong className="text-[#121316] font-bold">{inspectRecord.shirt_size}</strong>
+                      </div>
+                    )}
+
+                    <div className="flex justify-between border-b border-[#F4D7DE] pb-1.5">
+                      <span className="text-[#6B7280]">Ref. Bancaria:</span>
+                      <strong className="text-[#121316] font-mono font-bold">
+                        {inspectRecord.payment_reference || "No indicada"}
+                      </strong>
+                    </div>
+
+                    <div className="flex justify-between">
+                      <span className="text-[#6B7280]">Monto a Verificar:</span>
+                      <strong className="text-[#0E8EA8] font-bold">
+                        ${inspectRecord.payment_amount || (inspectRecord.kit_type === "premium" ? 15 : 10)} (Tasa BCV)
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* Ficha del Participante */}
+                  <div className="rounded-2xl bg-[#FAF7F8] border border-[#F4D7DE] p-4 text-xs space-y-2">
                     <div>
                       <span className="text-[#6B7280]">Nombre Completo:</span>
                       <strong className="block text-[#121316] font-bold">
@@ -843,13 +993,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                       </strong>
                     </div>
                     <div>
-                      <span className="text-[#6B7280]">Cédula:</span>
-                      <strong className="block text-[#121316] font-mono font-bold">
-                        {inspectRecord.cedula}
-                      </strong>
-                    </div>
-                    <div>
-                      <span className="text-[#6B7280]">Teléfono Participante:</span>
+                      <span className="text-[#6B7280]">Teléfono:</span>
                       <div className="flex items-center gap-2 mt-0.5">
                         <strong className="text-[#121316] font-bold">{inspectRecord.phone}</strong>
                         {inspectRecord.phone && (
@@ -893,13 +1037,13 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   {/* Notas internas del Administrador */}
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-[#121316]">
-                      Notas / Referencia Bancaria (Opcional):
+                      Notas / Observaciones (Opcional):
                     </label>
                     <textarea
-                      rows={3}
+                      rows={2}
                       value={adminNotes}
                       onChange={(e) => setAdminNotes(e.target.value)}
-                      placeholder="Ej. Ref Banesco 489201 por Bs. 850 validada con cuenta master."
+                      placeholder="Ej. Ref 489201 confirmada en cuenta Banesco."
                       className="w-full px-3 py-2 text-xs bg-white border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
                     />
                   </div>
@@ -942,6 +1086,88 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL 2: CLIENTE CONFIRMADO & NOTIFICACIÓN DORSAL */}
+      {/* ============================================================== */}
+      {confirmedData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 text-center shadow-2xl border-2 border-emerald-300 relative overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Fondo de brillo decorativo */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-emerald-100 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[#E8FAFD] rounded-full blur-2xl pointer-events-none" />
+
+            {/* Icono de verificación */}
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 text-emerald-600 mb-4 shadow-inner">
+              <CheckCircle className="h-9 w-9 stroke-[2.5]" />
+            </div>
+
+            <span className="text-[11px] uppercase tracking-widest font-black text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+              Pago Verificado
+            </span>
+
+            <h3 className="font-sport uppercase text-3xl font-black text-[#121316] mt-2 leading-none">
+              ¡CLIENTE CONFIRMADO!
+            </h3>
+
+            <p className="text-xs text-[#525866] mt-1.5">
+              Se ha validado la inscripción de{" "}
+              <strong className="text-[#121316] font-bold">
+                {confirmedData.record.first_name} {confirmedData.record.last_name}
+              </strong>{" "}
+              ({confirmedData.record.cedula}).
+            </p>
+
+            {/* Tarjeta con el Número de Participante / Dorsal Oficial */}
+            <div className="my-5 rounded-2xl bg-gradient-to-br from-[#E8FAFD] via-white to-[#FDF0F6] border-2 border-[#2FC7EA] p-5 shadow-sm">
+              <span className="text-xs font-black uppercase tracking-wider text-[#0E8EA8] block">
+                Número Oficial de Participante
+              </span>
+              <div className="font-sport text-5xl sm:text-6xl font-black text-[#EF007E] leading-none mt-1">
+                #{confirmedData.bib}
+              </div>
+              <span className="text-xs font-bold text-[#121316] block mt-1.5">
+                {confirmedData.record.kit_type === "premium"
+                  ? `Kit Premium ($15)${confirmedData.record.shirt_size ? ` • Talla ${confirmedData.record.shirt_size}` : ""}`
+                  : "Kit Básico ($10)"}
+              </span>
+              <span className="text-[11px] text-[#525866] font-medium block mt-0.5">
+                Caminata 5K • Sábado 31 de Octubre • Fórum Charallave
+              </span>
+            </div>
+
+            {/* Acciones: Notificar por WhatsApp o Cerrar */}
+            <div className="space-y-2">
+              {confirmedData.record.phone && (
+                <a
+                  href={formatWhatsAppLink(
+                    confirmedData.record.phone,
+                    `¡Hola ${confirmedData.record.first_name}! 👋 De parte de Inmobiliaria Dream Home te confirmamos que tu pago para la Caminata 5K 'Camina y Renace con Dream Home 2026' ha sido VALIDADO con éxito. 🎽 Tu Kit registrado es: ${
+                      confirmedData.record.kit_type === "premium"
+                        ? `Kit Premium${confirmedData.record.shirt_size ? ` (Talla ${confirmedData.record.shirt_size})` : ""}`
+                        : "Kit Básico"
+                    } y tu número de dorsal oficial asignado es el #${confirmedData.bib}. ¡Nos vemos este sábado 31 de octubre a las 7:00 am en Fórum Charallave!`
+                  )}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+                >
+                  <MessageCircle className="h-4 w-4" />
+                  <span>Notificar Dorsal por WhatsApp</span>
+                </a>
+              )}
+
+              <Button
+                variant="outline"
+                onClick={() => setConfirmedData(null)}
+                className="w-full border-[#F4D7DE] hover:bg-[#FAF7F8] text-[#525866] text-xs font-bold py-2.5 rounded-xl cursor-pointer"
+              >
+                Cerrar Ventana
+              </Button>
             </div>
           </div>
         </div>

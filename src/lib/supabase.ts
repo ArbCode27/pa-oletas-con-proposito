@@ -11,6 +11,10 @@ export interface RegistrationRecord {
   email: string
   emergency_contact_phone: string
   emergency_contact_name: string
+  kit_type: "basico" | "premium"
+  shirt_size?: string | null
+  payment_reference: string
+  payment_amount: number
   payment_proof_url: string
   status?: "pending" | "approved" | "rejected"
   bib_number?: number | null
@@ -31,7 +35,7 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
 
-const STORAGE_KEY = "dream_home_registrations_demo"
+const STORAGE_KEY = "dream_home_registrations_demo_v2"
 
 // Semilla inicial de demostración cuando no hay Supabase configurado
 const INITIAL_DEMO_RECORDS: RegistrationRecord[] = [
@@ -46,10 +50,14 @@ const INITIAL_DEMO_RECORDS: RegistrationRecord[] = [
     email: "mariana.gonzalez@example.com",
     emergency_contact_name: "Carlos González",
     emergency_contact_phone: "0424-9876543",
+    kit_type: "basico",
+    shirt_size: null,
+    payment_reference: "489201",
+    payment_amount: 10,
     payment_proof_url: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=800&q=80",
     status: "pending",
     bib_number: null,
-    notes: "Pago Móvil Banesco Ref: 489201 por Bs. 850 (Tasa BCV)",
+    notes: "Pago Móvil Banesco Ref: 489201 por $10 a Tasa BCV.",
   },
   {
     id: "demo-002",
@@ -62,10 +70,14 @@ const INITIAL_DEMO_RECORDS: RegistrationRecord[] = [
     email: "alejandro.rondon@example.com",
     emergency_contact_name: "Patricia Rondón",
     emergency_contact_phone: "0412-5551234",
+    kit_type: "premium",
+    shirt_size: "L",
+    payment_reference: "882104",
+    payment_amount: 15,
     payment_proof_url: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
     status: "approved",
     bib_number: 101,
-    notes: "Comprobante verificado. Dorsal asignado #101.",
+    notes: "Comprobante verificado. Kit Premium Talla L. Dorsal #101.",
   },
   {
     id: "demo-003",
@@ -78,16 +90,20 @@ const INITIAL_DEMO_RECORDS: RegistrationRecord[] = [
     email: "elena.castillo@example.com",
     emergency_contact_name: "María Castillo",
     emergency_contact_phone: "0414-9988776",
+    kit_type: "basico",
+    shirt_size: null,
+    payment_reference: "119042",
+    payment_amount: 10,
     payment_proof_url: "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=800&q=80",
     status: "rejected",
     bib_number: null,
-    notes: "Captura cortada sin número de referencia visible.",
+    notes: "Captura borrosa sin fecha visible.",
   },
 ]
 
 const getLocalDemoRecords = (): RegistrationRecord[] => {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY) || sessionStorage.getItem("demo_registrations")
+    const raw = localStorage.getItem(STORAGE_KEY)
     if (raw) {
       return JSON.parse(raw)
     }
@@ -175,6 +191,10 @@ export const submitRegistration = async (
           email: record.email,
           emergency_contact_phone: record.emergency_contact_phone,
           emergency_contact_name: record.emergency_contact_name,
+          kit_type: record.kit_type,
+          shirt_size: record.shirt_size || null,
+          payment_reference: record.payment_reference,
+          payment_amount: record.payment_amount,
           payment_proof_url: record.payment_proof_url,
           status: "pending",
         },
@@ -193,7 +213,7 @@ export const submitRegistration = async (
       return { data: null, error: error.message, isDemoMode: false }
     }
 
-    return { data, error: null, isDemoMode: false }
+    return { data: data as RegistrationRecord, error: null, isDemoMode: false }
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Error al procesar la inscripción"
     return { data: null, error: message, isDemoMode: false }

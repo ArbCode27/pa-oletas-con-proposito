@@ -1,28 +1,31 @@
 import { useState, useRef, useId } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import * as z from "zod"
+import { z } from "zod"
 import confetti from "canvas-confetti"
 import {
   User,
   Phone,
   Mail,
   Calendar,
-  AlertCircle,
-  Upload,
-  CheckCircle2,
-  FileCheck,
   CreditCard,
-  Heart,
-  Loader2,
+  Upload,
+  FileCheck,
+  CheckCircle2,
+  AlertCircle,
   HelpCircle,
-  Copy,
-  Check,
   ShieldCheck,
-  X,
+  Check,
+  Copy,
   FileText,
-  Building2,
-  ArrowRight
+  X,
+  ArrowRight,
+  ArrowLeft,
+  Heart,
+  Sparkles,
+  ShoppingBag,
+  Shirt,
+  Hash,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -44,46 +47,64 @@ import {
 } from "@/components/ui/dialog"
 import { uploadPaymentProof, submitRegistration, type RegistrationRecord } from "@/lib/supabase"
 
-const registrationSchema = z.object({
-  first_name: z
-    .string()
-    .min(2, "El nombre debe tener al menos 2 caracteres")
-    .max(50, "Nombre demasiado largo"),
-  last_name: z
-    .string()
-    .min(2, "El apellido debe tener al menos 2 caracteres")
-    .max(50, "Apellido demasiado largo"),
-  cedula_prefix: z.enum(["V", "E"]),
-  cedula_number: z
-    .string()
-    .regex(/^\d{6,9}$/, "Ingresa una cédula válida de 6 a 9 dígitos"),
-  birth_date: z.string().refine((val) => {
-    if (!val) return false
-    const date = new Date(val)
-    const today = new Date()
-    return date < today && date.getFullYear() > 1920
-  }, "Ingresa una fecha de nacimiento válida"),
-  phone: z
-    .string()
-    .min(10, "Ingresa un número telefónico válido (ej. 04141234567)")
-    .max(15, "Número demasiado largo"),
-  email: z.string().email("Ingresa un correo electrónico válido"),
-  emergency_contact_name: z
-    .string()
-    .min(2, "Ingresa el nombre del contacto de emergencia")
-    .max(60, "Nombre demasiado largo"),
-  emergency_contact_phone: z
-    .string()
-    .min(10, "Ingresa un teléfono válido de emergencia"),
-  accept_terms: z
-    .boolean()
-    .refine((val) => val === true, "Debes certificar tu aptitud física para la caminata"),
-})
+const SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"] as const
+
+const registrationSchema = z
+  .object({
+    kit_type: z.enum(["basico", "premium"]),
+    shirt_size: z.string().optional(),
+    first_name: z
+      .string()
+      .min(2, "El nombre debe tener al menos 2 caracteres")
+      .max(50, "Nombre demasiado largo"),
+    last_name: z
+      .string()
+      .min(2, "El apellido debe tener al menos 2 caracteres")
+      .max(50, "Apellido demasiado largo"),
+    cedula_prefix: z.enum(["V", "E"]),
+    cedula_number: z
+      .string()
+      .regex(/^\d{6,9}$/, "Ingresa una cédula válida de 6 a 9 dígitos"),
+    birth_date: z.string().refine((val) => {
+      if (!val) return false
+      const date = new Date(val)
+      const today = new Date()
+      return date < today && date.getFullYear() > 1920
+    }, "Ingresa una fecha de nacimiento válida"),
+    phone: z
+      .string()
+      .min(10, "Ingresa un número telefónico válido (ej. 04141234567)")
+      .max(15, "Número demasiado largo"),
+    email: z.string().email("Ingresa un correo electrónico válido"),
+    emergency_contact_name: z
+      .string()
+      .min(2, "Ingresa el nombre del contacto de emergencia")
+      .max(60, "Nombre demasiado largo"),
+    emergency_contact_phone: z
+      .string()
+      .min(10, "Ingresa un teléfono válido de emergencia"),
+    accept_terms: z
+      .boolean()
+      .refine((val) => val === true, "Debes certificar tu aptitud física para la caminata"),
+    payment_reference: z
+      .string()
+      .min(4, "Ingresa el número de referencia de tu pago (mínimo 4 dígitos)")
+      .max(25, "Referencia demasiado larga"),
+  })
+  .superRefine((data, ctx) => {
+    if (data.kit_type === "premium" && (!data.shirt_size || data.shirt_size.trim() === "")) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["shirt_size"],
+        message: "Por favor selecciona la talla de tu camisa oficial para el Kit Premium",
+      })
+    }
+  })
 
 type RegistrationFormValues = z.infer<typeof registrationSchema>
 
 export const RegistrationSection = () => {
-  const [activeStep, setActiveStep] = useState<1 | 2 | 3>(1)
+  const [activeStep, setActiveStep] = useState<1 | 2 | 3 | 4>(1)
   const [file, setFile] = useState<File | null>(null)
   const [filePreview, setFilePreview] = useState<string | null>(null)
   const [fileError, setFileError] = useState<string | null>(null)
@@ -100,11 +121,15 @@ export const RegistrationSection = () => {
     handleSubmit,
     trigger,
     control,
+    watch,
+    setValue,
     formState: { errors },
     reset,
   } = useForm<RegistrationFormValues>({
     resolver: zodResolver(registrationSchema),
     defaultValues: {
+      kit_type: "basico",
+      shirt_size: "",
       first_name: "",
       last_name: "",
       cedula_prefix: "V",
@@ -115,9 +140,13 @@ export const RegistrationSection = () => {
       emergency_contact_name: "",
       emergency_contact_phone: "",
       accept_terms: false,
+      payment_reference: "",
     },
     mode: "onBlur",
   })
+
+  const selectedKit = watch("kit_type")
+  const selectedShirtSize = watch("shirt_size")
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -165,15 +194,7 @@ export const RegistrationSection = () => {
 
   const handleNextStep = async () => {
     if (activeStep === 1) {
-      const step1Valid = await trigger([
-        "first_name",
-        "last_name",
-        "cedula_prefix",
-        "cedula_number",
-        "birth_date",
-        "phone",
-        "email",
-      ])
+      const step1Valid = await trigger(["kit_type", "shirt_size"])
       if (step1Valid) {
         setActiveStep(2)
       }
@@ -182,12 +203,28 @@ export const RegistrationSection = () => {
 
     if (activeStep === 2) {
       const step2Valid = await trigger([
+        "first_name",
+        "last_name",
+        "cedula_prefix",
+        "cedula_number",
+        "birth_date",
+        "phone",
+        "email",
+      ])
+      if (step2Valid) {
+        setActiveStep(3)
+      }
+      return
+    }
+
+    if (activeStep === 3) {
+      const step3Valid = await trigger([
         "emergency_contact_name",
         "emergency_contact_phone",
         "accept_terms",
       ])
-      if (step2Valid) {
-        setActiveStep(3)
+      if (step3Valid) {
+        setActiveStep(4)
       }
       return
     }
@@ -196,10 +233,11 @@ export const RegistrationSection = () => {
   const handlePrevStep = () => {
     if (activeStep === 2) setActiveStep(1)
     if (activeStep === 3) setActiveStep(2)
+    if (activeStep === 4) setActiveStep(3)
   }
 
   const handleCopyPaymentInfo = () => {
-    const textToCopy = `PAGO MÓVIL BANESCO (0134)\nCI/RIF: J-501234567\nTeléfono: 04241128778\nConcepto: Caminata 5K`
+    const textToCopy = `PAGO MÓVIL BANESCO (0134)\nCI: 17965340\nTeléfono: 04241128778\nConcepto: Caminata 5K`
     navigator.clipboard.writeText(textToCopy)
     setCopiedBank(true)
     setTimeout(() => setCopiedBank(false), 2500)
@@ -240,6 +278,7 @@ export const RegistrationSection = () => {
 
       // 2. Guardar registro en Supabase Database
       const formattedCedula = `${values.cedula_prefix}-${values.cedula_number}`
+      const amount = values.kit_type === "premium" ? 15 : 10
 
       const { data, error: dbErr } = await submitRegistration({
         first_name: values.first_name.trim(),
@@ -250,6 +289,10 @@ export const RegistrationSection = () => {
         email: values.email.trim().toLowerCase(),
         emergency_contact_name: values.emergency_contact_name.trim(),
         emergency_contact_phone: values.emergency_contact_phone.trim(),
+        kit_type: values.kit_type,
+        shirt_size: values.kit_type === "premium" ? values.shirt_size || null : null,
+        payment_reference: values.payment_reference.trim(),
+        payment_amount: amount,
         payment_proof_url: fileUrl,
       })
 
@@ -300,18 +343,26 @@ export const RegistrationSection = () => {
           </h2>
 
           <p className="mt-3 text-sm sm:text-base text-[#525866] leading-relaxed">
-            Completa tus datos personales, información de contacto para emergencias y adjunta tu comprobante de pago para reservar tu cupo oficial con Dream Home Venezuela.
+            Sábado 31 de octubre • 7:00 am • Salida: Fórum Charallave (con Bailoterapia 💃🎶).
+            Selecciona tu kit, completa tus datos y asegura tu dorsal oficial. ¡Cupos limitados!
           </p>
         </div>
 
-        {/* Multi-step progress indicator */}
-        <div className="mb-8 max-w-xl mx-auto">
+        {/* Multi-step progress indicator (4 Pasos) */}
+        <div className="mb-8 max-w-2xl mx-auto">
           <div className="flex items-center justify-between relative">
             <div className="absolute top-1/2 left-0 right-0 h-1 bg-[#F8BFDC] -translate-y-1/2 z-0" />
             <div
               className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-[#EF007E] to-[#2FC7EA] -translate-y-1/2 z-0 transition-all duration-500"
               style={{
-                width: activeStep === 1 ? "0%" : activeStep === 2 ? "50%" : "100%",
+                width:
+                  activeStep === 1
+                    ? "0%"
+                    : activeStep === 2
+                    ? "33.3%"
+                    : activeStep === 3
+                    ? "66.6%"
+                    : "100%",
               }}
             />
 
@@ -327,7 +378,7 @@ export const RegistrationSection = () => {
                 1
               </div>
               <span className="text-[11px] font-bold text-[#121316] mt-1.5 uppercase">
-                Datos
+                Kit
               </span>
             </div>
 
@@ -343,7 +394,7 @@ export const RegistrationSection = () => {
                 2
               </div>
               <span className="text-[11px] font-bold text-[#121316] mt-1.5 uppercase">
-                Emergencia
+                Datos
               </span>
             </div>
 
@@ -351,7 +402,7 @@ export const RegistrationSection = () => {
             <div className="relative z-10 flex flex-col items-center">
               <div
                 className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold transition-all ${
-                  activeStep === 3
+                  activeStep >= 3
                     ? "bg-[#EF007E] text-white shadow-md shadow-[#EF007E]/30 scale-105"
                     : "bg-white text-[#9CA3AF] border border-[#F8BFDC]"
                 }`}
@@ -359,7 +410,23 @@ export const RegistrationSection = () => {
                 3
               </div>
               <span className="text-[11px] font-bold text-[#121316] mt-1.5 uppercase">
-                Pago & Capture
+                Emergencia
+              </span>
+            </div>
+
+            {/* Step 4 */}
+            <div className="relative z-10 flex flex-col items-center">
+              <div
+                className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold transition-all ${
+                  activeStep === 4
+                    ? "bg-[#EF007E] text-white shadow-md shadow-[#EF007E]/30 scale-105"
+                    : "bg-white text-[#9CA3AF] border border-[#F8BFDC]"
+                }`}
+              >
+                4
+              </div>
+              <span className="text-[11px] font-bold text-[#121316] mt-1.5 uppercase">
+                Pago
               </span>
             </div>
           </div>
@@ -376,16 +443,244 @@ export const RegistrationSection = () => {
           )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            {/* STEP 1: DATOS PERSONALES */}
+            {/* ============================================================== */}
+            {/* PASO 1: SELECCIÓN DE KIT */}
+            {/* ============================================================== */}
             {activeStep === 1 && (
-              <div className="space-y-5 animate-in fade-in-50 duration-300">
-                <div className="border-b border-[#F4D7DE] pb-3 mb-4">
-                  <h3 className="font-sport uppercase text-2xl font-black text-[#121316]">
-                    Paso 1: Datos del Participante
-                  </h3>
-                  <p className="text-xs text-[#525866]">
-                    Ingresa tus nombres y apellidos tal como aparecen en tu documento de identidad.
+              <div className="space-y-6 animate-in fade-in-50 duration-300">
+                <div className="border-b border-[#F4D7DE] pb-3 mb-2">
+                  <div className="flex items-center gap-2">
+                    <ShoppingBag className="h-5 w-5 text-[#EF007E]" />
+                    <h3 className="font-sport uppercase text-2xl font-black text-[#121316]">
+                      Paso 1: Modalidad de Inscripción & Kit
+                    </h3>
+                  </div>
+                  <p className="text-xs text-[#525866] mt-1">
+                    Selecciona el kit que deseas para participar en la Caminata 5K. Ambos kits incluyen tu número dorsal y acceso completo al evento.
                   </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Tarjeta Kit Básico */}
+                  <div
+                    onClick={() => setValue("kit_type", "basico", { shouldValidate: true })}
+                    className={`relative rounded-3xl p-6 border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                      selectedKit === "basico"
+                        ? "border-[#2FC7EA] bg-gradient-to-b from-[#E8FAFD]/60 via-white to-white shadow-lg shadow-[#2FC7EA]/15 scale-[1.01]"
+                        : "border-[#E5E7EB] bg-white hover:border-[#AEEAF7] hover:bg-[#FAF7F8]"
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[11px] font-black uppercase tracking-wider text-[#0E8EA8] bg-[#E8FAFD] px-3 py-1 rounded-full border border-[#AEEAF7]">
+                          Opción Esencial
+                        </span>
+                        <div
+                          className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${
+                            selectedKit === "basico"
+                              ? "border-[#2FC7EA] bg-[#2FC7EA]"
+                              : "border-[#D1D5DB]"
+                          }`}
+                        >
+                          {selectedKit === "basico" && <div className="h-2 w-2 rounded-full bg-white" />}
+                        </div>
+                      </div>
+
+                      <h4 className="font-sport uppercase text-3xl font-black text-[#121316]">
+                        Kit Básico
+                      </h4>
+
+                      <div className="mt-2 mb-4 flex items-baseline gap-1.5">
+                        <span className="font-sport text-4xl sm:text-5xl font-black text-[#0E8EA8]">
+                          $10
+                        </span>
+                        <span className="text-xs text-[#525866] font-semibold">
+                          / Tasa oficial BCV
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-[#525866] mb-4">
+                        Ideal para quienes desean participar con su propia ropa deportiva y llevar la pañoleta conmemorativa oficial.
+                      </p>
+
+                      <ul className="space-y-2 text-xs text-[#121316] font-medium border-t border-[#F4D7DE] pt-4">
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#2FC7EA] shrink-0 stroke-[2.5]" />
+                          <span>Pañoleta conmemorativa oficial</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#2FC7EA] shrink-0 stroke-[2.5]" />
+                          <span>Llavero conmemorativo</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#2FC7EA] shrink-0 stroke-[2.5]" />
+                          <span>Dorsal oficial (número de competencia)</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#2FC7EA] shrink-0 stroke-[2.5]" />
+                          <span>Hidratación garantizada en 3 puntos</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#2FC7EA] shrink-0 stroke-[2.5]" />
+                          <span>Certificado de participación digital</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#2FC7EA] shrink-0 stroke-[2.5]" />
+                          <span>Obsequios por parte de patrocinantes</span>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Tarjeta Kit Premium */}
+                  <div
+                    onClick={() => setValue("kit_type", "premium", { shouldValidate: true })}
+                    className={`relative rounded-3xl p-6 border-2 transition-all cursor-pointer flex flex-col justify-between ${
+                      selectedKit === "premium"
+                        ? "border-[#EF007E] bg-gradient-to-b from-[#FDF0F6]/80 via-white to-white shadow-xl shadow-[#EF007E]/15 scale-[1.01]"
+                        : "border-[#E5E7EB] bg-white hover:border-[#F8BFDC] hover:bg-[#FAF7F8]"
+                    }`}
+                  >
+                    <div>
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-[11px] font-black uppercase tracking-wider text-[#EF007E] bg-[#FDF0F6] px-3 py-1 rounded-full border border-[#F8BFDC] flex items-center gap-1">
+                          <Sparkles className="h-3 w-3" /> Más Completo
+                        </span>
+                        <div
+                          className={`h-5 w-5 rounded-full border-2 flex items-center justify-center ${
+                            selectedKit === "premium"
+                              ? "border-[#EF007E] bg-[#EF007E]"
+                              : "border-[#D1D5DB]"
+                          }`}
+                        >
+                          {selectedKit === "premium" && <div className="h-2 w-2 rounded-full bg-white" />}
+                        </div>
+                      </div>
+
+                      <h4 className="font-sport uppercase text-3xl font-black text-[#121316]">
+                        Kit Premium
+                      </h4>
+
+                      <div className="mt-2 mb-4 flex items-baseline gap-1.5">
+                        <span className="font-sport text-4xl sm:text-5xl font-black text-[#EF007E]">
+                          $15
+                        </span>
+                        <span className="text-xs text-[#525866] font-semibold">
+                          / Tasa oficial BCV
+                        </span>
+                      </div>
+
+                      <p className="text-xs text-[#525866] mb-4">
+                        La experiencia completa: incluye la <strong>Camisa deportiva oficial</strong> y el <strong>Cooler de hidratación</strong> conmemorativo.
+                      </p>
+
+                      <ul className="space-y-2 text-xs text-[#121316] font-medium border-t border-[#F4D7DE] pt-4">
+                        <li className="flex items-center gap-2 font-bold text-[#EF007E]">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Camisa oficial del evento</span>
+                        </li>
+                        <li className="flex items-center gap-2 font-bold text-[#EF007E]">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Cooler conmemorativo</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Pañoleta conmemorativa oficial</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Llavero conmemorativo</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Dorsal oficial (número de competencia)</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Hidratación garantizada en 3 puntos</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Certificado de participación digital</span>
+                        </li>
+                        <li className="flex items-center gap-2">
+                          <Check className="h-4 w-4 text-[#EF007E] shrink-0 stroke-[2.5]" />
+                          <span>Obsequios por parte de patrocinantes</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                    {/* Selector de Talla de Camisa si se selecciona Kit Premium */}
+                    {selectedKit === "premium" && (
+                      <div className="mt-5 p-4 rounded-2xl bg-white border border-[#F8BFDC] shadow-sm animate-in fade-in-50 duration-200">
+                        <Label className="text-xs font-bold text-[#121316] flex items-center gap-1.5 mb-2">
+                          <Shirt className="h-4 w-4 text-[#EF007E]" />
+                          <span>Selecciona la Talla de tu Camisa Oficial *</span>
+                        </Label>
+
+                        <div className="grid grid-cols-5 gap-2">
+                          {SHIRT_SIZES.map((size) => (
+                            <button
+                              key={size}
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setValue("shirt_size", size, { shouldValidate: true })
+                              }}
+                              className={`py-2 text-xs font-black rounded-xl border transition-all cursor-pointer ${
+                                selectedShirtSize === size
+                                  ? "bg-[#EF007E] text-white border-[#EF007E] shadow-sm shadow-[#EF007E]/30 scale-105"
+                                  : "bg-[#FAF7F8] text-[#121316] border-[#F4D7DE] hover:border-[#EF007E]"
+                              }`}
+                            >
+                              {size}
+                            </button>
+                          ))}
+                        </div>
+
+                        {errors.shirt_size && (
+                          <p className="text-xs font-semibold text-red-500 mt-2">
+                            {errors.shirt_size.message}
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Botón Siguiente a Datos */}
+                <div className="pt-4 flex flex-col sm:flex-row justify-end w-full">
+                  <Button
+                    type="button"
+                    variant="sport"
+                    size="lg"
+                    onClick={handleNextStep}
+                    className="w-full sm:w-auto shadow-md"
+                  >
+                    <span>Continuar a Datos Personales</span>
+                    <ArrowRight className="ml-1.5 h-4 w-4 shrink-0" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* ============================================================== */}
+            {/* PASO 2: DATOS PERSONALES */}
+            {/* ============================================================== */}
+            {activeStep === 2 && (
+              <div className="space-y-5 animate-in fade-in-50 duration-300">
+                <div className="border-b border-[#F4D7DE] pb-3 mb-4 flex items-center justify-between">
+                  <div>
+                    <h3 className="font-sport uppercase text-2xl font-black text-[#121316]">
+                      Paso 2: Datos del Participante
+                    </h3>
+                    <p className="text-xs text-[#525866]">
+                      Ingresa tus nombres y apellidos tal como aparecen en tu documento de identidad.
+                    </p>
+                  </div>
+                  <Badge variant="pink" className="text-[11px] font-bold">
+                    {selectedKit === "premium" ? "Kit Premium ($15)" : "Kit Básico ($10)"}
+                  </Badge>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -426,39 +721,38 @@ export const RegistrationSection = () => {
                   </div>
                 </div>
 
-                {/* Cédula con selector V / E */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-3">
-                  <div className="sm:col-span-3 space-y-1.5">
-                    <Label htmlFor="cedula_prefix">Nacionalidad *</Label>
-                    <select
-                      id="cedula_prefix"
-                      {...register("cedula_prefix")}
-                      className="flex h-12 w-full rounded-2xl border border-[#F8BFDC] bg-white px-3 py-2 text-sm text-[#121316] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF007E]"
-                    >
-                      <option value="V">V - Venezolano</option>
-                      <option value="E">E - Extranjero</option>
-                    </select>
-                  </div>
+                {/* Cédula y Fecha de Nacimiento */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Cédula con selector V / E */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="cedula_number">Cédula de Identidad *</Label>
+                    <div className="flex gap-2">
+                      <select
+                        {...register("cedula_prefix")}
+                        className="w-16 rounded-2xl border border-[#F8BFDC] bg-[#FAF7F8] px-3 py-2.5 text-sm font-bold text-[#121316] focus:border-[#EF007E] focus:outline-none"
+                      >
+                        <option value="V">V-</option>
+                        <option value="E">E-</option>
+                      </select>
 
-                  <div className="sm:col-span-9 space-y-1.5">
-                    <Label htmlFor="cedula_number">Número de Cédula *</Label>
-                    <Input
-                      id="cedula_number"
-                      placeholder="Ej. 18456789"
-                      type="text"
-                      inputMode="numeric"
-                      {...register("cedula_number")}
-                    />
+                      <div className="relative flex-1">
+                        <Input
+                          id="cedula_number"
+                          placeholder="12345678"
+                          type="tel"
+                          maxLength={9}
+                          {...register("cedula_number")}
+                        />
+                      </div>
+                    </div>
                     {errors.cedula_number && (
                       <p className="text-xs font-medium text-red-500">
                         {errors.cedula_number.message}
                       </p>
                     )}
                   </div>
-                </div>
 
-                {/* Fecha de Nacimiento */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {/* Fecha de Nacimiento */}
                   <div className="space-y-1.5">
                     <Label htmlFor="birth_date">Fecha de Nacimiento *</Label>
                     <div className="relative">
@@ -475,10 +769,13 @@ export const RegistrationSection = () => {
                       </p>
                     )}
                   </div>
+                </div>
 
+                {/* Teléfono y Correo */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Teléfono */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="phone">Teléfono Móvil (WhatsApp) *</Label>
+                    <Label htmlFor="phone">Teléfono Personal (WhatsApp) *</Label>
                     <div className="relative">
                       <Input
                         id="phone"
@@ -488,38 +785,51 @@ export const RegistrationSection = () => {
                       />
                       <Phone className="absolute right-3.5 top-3.5 h-5 w-5 text-[#9CA3AF]" />
                     </div>
+                    <p className="text-[11px] text-[#6B7280]">
+                      Para enviarte la confirmación y avisos de la entrega del kit.
+                    </p>
                     {errors.phone && (
                       <p className="text-xs font-medium text-red-500">
                         {errors.phone.message}
                       </p>
                     )}
                   </div>
-                </div>
 
-                {/* Correo Electrónico */}
-                <div className="space-y-1.5">
-                  <Label htmlFor="email">Correo Electrónico *</Label>
-                  <div className="relative">
-                    <Input
-                      id="email"
-                      placeholder="ejemplo@correo.com"
-                      type="email"
-                      {...register("email")}
-                    />
-                    <Mail className="absolute right-3.5 top-3.5 h-5 w-5 text-[#9CA3AF]" />
-                  </div>
-                  <p className="text-[11px] text-[#6B7280]">
-                    A esta dirección te enviaremos tu confirmación y tu número asignado (dorsal).
-                  </p>
-                  {errors.email && (
-                    <p className="text-xs font-medium text-red-500">
-                      {errors.email.message}
+                  {/* Correo Electrónico */}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="email">Correo Electrónico *</Label>
+                    <div className="relative">
+                      <Input
+                        id="email"
+                        placeholder="ejemplo@correo.com"
+                        type="email"
+                        {...register("email")}
+                      />
+                      <Mail className="absolute right-3.5 top-3.5 h-5 w-5 text-[#9CA3AF]" />
+                    </div>
+                    <p className="text-[11px] text-[#6B7280]">
+                      A esta dirección te enviaremos tu número asignado (dorsal).
                     </p>
-                  )}
+                    {errors.email && (
+                      <p className="text-xs font-medium text-red-500">
+                        {errors.email.message}
+                      </p>
+                    )}
+                  </div>
                 </div>
 
-                {/* Botón Siguiente */}
-                <div className="pt-4 flex flex-col sm:flex-row justify-end w-full">
+                {/* Botones de navegación */}
+                <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={handlePrevStep}
+                    className="w-full sm:w-auto"
+                  >
+                    <ArrowLeft className="mr-1.5 h-4 w-4" />
+                    <span>Volver a Selección de Kit</span>
+                  </Button>
+
                   <Button
                     type="button"
                     variant="sport"
@@ -527,21 +837,22 @@ export const RegistrationSection = () => {
                     onClick={handleNextStep}
                     className="w-full sm:w-auto shadow-md"
                   >
-                    <span className="hidden sm:inline">Continuar a Contacto de Emergencia</span>
-                    <span className="sm:hidden">Siguiente: Contacto de Emergencia</span>
+                    <span>Continuar a Contacto de Emergencia</span>
                     <ArrowRight className="ml-1.5 h-4 w-4 shrink-0" />
                   </Button>
                 </div>
               </div>
             )}
 
-            {/* STEP 2: CONTACTO DE EMERGENCIA */}
-            {activeStep === 2 && (
+            {/* ============================================================== */}
+            {/* PASO 3: CONTACTO DE EMERGENCIA */}
+            {/* ============================================================== */}
+            {activeStep === 3 && (
               <div className="space-y-5 animate-in fade-in-50 duration-300">
                 <div className="border-b border-[#F4D7DE] pb-3 mb-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-sport uppercase text-2xl font-black text-[#121316]">
-                      Paso 2: Contacto de Emergencia
+                      Paso 3: Contacto de Emergencia & Salud
                     </h3>
                     <TooltipProvider>
                       <Tooltip>
@@ -567,7 +878,7 @@ export const RegistrationSection = () => {
                   </p>
                 </div>
 
-                {/* Banner de aclaración exigido en el requerimiento */}
+                {/* Banner de aclaratoria */}
                 <div className="rounded-2xl border border-[#F8BFDC] bg-[#FDF0F6] p-4 flex items-start gap-3">
                   <ShieldCheck className="h-5 w-5 text-[#EF007E] shrink-0 mt-0.5" />
                   <div>
@@ -585,19 +896,7 @@ export const RegistrationSection = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {/* Nombre persona de emergencia */}
                   <div className="space-y-1.5">
-                    <div className="flex items-center gap-1.5">
-                      <Label htmlFor="emergency_contact_name">Nombre de Contacto *</Label>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger asChild>
-                            <HelpCircle className="h-3.5 w-3.5 text-[#9CA3AF] cursor-help" />
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            Preferiblemente que no esté participando en el evento
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
+                    <Label htmlFor="emergency_contact_name">Nombre de Contacto *</Label>
                     <div className="relative">
                       <Input
                         id="emergency_contact_name"
@@ -633,9 +932,9 @@ export const RegistrationSection = () => {
                   </div>
                 </div>
 
-                {/* Checkbox Aceptación de Aptitud Física */}
+                {/* Checkbox Aceptación de términos y aptitud física */}
                 <div className="pt-2">
-                  <div className="flex items-start gap-3 rounded-2xl bg-[#FAF7F8] p-4 border border-[#F8BFDC]">
+                  <div className="rounded-2xl border border-[#F8BFDC] bg-[#FAF7F8] p-4 flex items-start gap-3">
                     <Controller
                       name="accept_terms"
                       control={control}
@@ -645,32 +944,36 @@ export const RegistrationSection = () => {
                           type="checkbox"
                           checked={field.value}
                           onChange={(e) => field.onChange(e.target.checked)}
-                          className="mt-1 h-4 w-4 rounded border-[#F8BFDC] text-[#EF007E] focus:ring-[#EF007E]"
+                          className="mt-1 h-5 w-5 rounded border-[#F8BFDC] text-[#EF007E] focus:ring-[#EF007E] cursor-pointer"
                         />
                       )}
                     />
-                    <label htmlFor="accept_terms" className="text-xs text-[#525866] leading-relaxed cursor-pointer select-none">
-                      Certifico que gozo de buena salud y aptitud física para participar en la Caminata 5K recreativa.
-                      Autorizo al comité organizador de Dream Home a coordinar asistencia médica en caso de requerirse.
+                    <label
+                      htmlFor="accept_terms"
+                      className="text-xs text-[#121316] leading-relaxed cursor-pointer"
+                    >
+                      Certifico que me encuentro en condiciones físicas y de salud aptas para participar en la Caminata 5K «Camina y Renace con Dream Home 2026», y acepto el reglamento de convivencia del evento.
                     </label>
                   </div>
                   {errors.accept_terms && (
-                    <p className="text-xs font-medium text-red-500 mt-1.5">
+                    <p className="text-xs font-medium text-red-500 mt-1 pl-1">
                       {errors.accept_terms.message}
                     </p>
                   )}
                 </div>
 
-                {/* Botones Navegación */}
+                {/* Botones de navegación */}
                 <div className="pt-4 flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
                   <Button
                     type="button"
                     variant="ghost"
                     onClick={handlePrevStep}
-                    className="w-full sm:w-auto justify-center"
+                    className="w-full sm:w-auto"
                   >
-                    ← Volver a Datos
+                    <ArrowLeft className="mr-1.5 h-4 w-4" />
+                    <span>Volver a Datos Personales</span>
                   </Button>
+
                   <Button
                     type="button"
                     variant="sport"
@@ -678,27 +981,59 @@ export const RegistrationSection = () => {
                     onClick={handleNextStep}
                     className="w-full sm:w-auto shadow-md"
                   >
-                    <span className="hidden sm:inline">Ir a Datos de Pago y Comprobante</span>
-                    <span className="sm:hidden">Siguiente: Pago y Capture</span>
+                    <span>Continuar al Pago y Comprobante</span>
                     <ArrowRight className="ml-1.5 h-4 w-4 shrink-0" />
                   </Button>
                 </div>
               </div>
             )}
 
-            {/* STEP 3: PAGO Y COMPROBANTE DE CAPTURE */}
-            {activeStep === 3 && (
+            {/* ============================================================== */}
+            {/* PASO 4: PAGO & COMPROBANTE */}
+            {/* ============================================================== */}
+            {activeStep === 4 && (
               <div className="space-y-6 animate-in fade-in-50 duration-300">
                 <div className="border-b border-[#F4D7DE] pb-3 mb-4">
                   <h3 className="font-sport uppercase text-2xl font-black text-[#121316]">
-                    Paso 3: Verificación de Pago & Capture
+                    Paso 4: Verificación de Pago & Capture
                   </h3>
                   <p className="text-xs text-[#525866]">
-                    Realiza tu pago móvil o transferencia y sube la captura para validar tu cupo y asignarte tu dorsal oficial.
+                    Realiza tu pago móvil, ingresa el número de referencia y adjunta la captura para validar tu cupo y asignarte tu dorsal oficial.
                   </p>
                 </div>
 
-                {/* Card de Datos Bancarios Oficiales */}
+                {/* Resumen del Kit seleccionado */}
+                <div className="rounded-2xl bg-gradient-to-r from-[#FDF0F6] to-[#E8FAFD] border border-[#F8BFDC] p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-white text-[#EF007E] border border-[#F8BFDC] flex items-center justify-center">
+                      <ShoppingBag className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#525866]">
+                        Modalidad seleccionada
+                      </span>
+                      <h4 className="font-sport uppercase text-lg font-black text-[#121316]">
+                        {selectedKit === "premium" ? "Kit Premium 5K" : "Kit Básico 5K"}
+                        {selectedKit === "premium" && selectedShirtSize && (
+                          <span className="ml-1.5 text-xs text-[#EF007E]">
+                            (Talla {selectedShirtSize})
+                          </span>
+                        )}
+                      </h4>
+                    </div>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#525866] block">
+                      Total a Pagar
+                    </span>
+                    <span className="font-sport text-2xl sm:text-3xl font-black text-[#EF007E]">
+                      {selectedKit === "premium" ? "$15" : "$10"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Card de Datos Bancarios Oficiales de Dream Home */}
                 <div className="rounded-3xl bg-gradient-to-br from-[#E8FAFD]/60 via-white to-[#FDF0F6]/60 text-[#121316] p-6 shadow-md relative overflow-hidden border-2 border-[#AEEAF7]">
                   <div className="absolute right-0 top-0 w-48 h-48 bg-[#EF007E]/10 rounded-full blur-2xl pointer-events-none" />
 
@@ -710,7 +1045,7 @@ export const RegistrationSection = () => {
                       </span>
                     </div>
                     <Badge variant="celeste" className="text-[11px] font-bold bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7]">
-                      Kit Benéfico 5K
+                      Tasa Oficial BCV
                     </Badge>
                   </div>
 
@@ -718,14 +1053,14 @@ export const RegistrationSection = () => {
                     <div>
                       <span className="block text-[#6B7280] font-medium">Banco Receptor:</span>
                       <strong className="text-sm font-black text-[#121316]">
-                        Banesco (0134) / Banco Mercantil (0105)
+                        Banesco (0134)
                       </strong>
                     </div>
 
                     <div>
-                      <span className="block text-[#6B7280] font-medium">Cédula / RIF:</span>
+                      <span className="block text-[#6B7280] font-medium">Cédula:</span>
                       <strong className="text-sm font-black text-[#121316]">
-                        J-50123456-7
+                        17.965.340
                       </strong>
                     </div>
 
@@ -739,16 +1074,16 @@ export const RegistrationSection = () => {
                     <div>
                       <span className="block text-[#6B7280] font-medium">Beneficiario:</span>
                       <strong className="text-sm font-black text-[#121316]">
-                        Inmobiliaria Dream Home Venezuela C.A.
+                        Inmobiliaria Dream Home Venezuela
                       </strong>
                     </div>
                   </div>
 
                   <div className="mt-5 pt-4 border-t border-[#F4D7DE] flex flex-wrap items-center justify-between gap-3">
                     <div className="text-xs">
-                      <span className="text-[#6B7280]">Aporte Benéfico: </span>
+                      <span className="text-[#6B7280]">Inversión Oficial: </span>
                       <strong className="text-[#121316] font-extrabold">
-                        Ref. $10 / Tasa oficial BCV
+                        {selectedKit === "premium" ? "Ref. $15" : "Ref. $10"} / Tasa oficial BCV
                       </strong>
                     </div>
 
@@ -774,6 +1109,29 @@ export const RegistrationSection = () => {
                   </div>
                 </div>
 
+                {/* Campo: Número de Referencia de Pago */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="payment_reference" className="text-xs font-bold text-[#121316] flex items-center gap-1.5">
+                    <Hash className="h-4 w-4 text-[#EF007E]" />
+                    <span>Número de Referencia de Pago Móvil o Transferencia *</span>
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="payment_reference"
+                      placeholder="Ej. 489201 (los dígitos de tu confirmación)"
+                      {...register("payment_reference")}
+                    />
+                  </div>
+                  <p className="text-[11px] text-[#6B7280]">
+                    Indica los números de confirmación emitidos por tu banco para validar tu transferencia.
+                  </p>
+                  {errors.payment_reference && (
+                    <p className="text-xs font-medium text-red-500">
+                      {errors.payment_reference.message}
+                    </p>
+                  )}
+                </div>
+
                 {/* File Upload Box (Drag and Drop / File Input) */}
                 <div className="space-y-2">
                   <Label htmlFor={fileInputId} className="text-sm font-bold text-[#121316]">
@@ -797,6 +1155,7 @@ export const RegistrationSection = () => {
                         className="hidden"
                         onChange={handleFileChange}
                       />
+
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow-sm border border-[#F8BFDC] text-[#EF007E] mb-3">
                         <Upload className="h-6 w-6" />
                       </div>
@@ -862,19 +1221,20 @@ export const RegistrationSection = () => {
                     disabled={isSubmitting}
                     className="w-full sm:w-auto justify-center"
                   >
-                    ← Volver a Contacto
+                    <ArrowLeft className="mr-1.5 h-4 w-4" />
+                    <span>Volver a Contacto</span>
                   </Button>
 
                   <Button
                     type="submit"
                     variant="sport"
-                    size="lg"
+                    size="xl"
                     disabled={isSubmitting}
-                    className="w-full sm:w-auto shadow-xl"
+                    className="w-full sm:w-auto shadow-xl shadow-[#EF007E]/25 text-sm sm:text-base font-black px-6 sm:px-8 py-3.5 sm:py-4"
                   >
                     {isSubmitting ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin shrink-0" />
+                        <span className="animate-spin mr-2">◌</span>
                         <span>Procesando Inscripción...</span>
                       </>
                     ) : (
@@ -891,7 +1251,7 @@ export const RegistrationSection = () => {
         </div>
       </div>
 
-      {/* DIALOG MODAL DE ÉXITO INTERACTIVO (Requerido en las instrucciones) */}
+      {/* DIALOG MODAL DE ÉXITO */}
       <Dialog open={successModalOpen} onOpenChange={setSuccessModalOpen}>
         <DialogContent className="max-w-lg text-center p-6 sm:p-8">
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#FDF0F6] text-[#EF007E] mb-2 shadow-inner">
@@ -907,10 +1267,9 @@ export const RegistrationSection = () => {
             </DialogDescription>
           </DialogHeader>
 
-          {/* Mensaje de éxito exacto especificado en el requerimiento */}
           <div className="my-4 rounded-2xl bg-[#FDF0F6] border border-[#F8BFDC] p-4 text-center">
             <p className="text-sm font-extrabold text-[#EF007E] leading-relaxed">
-              «¡Inscripción recibida! Una vez comprobado tu pago, enviaremos tu número asignado para la carrera a tu correo.»
+              «¡Inscripción recibida! Una vez comprobado tu pago, enviaremos tu número asignado para la carrera a tu correo y WhatsApp.»
             </p>
           </div>
 
@@ -927,8 +1286,16 @@ export const RegistrationSection = () => {
                 <strong className="text-[#121316]">{registeredData.cedula}</strong>
               </div>
               <div className="flex justify-between border-b border-[#F8BFDC] pb-2">
-                <span className="text-[#6B7280]">Correo:</span>
-                <strong className="text-[#121316]">{registeredData.email}</strong>
+                <span className="text-[#6B7280]">Modalidad Kit:</span>
+                <strong className="text-[#EF007E] font-bold">
+                  {registeredData.kit_type === "premium"
+                    ? `Kit Premium ($15)${registeredData.shirt_size ? ` - Talla ${registeredData.shirt_size}` : ""}`
+                    : "Kit Básico ($10)"}
+                </strong>
+              </div>
+              <div className="flex justify-between border-b border-[#F8BFDC] pb-2">
+                <span className="text-[#6B7280]">Ref. Bancaria:</span>
+                <strong className="text-[#121316] font-mono">{registeredData.payment_reference}</strong>
               </div>
               <div className="flex justify-between items-center pt-1">
                 <span className="text-[#6B7280]">Estado:</span>
