@@ -24,6 +24,12 @@ import {
   ShoppingBag,
   Shirt,
   Sparkles,
+  FileDown,
+  FileText,
+  Paperclip,
+  Share2,
+  Loader2,
+  Send,
 } from "lucide-react"
 import {
   getRegistrations,
@@ -32,6 +38,10 @@ import {
   formatBibNumber,
   type RegistrationRecord,
 } from "@/lib/supabase"
+import {
+  downloadTicketPdf,
+  generateTicketPdfFile,
+} from "@/lib/generateTicketPdf"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 
@@ -63,6 +73,11 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
   // Feedback de copiado al portapapeles
   const [copiedId, setCopiedId] = useState<string | null>(null)
+
+  // Estados para descarga y envío de PDF
+  const [isPdfLoading, setIsPdfLoading] = useState(false)
+  const [pdfSuccessMessage, setPdfSuccessMessage] = useState<string | null>(null)
+  const [whatsAppGuideActive, setWhatsAppGuideActive] = useState(false)
 
   // Carga de registros
   const handleFetchRecords = useCallback(async () => {
@@ -126,6 +141,89 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     setTimeout(() => setCopiedId(null), 2000)
   }
 
+  // Descargar Comprobante PDF oficial
+  const handleDownloadRecordPdf = async (record: RegistrationRecord, bib: number | string) => {
+    try {
+      setIsPdfLoading(true)
+      const filename = await downloadTicketPdf({ record, bib })
+      setPdfSuccessMessage(`Comprobante descargado: ${filename}`)
+      setTimeout(() => setPdfSuccessMessage(null), 6000)
+    } catch (err) {
+      console.error("Error al descargar PDF:", err)
+      alert("No se pudo generar el comprobante PDF. Por favor intenta nuevamente.")
+    } finally {
+      setIsPdfLoading(false)
+    }
+  }
+
+  // Enviar PDF y mensaje oficial por WhatsApp
+  const handleSendPdfWhatsApp = async (record: RegistrationRecord, bib: number | string) => {
+    try {
+      setIsPdfLoading(true)
+      const bibStr = formatBibNumber(bib)
+      const kitStr =
+        record.kit_type === "premium"
+          ? `Kit Premium${record.shirt_size ? ` (Talla ${record.shirt_size})` : ""}`
+          : "Kit Básico"
+
+      const messageText =
+        `¡Hola ${record.first_name}! 👋 Te saluda el equipo de Inmobiliaria Dream Home.\n\n` +
+        `🎉 ¡Tu inscripción para la Caminata 5K 'Camina y Renace con Dream Home 2026' ha sido APROBADA con éxito!\n\n` +
+        `🎽 Número Oficial de Dorsal: #${bibStr}\n` +
+        `📦 Modalidad de Kit: ${kitStr}\n` +
+        `📅 Fecha: Sábado 31 de Octubre de 2026\n` +
+        `⏰ Hora de Convocatoria: 7:00 AM\n` +
+        `📍 Salida: Fórum Charallave, Edo. Miranda\n\n` +
+        `📄 Te adjuntamos tu Comprobante Oficial en formato PDF para que lo tengas a mano y lo presentes al retirar tu kit físico. ¡Nos vemos en la meta!`
+
+      // Generar el archivo PDF
+      const { file, filename } = await generateTicketPdfFile({ record, bib })
+
+      // Verificar si el navegador soporta Web Share API con archivos (Móviles / Tablets / Chrome Android)
+      const nav = navigator as unknown as {
+        canShare?: (data: { files?: File[] }) => boolean
+        share?: (data: { files?: File[]; title?: string; text?: string }) => Promise<void>
+      }
+
+      if (
+        typeof nav.canShare === "function" &&
+        nav.canShare({ files: [file] }) &&
+        typeof nav.share === "function"
+      ) {
+        try {
+          await nav.share({
+            files: [file],
+            title: `Comprobante Dorsal #${bibStr} - ${record.first_name}`,
+            text: messageText,
+          })
+          setPdfSuccessMessage(`¡Comprobante compartido exitosamente!`)
+          return
+        } catch (shareErr: unknown) {
+          if (shareErr instanceof Error && shareErr.name === "AbortError") {
+            return
+          }
+        }
+      }
+
+      // Si no soporta Web Share directo de archivos (como WhatsApp Web en computadora):
+      // 1. Descargar el archivo PDF automáticamente
+      await downloadTicketPdf({ record, bib })
+
+      // 2. Abrir WhatsApp Web con el mensaje pre-cargado
+      const waLink = formatWhatsAppLink(record.phone, messageText)
+      window.open(waLink, "_blank")
+
+      // 3. Activar guía interactiva en el modal
+      setWhatsAppGuideActive(true)
+      setPdfSuccessMessage(`Se descargó "${filename}". Adjúntalo en el chat de WhatsApp que se acaba de abrir.`)
+    } catch (err) {
+      console.error("Error al procesar envío por WhatsApp:", err)
+      alert("Ocurrió un error al preparar el PDF. Puedes descargarlo con el botón de descarga.")
+    } finally {
+      setIsPdfLoading(false)
+    }
+  }
+
   // Actualizar estado de registro
   const handleStatusChange = async (
     record: RegistrationRecord,
@@ -171,6 +269,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
     // Si fue aprobado con dorsal, mostrar el modal de Cliente Confirmado
     if (newStatus === "approved" && bib) {
+      setPdfSuccessMessage(null)
+      setWhatsAppGuideActive(false)
       setConfirmedData({
         record: updatedRecord,
         bib,
@@ -842,6 +942,16 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                             >
                               <Eye className="h-4 w-4" />
                             </button>
+
+                            {record.status === "approved" && record.bib_number && (
+                              <button
+                                onClick={() => handleDownloadRecordPdf(record, record.bib_number!)}
+                                title={`Descargar Comprobante PDF Oficial (Dorsal #${formatBibNumber(record.bib_number)})`}
+                                className="p-2 rounded-xl bg-[#FDF0F6] text-[#EF007E] hover:bg-[#EF007E] hover:text-white border border-[#F8BFDC] transition-colors cursor-pointer"
+                              >
+                                <FileDown className="h-4 w-4" />
+                              </button>
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -1066,6 +1176,23 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
 
                 {/* Botones de acción del Modal */}
                 <div className="pt-3 border-t border-[#F4D7DE] space-y-2">
+                  {inspectRecord.status === "approved" && inspectRecord.bib_number && (
+                    <Button
+                      variant="outline"
+                      type="button"
+                      onClick={() => handleDownloadRecordPdf(inspectRecord, inspectRecord.bib_number!)}
+                      disabled={isPdfLoading}
+                      className="w-full border-[#F8BFDC] hover:bg-[#FDF0F6] text-[#EF007E] font-bold text-xs py-2.5 rounded-xl gap-2 cursor-pointer shadow-sm"
+                    >
+                      {isPdfLoading ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <FileDown className="h-4 w-4" />
+                      )}
+                      <span>Descargar Comprobante PDF (Dorsal #{formatBibNumber(inspectRecord.bib_number)})</span>
+                    </Button>
+                  )}
+
                   <Button
                     onClick={() => {
                       const bibNum = customBib
@@ -1159,31 +1286,71 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               </span>
             </div>
 
-            {/* Acciones: Notificar por WhatsApp o Cerrar */}
-            <div className="space-y-2">
+            {/* Mensajes de estado / Feedback de generación de PDF */}
+            {pdfSuccessMessage && (
+              <div className="my-3 rounded-2xl bg-emerald-50 border border-emerald-200 p-3 text-xs text-emerald-800 font-bold flex items-center gap-2 text-left animate-in fade-in-0">
+                <CheckCircle className="h-4 w-4 text-emerald-600 shrink-0" />
+                <span className="flex-1 leading-snug">{pdfSuccessMessage}</span>
+              </div>
+            )}
+
+            {/* Guía de instrucciones para adjuntar en WhatsApp Web / Desktop */}
+            {whatsAppGuideActive && (
+              <div className="my-3 rounded-2xl bg-[#E8FAFD] border border-[#AEEAF7] p-3.5 text-xs text-[#072430] text-left space-y-1.5 animate-in fade-in-0 shadow-sm">
+                <div className="flex items-center gap-1.5 font-bold text-[#0E8EA8]">
+                  <Paperclip className="h-4 w-4 shrink-0" />
+                  <span>Comprobante descargado listo para adjuntar:</span>
+                </div>
+                <p className="text-[11px] text-[#525866] leading-relaxed">
+                  1. El chat de WhatsApp ya está abierto en otra pestaña con el mensaje oficial redactado.<br />
+                  2. El archivo PDF oficial se descargó en tu equipo.<br />
+                  3. En el chat de WhatsApp de tu cliente, haz clic en el icono de <strong>clip (📎 Documento)</strong> y selecciona el archivo PDF para enviárselo.
+                </p>
+              </div>
+            )}
+
+            {/* Acciones: Enviar por WhatsApp con PDF, Descargar PDF o Cerrar */}
+            <div className="space-y-2.5 mt-4">
               {confirmedData.record.phone && (
-                <a
-                  href={formatWhatsAppLink(
-                    confirmedData.record.phone,
-                    `¡Hola ${confirmedData.record.first_name}! 👋 De parte de Inmobiliaria Dream Home te confirmamos que tu pago para la Caminata 5K 'Camina y Renace con Dream Home 2026' ha sido VALIDADO con éxito. 🎽 Tu Kit registrado es: ${
-                      confirmedData.record.kit_type === "premium"
-                        ? `Kit Premium${confirmedData.record.shirt_size ? ` (Talla ${confirmedData.record.shirt_size})` : ""}`
-                        : "Kit Básico"
-                    } y tu número de dorsal oficial asignado es el #${formatBibNumber(confirmedData.bib)}. ¡Nos vemos este sábado 31 de octubre a las 7:00 am en Fórum Charallave!`
-                  )}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 shadow-md shadow-emerald-600/20 transition-all cursor-pointer"
+                <button
+                  type="button"
+                  onClick={() => handleSendPdfWhatsApp(confirmedData.record, confirmedData.bib)}
+                  disabled={isPdfLoading}
+                  className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3.5 shadow-md shadow-emerald-600/25 transition-all cursor-pointer disabled:opacity-70"
                 >
-                  <MessageCircle className="h-4 w-4" />
-                  <span>Notificar Dorsal por WhatsApp</span>
-                </a>
+                  {isPdfLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Send className="h-4 w-4" />
+                  )}
+                  <span>Enviar PDF por WhatsApp al Cliente</span>
+                </button>
               )}
 
               <Button
                 variant="outline"
-                onClick={() => setConfirmedData(null)}
-                className="w-full border-[#F4D7DE] hover:bg-[#FAF7F8] text-[#525866] text-xs font-bold py-2.5 rounded-xl cursor-pointer"
+                type="button"
+                onClick={() => handleDownloadRecordPdf(confirmedData.record, confirmedData.bib)}
+                disabled={isPdfLoading}
+                className="w-full border-[#F8BFDC] hover:border-[#EF007E] hover:bg-[#FDF0F6] text-[#EF007E] text-xs font-bold py-2.5 rounded-xl gap-2 cursor-pointer shadow-sm disabled:opacity-70"
+              >
+                {isPdfLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <FileDown className="h-4 w-4" />
+                )}
+                <span>Descargar Comprobante PDF Oficial</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => {
+                  setConfirmedData(null)
+                  setPdfSuccessMessage(null)
+                  setWhatsAppGuideActive(false)
+                }}
+                className="w-full text-[#6B7280] hover:text-[#121316] text-xs font-semibold py-2 rounded-xl cursor-pointer"
               >
                 Cerrar Ventana
               </Button>
