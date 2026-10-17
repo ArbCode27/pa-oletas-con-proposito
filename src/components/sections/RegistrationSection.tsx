@@ -49,6 +49,75 @@ import { uploadPaymentProof, submitRegistration, type RegistrationRecord } from 
 
 const SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"] as const
 
+interface DateParseResult {
+  valid: boolean
+  error?: string
+  date?: Date
+}
+
+// Validación estricta de fecha de nacimiento en formato DD/MM/AAAA
+const parseBirthDate = (val: string): DateParseResult => {
+  if (!val || val.trim().length === 0) {
+    return { valid: false, error: "Ingresa tu fecha de nacimiento" }
+  }
+
+  // Comprobar formato DD/MM/AAAA
+  const match = val.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (!match) {
+    return { valid: false, error: "Usa el formato DD/MM/AAAA (ej. 15/06/1995)" }
+  }
+
+  const day = parseInt(match[1], 10)
+  const month = parseInt(match[2], 10)
+  const year = parseInt(match[3], 10)
+
+  if (month < 1 || month > 12) {
+    return { valid: false, error: "El mes debe estar entre 01 y 12" }
+  }
+
+  if (day < 1 || day > 31) {
+    return { valid: false, error: "El día no es válido" }
+  }
+
+  const currentYear = new Date().getFullYear()
+  if (year < 1920) {
+    return { valid: false, error: "El año debe ser mayor a 1920" }
+  }
+
+  if (year > currentYear) {
+    return { valid: false, error: "El año no puede ser en el futuro" }
+  }
+
+  // Validar consistencia de días por mes y años bisiestos
+  const candidate = new Date(year, month - 1, day)
+  if (
+    candidate.getFullYear() !== year ||
+    candidate.getMonth() !== month - 1 ||
+    candidate.getDate() !== day
+  ) {
+    return { valid: false, error: "La fecha ingresada no existe en el calendario" }
+  }
+
+  // Validar que la fecha sea en el pasado
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  if (candidate >= today) {
+    return { valid: false, error: "La fecha de nacimiento debe ser anterior a hoy" }
+  }
+
+  return { valid: true, date: candidate }
+}
+
+// Convertir DD/MM/AAAA a formato ISO YYYY-MM-DD para almacenamiento en Supabase
+const formatBirthDateToISO = (dateStr: string): string => {
+  const match = dateStr.trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+  if (match) {
+    const [, day, month, year] = match
+    return `${year}-${month}-${day}`
+  }
+  return dateStr
+}
+
 const registrationSchema = z
   .object({
     kit_type: z.enum(["basico", "premium"]),
@@ -65,12 +134,18 @@ const registrationSchema = z
     cedula_number: z
       .string()
       .regex(/^\d{6,9}$/, "Ingresa una cédula válida de 6 a 9 dígitos"),
-    birth_date: z.string().refine((val) => {
-      if (!val) return false
-      const date = new Date(val)
-      const today = new Date()
-      return date < today && date.getFullYear() > 1920
-    }, "Ingresa una fecha de nacimiento válida"),
+    birth_date: z
+      .string()
+      .min(1, "Ingresa tu fecha de nacimiento")
+      .superRefine((val, ctx) => {
+        const result = parseBirthDate(val)
+        if (!result.valid) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: result.error || "Fecha de nacimiento no válida",
+          })
+        }
+      }),
     phone: z
       .string()
       .min(10, "Ingresa un número telefónico válido (ej. 04141234567)")
@@ -147,6 +222,25 @@ export const RegistrationSection = () => {
 
   const selectedKit = watch("kit_type")
   const selectedShirtSize = watch("shirt_size")
+  const birthDateValue = watch("birth_date") || ""
+
+  // Manejo de escritura y máscara automática DD/MM/AAAA (sin desplegar calendario)
+  const handleBirthDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const raw = e.target.value
+    // Extraer solo dígitos y limitar a un máximo de 8 números
+    const digits = raw.replace(/\D/g, "").slice(0, 8)
+    let formatted = digits
+    if (digits.length > 4) {
+      formatted = `${digits.slice(0, 2)}/${digits.slice(2, 4)}/${digits.slice(4)}`
+    } else if (digits.length > 2) {
+      formatted = `${digits.slice(0, 2)}/${digits.slice(2)}`
+    }
+    setValue("birth_date", formatted, { shouldValidate: false, shouldDirty: true })
+  }
+
+  const handleBirthDateBlur = () => {
+    trigger("birth_date")
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0]
@@ -284,7 +378,7 @@ export const RegistrationSection = () => {
         first_name: values.first_name.trim(),
         last_name: values.last_name.trim(),
         cedula: formattedCedula,
-        birth_date: values.birth_date,
+        birth_date: formatBirthDateToISO(values.birth_date),
         phone: values.phone.trim(),
         email: values.email.trim().toLowerCase(),
         emergency_contact_name: values.emergency_contact_name.trim(),
@@ -754,14 +848,26 @@ export const RegistrationSection = () => {
 
                   {/* Fecha de Nacimiento */}
                   <div className="space-y-1.5">
-                    <Label htmlFor="birth_date">Fecha de Nacimiento *</Label>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="birth_date">Fecha de Nacimiento *</Label>
+                      <span className="text-[11px] font-semibold text-[#8B93A0]">
+                        DD/MM/AAAA
+                      </span>
+                    </div>
                     <div className="relative">
                       <Input
                         id="birth_date"
-                        type="date"
-                        {...register("birth_date")}
+                        type="text"
+                        inputMode="numeric"
+                        placeholder="DD/MM/AAAA (ej. 15/06/1995)"
+                        maxLength={10}
+                        value={birthDateValue}
+                        onChange={handleBirthDateChange}
+                        onBlur={handleBirthDateBlur}
+                        className="font-mono text-sm tracking-wide bg-white"
+                        autoComplete="bday"
                       />
-                      <Calendar className="absolute right-3.5 top-3.5 h-5 w-5 text-[#9CA3AF] pointer-events-none" />
+                      <Calendar className="absolute right-3.5 top-3.5 h-4 w-4 text-[#9CA3AF] pointer-events-none" />
                     </div>
                     {errors.birth_date && (
                       <p className="text-xs font-medium text-red-500">
