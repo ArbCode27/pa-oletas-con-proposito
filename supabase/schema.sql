@@ -93,6 +93,7 @@ create policy "Permitir lectura de comprobantes de pago"
 
 -- ==============================================================================
 -- Comentario informativo sobre la asignación del bib_number:
--- El número de corredor (bib_number) inicia en 101 y puede ser asignado
--- automáticamente cuando el estatus cambia a 'approved'.
+-- El número de corredor (bib_number) se asigna en orden estricto de aprobación,
+-- iniciando en 01 (entero 1, formateado como '01') e incrementándose a medida
+-- que se van aprobando los pagos por el administrador.
 -- ==============================================================================

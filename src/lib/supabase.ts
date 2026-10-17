@@ -21,6 +21,17 @@ export interface RegistrationRecord {
   notes?: string | null
 }
 
+/**
+ * Formatea el número de dorsal para mostrarlo con dos dígitos mínimos
+ * según el orden de aprobación (ej. 1 -> "01", 9 -> "09", 10 -> "10")
+ */
+export const formatBibNumber = (bib: number | string | null | undefined): string => {
+  if (bib === null || bib === undefined || bib === "") return ""
+  const num = typeof bib === "string" ? parseInt(bib, 10) : bib
+  if (isNaN(num)) return String(bib)
+  return num < 10 && num >= 0 ? `0${num}` : String(num)
+}
+
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ""
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ""
 
@@ -35,7 +46,7 @@ export const supabase = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null
 
-const STORAGE_KEY = "dream_home_registrations_demo_v2"
+const STORAGE_KEY = "dream_home_registrations_demo_v3"
 
 // Semilla inicial de demostración cuando no hay Supabase configurado
 const INITIAL_DEMO_RECORDS: RegistrationRecord[] = [
@@ -76,8 +87,8 @@ const INITIAL_DEMO_RECORDS: RegistrationRecord[] = [
     payment_amount: 15,
     payment_proof_url: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=800&q=80",
     status: "approved",
-    bib_number: 101,
-    notes: "Comprobante verificado. Kit Premium Talla L. Dorsal #101.",
+    bib_number: 1,
+    notes: "Comprobante verificado. Kit Premium Talla L. Dorsal #01.",
   },
   {
     id: "demo-003",

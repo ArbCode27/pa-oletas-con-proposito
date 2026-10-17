@@ -29,6 +29,7 @@ import {
   getRegistrations,
   updateRegistrationStatus,
   isSupabaseConfigured,
+  formatBibNumber,
   type RegistrationRecord,
 } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
@@ -75,13 +76,13 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     handleFetchRecords()
   }, [handleFetchRecords])
 
-  // Próximo número de dorsal disponible (inicia en 101)
+  // Próximo número de dorsal disponible (asignado en orden estricto de aprobación, inicia en 1 -> 01)
   const nextAvailableBib = useMemo(() => {
     const usedBibs = records
       .map((r) => r.bib_number)
-      .filter((b): b is number => typeof b === "number" && !isNaN(b))
+      .filter((b): b is number => typeof b === "number" && !isNaN(b) && b > 0)
 
-    if (usedBibs.length === 0) return 101
+    if (usedBibs.length === 0) return 1
     return Math.max(...usedBibs) + 1
   }, [records])
 
@@ -105,7 +106,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     setZoomLevel(1)
     setRotationAngle(0)
     setAdminNotes(record.notes || "")
-    setCustomBib(record.bib_number ? String(record.bib_number) : String(nextAvailableBib))
+    setCustomBib(
+      record.bib_number ? formatBibNumber(record.bib_number) : formatBibNumber(nextAvailableBib)
+    )
   }
 
   const handleCloseInspect = () => {
@@ -133,7 +136,11 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     if (!record.id) return
 
     setActionLoading(true)
-    const bib = newStatus === "approved" ? (assignedBib ?? nextAvailableBib) : null
+    // El dorsal se asigna por orden de aprobación: empieza en 01 y se incrementa
+    const bib =
+      newStatus === "approved"
+        ? (assignedBib ?? record.bib_number ?? nextAvailableBib)
+        : null
 
     const { error, data: updated } = await updateRegistrationStatus(
       record.id,
@@ -213,7 +220,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       `"${r.emergency_contact_name.replace(/"/g, '""')}"`,
       `"${r.emergency_contact_phone}"`,
       r.status || "pending",
-      r.bib_number || "",
+      r.bib_number ? `#${formatBibNumber(r.bib_number)}` : "",
       `"${(r.notes || "").replace(/"/g, '""')}"`,
       `"${r.payment_proof_url}"`,
     ])
@@ -234,6 +241,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const filteredAndSortedRecords = useMemo(() => {
     let result = records.filter((r) => {
       const q = searchQuery.toLowerCase().trim()
+      const bibFormatted = r.bib_number ? formatBibNumber(r.bib_number) : ""
       const matchesSearch =
         !q ||
         `${r.first_name} ${r.last_name}`.toLowerCase().includes(q) ||
@@ -241,7 +249,8 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
         r.phone.toLowerCase().includes(q) ||
         r.email.toLowerCase().includes(q) ||
         (r.payment_reference || "").toLowerCase().includes(q) ||
-        String(r.bib_number || "").includes(q)
+        String(r.bib_number || "").includes(q) ||
+        bibFormatted.includes(q)
 
       const matchesStatus = statusFilter === "all" || r.status === statusFilter
       const matchesKit = kitFilter === "all" || r.kit_type === kitFilter
@@ -520,7 +529,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 <option value="date_desc">Más recientes primero</option>
                 <option value="date_asc">Más antiguos primero</option>
                 <option value="name">Por nombre (A-Z)</option>
-                <option value="bib">Por número dorsal</option>
+                <option value="bib">Por dorsal (Orden de aprobación)</option>
               </select>
             </div>
           </div>
@@ -659,7 +668,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                         <td className="p-4 whitespace-nowrap">
                           {record.bib_number ? (
                             <span className="inline-flex items-center justify-center font-sport font-black text-sm px-2.5 py-1 rounded-xl bg-gradient-to-r from-[#2FC7EA] to-[#0E8EA8] text-white shadow-sm shadow-[#2FC7EA]/20">
-                              #{record.bib_number}
+                              #{formatBibNumber(record.bib_number)}
                             </span>
                           ) : (
                             <span className="text-[11px] text-[#9CA3AF] italic">Sin dorsal</span>
@@ -809,7 +818,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                             {record.status !== "approved" && (
                               <button
                                 onClick={() => handleStatusChange(record, "approved")}
-                                title="Aprobar pago y asignar siguiente dorsal"
+                                title={`Aprobar pago y asignar siguiente dorsal (#${formatBibNumber(record.bib_number ?? nextAvailableBib)})`}
                                 className="p-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white border border-emerald-200 transition-colors cursor-pointer"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -1021,15 +1030,21 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                     <label className="text-xs font-bold text-[#121316] flex items-center justify-between">
                       <span className="flex items-center gap-1">
                         <Hash className="h-3.5 w-3.5 text-[#2FC7EA]" />
-                        Número Dorsal Asignado:
+                        Número Dorsal (Orden de Aprobación):
                       </span>
-                      <span className="text-[11px] text-[#6B7280]">Sugerido: #{nextAvailableBib}</span>
+                      <span className="text-[11px] text-[#6B7280]">
+                        Siguiente disponible: #{formatBibNumber(nextAvailableBib)}
+                      </span>
                     </label>
                     <input
-                      type="number"
+                      type="text"
+                      inputMode="numeric"
                       value={customBib}
-                      onChange={(e) => setCustomBib(e.target.value)}
-                      placeholder="Ej. 101"
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, "")
+                        setCustomBib(val)
+                      }}
+                      placeholder={`Ej. ${formatBibNumber(nextAvailableBib)}`}
                       className="w-full px-3.5 py-2 text-sm bg-white border border-[#AEEAF7] rounded-xl font-sport font-black text-lg text-[#0E8EA8] focus:outline-none focus:border-[#2FC7EA]"
                     />
                   </div>
@@ -1053,14 +1068,18 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 <div className="pt-3 border-t border-[#F4D7DE] space-y-2">
                   <Button
                     onClick={() => {
-                      const bibNum = customBib ? parseInt(customBib, 10) : nextAvailableBib
+                      const bibNum = customBib
+                        ? parseInt(customBib, 10)
+                        : (inspectRecord.bib_number ?? nextAvailableBib)
                       handleStatusChange(inspectRecord, "approved", bibNum, adminNotes)
                     }}
                     disabled={actionLoading}
                     className="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-3 rounded-xl gap-2 shadow-md shadow-emerald-600/20"
                   >
                     <CheckCircle className="h-4 w-4" />
-                    <span>Aprobar Pago y Asignar Dorsal #{customBib || nextAvailableBib}</span>
+                    <span>
+                      Aprobar Pago y Asignar Dorsal #{formatBibNumber(customBib || inspectRecord.bib_number || nextAvailableBib)}
+                    </span>
                   </Button>
 
                   <div className="grid grid-cols-2 gap-2">
@@ -1128,7 +1147,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 Número Oficial de Participante
               </span>
               <div className="font-sport text-5xl sm:text-6xl font-black text-[#EF007E] leading-none mt-1">
-                #{confirmedData.bib}
+                #{formatBibNumber(confirmedData.bib)}
               </div>
               <span className="text-xs font-bold text-[#121316] block mt-1.5">
                 {confirmedData.record.kit_type === "premium"
@@ -1150,7 +1169,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                       confirmedData.record.kit_type === "premium"
                         ? `Kit Premium${confirmedData.record.shirt_size ? ` (Talla ${confirmedData.record.shirt_size})` : ""}`
                         : "Kit Básico"
-                    } y tu número de dorsal oficial asignado es el #${confirmedData.bib}. ¡Nos vemos este sábado 31 de octubre a las 7:00 am en Fórum Charallave!`
+                    } y tu número de dorsal oficial asignado es el #${formatBibNumber(confirmedData.bib)}. ¡Nos vemos este sábado 31 de octubre a las 7:00 am en Fórum Charallave!`
                   )}
                   target="_blank"
                   rel="noreferrer"
