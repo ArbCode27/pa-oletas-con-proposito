@@ -65,7 +65,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [customBib, setCustomBib] = useState<string>("")
   const [actionLoading, setActionLoading] = useState(false)
 
-  // Modal de "Cliente Confirmado" con Número de Participante
+  // Modal de "Participante Confirmado" con Número de Participante
   const [confirmedData, setConfirmedData] = useState<{
     record: RegistrationRecord
     bib: number
@@ -101,7 +101,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     return Math.max(...usedBibs) + 1
   }, [records])
 
-  // Disparar confeti al confirmar cliente
+  // Disparar confeti al confirmar participante
   const fireSuccessConfetti = () => {
     try {
       confetti({
@@ -267,7 +267,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       handleCloseInspect()
     }
 
-    // Si fue aprobado con dorsal, mostrar el modal de Cliente Confirmado
+    // Si fue aprobado con dorsal, mostrar el modal de Participante Confirmado
     if (newStatus === "approved" && bib) {
       setPdfSuccessMessage(null)
       setWhatsAppGuideActive(false)
@@ -1238,7 +1238,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       )}
 
       {/* ============================================================== */}
-      {/* MODAL 2: CLIENTE CONFIRMADO & NOTIFICACIÓN DORSAL */}
+      {/* MODAL 2: PARTICIPANTE CONFIRMADO & NOTIFICACIÓN DORSAL */}
       {/* ============================================================== */}
       {confirmedData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-200">
@@ -1257,7 +1257,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
             </span>
 
             <h3 className="font-sport uppercase text-3xl font-black text-[#121316] mt-2 leading-none">
-              ¡CLIENTE CONFIRMADO!
+              ¡PARTICIPANTE CONFIRMADO!
             </h3>
 
             <p className="text-xs text-[#525866] mt-1.5">
@@ -1304,7 +1304,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 <p className="text-[11px] text-[#525866] leading-relaxed">
                   1. El chat de WhatsApp ya está abierto en otra pestaña con el mensaje oficial redactado.<br />
                   2. El archivo PDF oficial se descargó en tu equipo.<br />
-                  3. En el chat de WhatsApp de tu cliente, haz clic en el icono de <strong>clip (📎 Documento)</strong> y selecciona el archivo PDF para enviárselo.
+                  3. En el chat de WhatsApp del participante, haz clic en el icono de <strong>clip (📎 Documento)</strong> y selecciona el archivo PDF para enviárselo.
                 </p>
               </div>
             )}
@@ -1323,7 +1323,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
-                  <span>Enviar PDF por WhatsApp al Cliente</span>
+                  <span>Enviar PDF por WhatsApp al Participante</span>
                 </button>
               )}
 
