@@ -320,6 +320,52 @@ export const updateRegistrationStatus = async (
   }
 }
 
+/**
+ * Actualiza la información completa o parcial de una inscripción
+ */
+export const updateRegistration = async (
+  id: string,
+  updatedData: Partial<RegistrationRecord>
+): Promise<{ data: RegistrationRecord | null; error: string | null; isDemoMode: boolean }> => {
+  if (!isSupabaseConfigured || !supabase) {
+    await new Promise((resolve) => setTimeout(resolve, 300))
+    const current = getLocalDemoRecords()
+    let updatedRecord: RegistrationRecord | null = null
+
+    const updated = current.map((item) => {
+      if (item.id === id) {
+        updatedRecord = {
+          ...item,
+          ...updatedData,
+        }
+        return updatedRecord
+      }
+      return item
+    })
+
+    saveLocalDemoRecords(updated)
+    return { data: updatedRecord, error: null, isDemoMode: true }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("registrations")
+      .update(updatedData)
+      .eq("id", id)
+      .select()
+      .single()
+
+    if (error) {
+      return { data: null, error: error.message, isDemoMode: false }
+    }
+
+    return { data: data as RegistrationRecord, error: null, isDemoMode: false }
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Error al actualizar inscripción"
+    return { data: null, error: message, isDemoMode: false }
+  }
+}
+
 export const deleteRegistration = async (
   id: string
 ): Promise<{ error: string | null; isDemoMode: boolean }> => {

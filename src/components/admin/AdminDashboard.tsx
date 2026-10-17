@@ -30,10 +30,17 @@ import {
   Share2,
   Loader2,
   Send,
+  Pencil,
+  Trash2,
+  AlertTriangle,
+  Save,
+  User,
 } from "lucide-react"
 import {
   getRegistrations,
   updateRegistrationStatus,
+  updateRegistration,
+  deleteRegistration,
   isSupabaseConfigured,
   formatBibNumber,
   type RegistrationRecord,
@@ -78,6 +85,15 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   const [isPdfLoading, setIsPdfLoading] = useState(false)
   const [pdfSuccessMessage, setPdfSuccessMessage] = useState<string | null>(null)
   const [whatsAppGuideActive, setWhatsAppGuideActive] = useState(false)
+
+  // Estados para modal de edición de información
+  const [editRecord, setEditRecord] = useState<RegistrationRecord | null>(null)
+  const [editFormData, setEditFormData] = useState<Partial<RegistrationRecord>>({})
+  const [isEditSaving, setIsEditSaving] = useState(false)
+
+  // Estados para modal de confirmación de eliminación
+  const [recordToDelete, setRecordToDelete] = useState<RegistrationRecord | null>(null)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   // Carga de registros
   const handleFetchRecords = useCallback(async () => {
@@ -226,6 +242,78 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     } finally {
       setIsPdfLoading(false)
     }
+  }
+
+  // Abrir modal de edición
+  const handleOpenEdit = (record: RegistrationRecord) => {
+    setEditRecord(record)
+    setEditFormData({
+      first_name: record.first_name,
+      last_name: record.last_name,
+      cedula: record.cedula,
+      birth_date: record.birth_date,
+      phone: record.phone,
+      email: record.email,
+      emergency_contact_name: record.emergency_contact_name,
+      emergency_contact_phone: record.emergency_contact_phone,
+      kit_type: record.kit_type,
+      shirt_size: record.shirt_size,
+      payment_reference: record.payment_reference,
+      payment_amount: record.payment_amount,
+      status: record.status,
+      bib_number: record.bib_number,
+      notes: record.notes,
+    })
+  }
+
+  const handleCloseEdit = () => {
+    setEditRecord(null)
+    setEditFormData({})
+  }
+
+  // Guardar cambios de edición
+  const handleSaveEdit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editRecord?.id) return
+
+    setIsEditSaving(true)
+    const { data: updated, error } = await updateRegistration(editRecord.id, editFormData)
+    setIsEditSaving(false)
+
+    if (error) {
+      alert(`Error al guardar los cambios: ${error}`)
+      return
+    }
+
+    const savedRecord = updated || { ...editRecord, ...editFormData }
+    setRecords((prev) => prev.map((item) => (item.id === editRecord.id ? savedRecord : item)))
+    handleCloseEdit()
+  }
+
+  // Abrir modal de eliminación
+  const handleOpenDelete = (record: RegistrationRecord) => {
+    setRecordToDelete(record)
+  }
+
+  const handleCloseDelete = () => {
+    setRecordToDelete(null)
+  }
+
+  // Confirmar eliminación de la petición
+  const handleConfirmDelete = async () => {
+    if (!recordToDelete?.id) return
+
+    setIsDeleting(true)
+    const { error } = await deleteRegistration(recordToDelete.id)
+    setIsDeleting(false)
+
+    if (error) {
+      alert(`Error al eliminar la petición: ${error}`)
+      return
+    }
+
+    setRecords((prev) => prev.filter((item) => item.id !== recordToDelete.id))
+    handleCloseDelete()
   }
 
   // Actualizar estado de registro
@@ -956,6 +1044,22 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                                 <FileDown className="h-4 w-4" />
                               </button>
                             )}
+
+                            <button
+                              onClick={() => handleOpenEdit(record)}
+                              title="Editar información de la inscripción"
+                              className="p-2 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-200 transition-colors cursor-pointer"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+
+                            <button
+                              onClick={() => handleOpenDelete(record)}
+                              title="Eliminar petición de inscripción"
+                              className="p-2 rounded-xl bg-red-50 text-red-600 hover:bg-red-600 hover:text-white border border-red-200 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           </div>
                         </td>
                       </tr>
@@ -1357,6 +1461,438 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 className="w-full text-[#6B7280] hover:text-[#121316] text-xs font-semibold py-2 rounded-xl cursor-pointer"
               >
                 Cerrar Ventana
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL 3: EDITAR INFORMACIÓN DE LA INSCRIPCIÓN */}
+      {/* ============================================================== */}
+      {editRecord && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-200">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-[#F8BFDC] overflow-hidden">
+            {/* Cabecera del modal */}
+            <div className="flex items-center justify-between p-5 border-b border-[#F4D7DE] bg-gradient-to-r from-white via-[#FAF7F8] to-[#FDF0F6]">
+              <div className="flex items-center gap-3">
+                <div className="h-9 w-9 rounded-full bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 font-bold">
+                  <Pencil className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-[#121316]">
+                    Editar Información del Participante
+                  </h3>
+                  <span className="text-xs text-[#525866]">
+                    {editRecord.first_name} {editRecord.last_name} • {editRecord.cedula}
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={handleCloseEdit}
+                className="h-8 w-8 rounded-full bg-[#FAF7F8] hover:bg-[#FDF0F6] text-[#6B7280] hover:text-[#121316] flex items-center justify-center transition-colors font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Formulario de edición */}
+            <form onSubmit={handleSaveEdit} className="flex-1 overflow-y-auto p-6 space-y-4">
+              {/* Sección 1: Datos Personales */}
+              <div>
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#0E8EA8] mb-3 flex items-center gap-1.5">
+                  <User className="h-3.5 w-3.5" />
+                  <span>Datos Personales</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Nombres *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.first_name || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, first_name: e.target.value }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Apellidos *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.last_name || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, last_name: e.target.value }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Cédula de Identidad *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editFormData.cedula || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, cedula: e.target.value }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl font-mono focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Fecha de Nacimiento
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.birth_date || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, birth_date: e.target.value }))
+                      }
+                      placeholder="YYYY-MM-DD o DD/MM/AAAA"
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Teléfono Personal (WhatsApp) *
+                    </label>
+                    <input
+                      type="tel"
+                      required
+                      value={editFormData.phone || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, phone: e.target.value }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Correo Electrónico *
+                    </label>
+                    <input
+                      type="email"
+                      required
+                      value={editFormData.email || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, email: e.target.value }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección 2: Contacto de Emergencia */}
+              <div className="pt-2 border-t border-[#F4D7DE]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#EF007E] mb-3 flex items-center gap-1.5">
+                  <Phone className="h-3.5 w-3.5" />
+                  <span>Contacto de Emergencia</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Nombre del Contacto
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.emergency_contact_name || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          emergency_contact_name: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Teléfono de Emergencia
+                    </label>
+                    <input
+                      type="tel"
+                      value={editFormData.emergency_contact_phone || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          emergency_contact_phone: e.target.value,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección 3: Modalidad de Kit y Pago */}
+              <div className="pt-2 border-t border-[#F4D7DE]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#0E8EA8] mb-3 flex items-center gap-1.5">
+                  <ShoppingBag className="h-3.5 w-3.5" />
+                  <span>Modalidad de Kit y Pago</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Tipo de Kit *
+                    </label>
+                    <select
+                      value={editFormData.kit_type || "basico"}
+                      onChange={(e) => {
+                        const newKit = e.target.value as "basico" | "premium"
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          kit_type: newKit,
+                          payment_amount: newKit === "premium" ? 15 : 10,
+                          shirt_size: newKit === "basico" ? null : prev.shirt_size || "M",
+                        }))
+                      }}
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#AEEAF7] rounded-xl font-bold focus:outline-none focus:border-[#2FC7EA]"
+                    >
+                      <option value="basico">Kit Básico ($10)</option>
+                      <option value="premium">Kit Premium ($15)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Talla de Camisa
+                    </label>
+                    <select
+                      value={editFormData.shirt_size || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          shirt_size: e.target.value || null,
+                        }))
+                      }
+                      disabled={editFormData.kit_type !== "premium"}
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#AEEAF7] rounded-xl font-bold focus:outline-none focus:border-[#2FC7EA] disabled:opacity-50"
+                    >
+                      <option value="">(No aplica / Sin talla)</option>
+                      <option value="S">Talla S</option>
+                      <option value="M">Talla M</option>
+                      <option value="L">Talla L</option>
+                      <option value="XL">Talla XL</option>
+                      <option value="XXL">Talla XXL</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Monto Registrado ($)
+                    </label>
+                    <input
+                      type="number"
+                      step="any"
+                      value={editFormData.payment_amount ?? 10}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          payment_amount: parseFloat(e.target.value) || 0,
+                        }))
+                      }
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#AEEAF7] rounded-xl font-bold focus:outline-none focus:border-[#2FC7EA]"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Número de Referencia Bancaria
+                    </label>
+                    <input
+                      type="text"
+                      value={editFormData.payment_reference || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          payment_reference: e.target.value,
+                        }))
+                      }
+                      placeholder="Ej. 489201"
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl font-mono focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Sección 4: Estado y Dorsal */}
+              <div className="pt-2 border-t border-[#F4D7DE]">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-[#EF007E] mb-3 flex items-center gap-1.5">
+                  <Hash className="h-3.5 w-3.5" />
+                  <span>Estado y Asignación de Dorsal</span>
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Estado de la Inscripción *
+                    </label>
+                    <select
+                      value={editFormData.status || "pending"}
+                      onChange={(e) => {
+                        const newStatus = e.target.value as "pending" | "approved" | "rejected"
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          status: newStatus,
+                          bib_number:
+                            newStatus === "approved"
+                              ? prev.bib_number || nextAvailableBib
+                              : null,
+                        }))
+                      }}
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl font-bold focus:outline-none focus:border-[#EF007E]"
+                    >
+                      <option value="pending">Pendiente (Por validar)</option>
+                      <option value="approved">Aprobado (Validado)</option>
+                      <option value="rejected">Rechazado</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Número de Dorsal Oficial
+                    </label>
+                    <input
+                      type="number"
+                      value={editFormData.bib_number ?? ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({
+                          ...prev,
+                          bib_number: e.target.value ? parseInt(e.target.value, 10) : null,
+                        }))
+                      }
+                      placeholder="Ej. 1, 2, 10..."
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#AEEAF7] rounded-xl font-sport font-black text-sm text-[#0E8EA8] focus:outline-none focus:border-[#2FC7EA]"
+                    />
+                    <span className="text-[10px] text-[#6B7280]">
+                      Se visualizará como #{formatBibNumber(editFormData.bib_number)}
+                    </span>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-bold text-[#121316] block mb-1">
+                      Notas / Observaciones Internas
+                    </label>
+                    <textarea
+                      rows={2}
+                      value={editFormData.notes || ""}
+                      onChange={(e) =>
+                        setEditFormData((prev) => ({ ...prev, notes: e.target.value }))
+                      }
+                      placeholder="Notas del administrador..."
+                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#F8BFDC] rounded-xl focus:outline-none focus:border-[#EF007E]"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Botones de acción */}
+              <div className="pt-4 border-t border-[#F4D7DE] flex items-center justify-end gap-2.5">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCloseEdit}
+                  disabled={isEditSaving}
+                  className="text-xs font-bold py-2.5 px-4 rounded-xl cursor-pointer"
+                >
+                  Cancelar
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={isEditSaving}
+                  className="bg-[#EF007E] hover:bg-[#C9006A] text-white text-xs font-bold py-2.5 px-5 rounded-xl gap-1.5 shadow-md shadow-[#EF007E]/20 cursor-pointer disabled:opacity-70"
+                >
+                  {isEditSaving ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4" />
+                  )}
+                  <span>Guardar Cambios</span>
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL 4: CONFIRMAR ELIMINACIÓN DE REGISTRO */}
+      {/* ============================================================== */}
+      {recordToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-200">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border-2 border-red-200 relative overflow-hidden animate-in zoom-in-95 duration-200 text-center">
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 text-red-600 mb-4 shadow-inner">
+              <Trash2 className="h-7 w-7" />
+            </div>
+
+            <span className="text-[11px] uppercase tracking-widest font-black text-red-700 bg-red-50 px-3 py-1 rounded-full border border-red-200">
+              Confirmar Eliminación
+            </span>
+
+            <h3 className="font-sport uppercase text-2xl font-black text-[#121316] mt-2.5 leading-none">
+              ¿ELIMINAR ESTA PETICIÓN?
+            </h3>
+
+            <p className="text-xs text-[#525866] mt-2 leading-relaxed">
+              Estás a punto de eliminar permanentemente la petición de inscripción de{" "}
+              <strong className="text-[#121316] font-bold">
+                {recordToDelete.first_name} {recordToDelete.last_name}
+              </strong>{" "}
+              (Cédula: <strong>{recordToDelete.cedula}</strong>).
+            </p>
+
+            {recordToDelete.bib_number && (
+              <div className="my-3 p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[11px] text-amber-900 font-medium">
+                ⚠️ Este participante tenía asignado el dorsal{" "}
+                <strong className="font-bold">#{formatBibNumber(recordToDelete.bib_number)}</strong>. Al eliminarlo, este dorsal quedará liberado.
+              </div>
+            )}
+
+            <p className="text-[11px] text-red-600 font-bold mb-4">
+              Esta acción no se puede deshacer.
+            </p>
+
+            <div className="space-y-2">
+              <Button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="w-full bg-red-600 hover:bg-red-700 text-white font-bold text-xs py-3 rounded-xl gap-2 shadow-md shadow-red-600/20 cursor-pointer disabled:opacity-70"
+              >
+                {isDeleting ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash2 className="h-4 w-4" />
+                )}
+                <span>Sí, Eliminar Permanentemente</span>
+              </Button>
+
+              <Button
+                variant="outline"
+                type="button"
+                onClick={handleCloseDelete}
+                disabled={isDeleting}
+                className="w-full border-[#F4D7DE] hover:bg-[#FAF7F8] text-[#525866] text-xs font-bold py-2.5 rounded-xl cursor-pointer"
+              >
+                Cancelar
               </Button>
             </div>
           </div>
