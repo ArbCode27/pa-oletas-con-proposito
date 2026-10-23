@@ -9,7 +9,7 @@ interface SponsorItem {
 }
 
 const SPONSORS: SponsorItem[] = [
-  { id: 1, name: "Dream Home", logo: "/sponsors/dream-home.png" },
+  { id: 1, name: "Dream Home Cúa - Urdaneta", logo: "/sponsors/dream-home-cua.png" },
   { id: 2, name: "Cuchitur@s", logo: "/sponsors/cuchituras.jpg" },
   { id: 3, name: "slash", logo: "/sponsors/slash.png" },
   { id: 4, name: "Pacheco, Marcano & Asociados", logo: "/sponsors/pacheco-marcano.jpg" },
