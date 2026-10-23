@@ -15,7 +15,7 @@ const SPONSORS: SponsorItem[] = [
   { id: 4, name: "Pacheco, Marcano & Asociados", logo: "/sponsors/pacheco-marcano.jpg" },
   { id: 5, name: "Hospital Clinic Venezuela", logo: "/sponsors/hospital-clinic.png" },
   { id: 6, name: "Norte", logo: "/sponsors/norte.png" },
-  { id: 7, name: "Fibocreativo", logo: "/sponsors/fibocreativo.png" },
+  { id: 7, name: "FTB Creativo", logo: "/sponsors/ftb-creativo.jpg" },
   {
     id: 8,
     name: "Tecnológico Antonio José de Sucre — Ampliación Charallave",
