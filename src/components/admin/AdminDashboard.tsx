@@ -22,7 +22,6 @@ import {
   AlertCircle,
   FileSpreadsheet,
   ShoppingBag,
-  Shirt,
   Sparkles,
   FileDown,
   FileText,
@@ -177,10 +176,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     try {
       setIsPdfLoading(true)
       const bibStr = formatBibNumber(bib)
-      const kitStr =
-        record.kit_type === "premium"
-          ? `Kit Premium${record.shirt_size ? ` (Talla ${record.shirt_size})` : ""}`
-          : "Kit Básico"
+      const kitStr = record.kit_type === "premium" ? "Kit Premium" : "Kit Básico"
 
       const messageText =
         `¡Hola ${record.first_name}! 👋 Te saluda el equipo de Inmobiliaria Dream Home.\n\n` +
@@ -379,7 +375,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       "ID",
       "Fecha Registro",
       "Modalidad Kit",
-      "Talla Camisa",
       "Inversión $",
       "Ref. Bancaria",
       "Nombres",
@@ -400,7 +395,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
       r.id || "",
       r.created_at ? new Date(r.created_at).toLocaleString("es-VE") : "",
       r.kit_type === "premium" ? "Kit Premium" : "Kit Básico",
-      r.shirt_size || "N/A",
       r.payment_amount || (r.kit_type === "premium" ? 15 : 10),
       `"${r.payment_reference || ""}"`,
       `"${r.first_name.replace(/"/g, '""')}"`,
@@ -897,16 +891,9 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                         {/* Modalidad Kit */}
                         <td className="p-4 whitespace-nowrap">
                           {record.kit_type === "premium" ? (
-                            <div className="space-y-0.5">
-                              <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FDF0F6] text-[#EF007E] border border-[#F8BFDC]">
-                                <Sparkles className="h-3 w-3" /> Kit Premium ($15)
-                              </span>
-                              {record.shirt_size && (
-                                <span className="block text-[10px] font-bold text-[#525866] pl-1">
-                                  Talla Camisa: <strong className="text-[#121316]">{record.shirt_size}</strong>
-                                </span>
-                              )}
-                            </div>
+                            <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#FDF0F6] text-[#EF007E] border border-[#F8BFDC]">
+                              <Sparkles className="h-3 w-3" /> Kit Premium ($15)
+                            </span>
                           ) : (
                             <span className="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-[#E8FAFD] text-[#0E8EA8] border border-[#AEEAF7]">
                               Kit Básico ($10)
@@ -1093,7 +1080,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                     <span>•</span>
                     <span className="font-bold text-[#EF007E]">
                       {inspectRecord.kit_type === "premium"
-                        ? `Kit Premium ($15)${inspectRecord.shirt_size ? ` - Talla ${inspectRecord.shirt_size}` : ""}`
+                        ? "Kit Premium ($15)"
                         : "Kit Básico ($10)"}
                     </span>
                   </div>
@@ -1188,13 +1175,6 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                         {inspectRecord.kit_type === "premium" ? "Kit Premium ($15)" : "Kit Básico ($10)"}
                       </strong>
                     </div>
-
-                    {inspectRecord.shirt_size && (
-                      <div className="flex justify-between border-b border-[#F4D7DE] pb-1.5">
-                        <span className="text-[#6B7280]">Talla Camisa:</span>
-                        <strong className="text-[#121316] font-bold">{inspectRecord.shirt_size}</strong>
-                      </div>
-                    )}
 
                     <div className="flex justify-between border-b border-[#F4D7DE] pb-1.5">
                       <span className="text-[#6B7280]">Ref. Bancaria:</span>
@@ -1386,7 +1366,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               </div>
               <span className="text-xs font-bold text-[#121316] block mt-1.5">
                 {confirmedData.record.kit_type === "premium"
-                  ? `Kit Premium ($15)${confirmedData.record.shirt_size ? ` • Talla ${confirmedData.record.shirt_size}` : ""}`
+                  ? "Kit Premium ($15)"
                   : "Kit Básico ($10)"}
               </span>
               <span className="text-[11px] text-[#525866] font-medium block mt-0.5">
@@ -1648,7 +1628,7 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                   <ShoppingBag className="h-3.5 w-3.5" />
                   <span>Modalidad de Kit y Pago</span>
                 </h4>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className="text-xs font-bold text-[#121316] block mb-1">
                       Tipo de Kit *
@@ -1661,37 +1641,13 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                           ...prev,
                           kit_type: newKit,
                           payment_amount: newKit === "premium" ? 15 : 10,
-                          shirt_size: newKit === "basico" ? null : prev.shirt_size || "M",
+                          shirt_size: null,
                         }))
                       }}
                       className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#AEEAF7] rounded-xl font-bold focus:outline-none focus:border-[#2FC7EA]"
                     >
                       <option value="basico">Kit Básico ($10)</option>
                       <option value="premium">Kit Premium ($15)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="text-xs font-bold text-[#121316] block mb-1">
-                      Talla de Camisa
-                    </label>
-                    <select
-                      value={editFormData.shirt_size || ""}
-                      onChange={(e) =>
-                        setEditFormData((prev) => ({
-                          ...prev,
-                          shirt_size: e.target.value || null,
-                        }))
-                      }
-                      disabled={editFormData.kit_type !== "premium"}
-                      className="w-full px-3 py-2 text-xs bg-[#FAF7F8] border border-[#AEEAF7] rounded-xl font-bold focus:outline-none focus:border-[#2FC7EA] disabled:opacity-50"
-                    >
-                      <option value="">(No aplica / Sin talla)</option>
-                      <option value="S">Talla S</option>
-                      <option value="M">Talla M</option>
-                      <option value="L">Talla L</option>
-                      <option value="XL">Talla XL</option>
-                      <option value="XXL">Talla XXL</option>
                     </select>
                   </div>
 

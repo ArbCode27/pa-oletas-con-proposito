@@ -129,9 +129,7 @@ export const buildTicketPdf = async ({ record, bib }: TicketPdfOptions): Promise
   // Modalidad Kit destacada en el box
   doc.setFontSize(12)
   doc.setTextColor(18, 19, 22)
-  const kitLabel = isPremium
-    ? `KIT PREMIUM ($15)${record.shirt_size ? ` - TALLA ${record.shirt_size}` : ""}`
-    : "KIT BASICO ($10)"
+  const kitLabel = isPremium ? "KIT PREMIUM ($15)" : "KIT BASICO ($10)"
   doc.text(kitLabel, 105, bibBoxY + 40, { align: "center" })
 
   doc.setFont("helvetica", "normal")
@@ -214,7 +212,7 @@ export const buildTicketPdf = async ({ record, bib }: TicketPdfOptions): Promise
 
   if (isPremium) {
     doc.text(
-      `• Camisa Oficial Dry-Fit (Talla ${record.shirt_size || "Asignada"})   • Cooler Conmemorativo Dream Home\n• Pañoleta Oficial Mes Rosa   • Llavero Conmemorativo   • Dorsal Oficial Asignado (#${formattedBib})\n• 3 Puntos de Hidratación   • Certificado Digital   • Obsequios de Patrocinantes`,
+      `• Camisa Oficial Dry-Fit   • Cooler Conmemorativo Dream Home\n• Pañoleta Oficial Mes Rosa   • Llavero Conmemorativo   • Dorsal Oficial Asignado (#${formattedBib})\n• 3 Puntos de Hidratación   • Certificado Digital   • Obsequios de Patrocinantes`,
       24,
       kitInfoY + 13
     )

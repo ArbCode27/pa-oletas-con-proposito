@@ -24,7 +24,6 @@ import {
   Heart,
   Sparkles,
   ShoppingBag,
-  Shirt,
   Hash,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -46,8 +45,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { uploadPaymentProof, submitRegistration, type RegistrationRecord } from "@/lib/supabase"
-
-const SHIRT_SIZES = ["S", "M", "L", "XL", "XXL"] as const
 
 interface DateParseResult {
   valid: boolean
@@ -118,63 +115,52 @@ const formatBirthDateToISO = (dateStr: string): string => {
   return dateStr
 }
 
-const registrationSchema = z
-  .object({
-    kit_type: z.enum(["basico", "premium"]),
-    shirt_size: z.string().optional(),
-    first_name: z
-      .string()
-      .min(2, "El nombre debe tener al menos 2 caracteres")
-      .max(50, "Nombre demasiado largo"),
-    last_name: z
-      .string()
-      .min(2, "El apellido debe tener al menos 2 caracteres")
-      .max(50, "Apellido demasiado largo"),
-    cedula_prefix: z.enum(["V", "E"]),
-    cedula_number: z
-      .string()
-      .regex(/^\d{6,9}$/, "Ingresa una cédula válida de 6 a 9 dígitos"),
-    birth_date: z
-      .string()
-      .min(1, "Ingresa tu fecha de nacimiento")
-      .superRefine((val, ctx) => {
-        const result = parseBirthDate(val)
-        if (!result.valid) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: result.error || "Fecha de nacimiento no válida",
-          })
-        }
-      }),
-    phone: z
-      .string()
-      .min(10, "Ingresa un número telefónico válido (ej. 04141234567)")
-      .max(15, "Número demasiado largo"),
-    email: z.string().email("Ingresa un correo electrónico válido"),
-    emergency_contact_name: z
-      .string()
-      .min(2, "Ingresa el nombre del contacto de emergencia")
-      .max(60, "Nombre demasiado largo"),
-    emergency_contact_phone: z
-      .string()
-      .min(10, "Ingresa un teléfono válido de emergencia"),
-    accept_terms: z
-      .boolean()
-      .refine((val) => val === true, "Debes certificar tu aptitud física para la caminata"),
-    payment_reference: z
-      .string()
-      .min(4, "Ingresa el número de referencia de tu pago (mínimo 4 dígitos)")
-      .max(25, "Referencia demasiado larga"),
-  })
-  .superRefine((data, ctx) => {
-    if (data.kit_type === "premium" && (!data.shirt_size || data.shirt_size.trim() === "")) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        path: ["shirt_size"],
-        message: "Por favor selecciona la talla de tu camisa oficial para el Kit Premium",
-      })
-    }
-  })
+const registrationSchema = z.object({
+  kit_type: z.enum(["basico", "premium"]),
+  first_name: z
+    .string()
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(50, "Nombre demasiado largo"),
+  last_name: z
+    .string()
+    .min(2, "El apellido debe tener al menos 2 caracteres")
+    .max(50, "Apellido demasiado largo"),
+  cedula_prefix: z.enum(["V", "E"]),
+  cedula_number: z
+    .string()
+    .regex(/^\d{6,9}$/, "Ingresa una cédula válida de 6 a 9 dígitos"),
+  birth_date: z
+    .string()
+    .min(1, "Ingresa tu fecha de nacimiento")
+    .superRefine((val, ctx) => {
+      const result = parseBirthDate(val)
+      if (!result.valid) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: result.error || "Fecha de nacimiento no válida",
+        })
+      }
+    }),
+  phone: z
+    .string()
+    .min(10, "Ingresa un número telefónico válido (ej. 04141234567)")
+    .max(15, "Número demasiado largo"),
+  email: z.string().email("Ingresa un correo electrónico válido"),
+  emergency_contact_name: z
+    .string()
+    .min(2, "Ingresa el nombre del contacto de emergencia")
+    .max(60, "Nombre demasiado largo"),
+  emergency_contact_phone: z
+    .string()
+    .min(10, "Ingresa un teléfono válido de emergencia"),
+  accept_terms: z
+    .boolean()
+    .refine((val) => val === true, "Debes certificar tu aptitud física para la caminata"),
+  payment_reference: z
+    .string()
+    .min(4, "Ingresa el número de referencia de tu pago (mínimo 4 dígitos)")
+    .max(25, "Referencia demasiado larga"),
+})
 
 type RegistrationFormValues = z.infer<typeof registrationSchema>
 
@@ -204,7 +190,6 @@ export const RegistrationSection = () => {
     resolver: zodResolver(registrationSchema),
     defaultValues: {
       kit_type: "basico",
-      shirt_size: "",
       first_name: "",
       last_name: "",
       cedula_prefix: "V",
@@ -221,7 +206,6 @@ export const RegistrationSection = () => {
   })
 
   const selectedKit = watch("kit_type")
-  const selectedShirtSize = watch("shirt_size")
   const birthDateValue = watch("birth_date") || ""
 
   // Manejo de escritura y máscara automática DD/MM/AAAA (sin desplegar calendario)
@@ -288,7 +272,7 @@ export const RegistrationSection = () => {
 
   const handleNextStep = async () => {
     if (activeStep === 1) {
-      const step1Valid = await trigger(["kit_type", "shirt_size"])
+      const step1Valid = await trigger(["kit_type"])
       if (step1Valid) {
         setActiveStep(2)
       }
@@ -384,7 +368,7 @@ export const RegistrationSection = () => {
         emergency_contact_name: values.emergency_contact_name.trim(),
         emergency_contact_phone: values.emergency_contact_phone.trim(),
         kit_type: values.kit_type,
-        shirt_size: values.kit_type === "premium" ? values.shirt_size || null : null,
+        shirt_size: null,
         payment_reference: values.payment_reference.trim(),
         payment_amount: amount,
         payment_proof_url: fileUrl,
@@ -704,41 +688,6 @@ export const RegistrationSection = () => {
                       </ul>
                     </div>
 
-                    {/* Selector de Talla de Camisa si se selecciona Kit Premium */}
-                    {selectedKit === "premium" && (
-                      <div className="mt-5 p-4 rounded-2xl bg-white border border-[#F8BFDC] shadow-sm animate-in fade-in-50 duration-200">
-                        <Label className="text-xs font-bold text-[#121316] flex items-center gap-1.5 mb-2">
-                          <Shirt className="h-4 w-4 text-[#EF007E]" />
-                          <span>Selecciona la Talla de tu Camisa Oficial *</span>
-                        </Label>
-
-                        <div className="grid grid-cols-5 gap-2">
-                          {SHIRT_SIZES.map((size) => (
-                            <button
-                              key={size}
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                setValue("shirt_size", size, { shouldValidate: true })
-                              }}
-                              className={`py-2 text-xs font-black rounded-xl border transition-all cursor-pointer ${
-                                selectedShirtSize === size
-                                  ? "bg-[#EF007E] text-white border-[#EF007E] shadow-sm shadow-[#EF007E]/30 scale-105"
-                                  : "bg-[#FAF7F8] text-[#121316] border-[#F4D7DE] hover:border-[#EF007E]"
-                              }`}
-                            >
-                              {size}
-                            </button>
-                          ))}
-                        </div>
-
-                        {errors.shirt_size && (
-                          <p className="text-xs font-semibold text-red-500 mt-2">
-                            {errors.shirt_size.message}
-                          </p>
-                        )}
-                      </div>
-                    )}
                   </div>
                 </div>
 
@@ -1120,11 +1069,6 @@ export const RegistrationSection = () => {
                       </span>
                       <h4 className="font-sport uppercase text-lg font-black text-[#121316]">
                         {selectedKit === "premium" ? "Kit Premium 5K" : "Kit Básico 5K"}
-                        {selectedKit === "premium" && selectedShirtSize && (
-                          <span className="ml-1.5 text-xs text-[#EF007E]">
-                            (Talla {selectedShirtSize})
-                          </span>
-                        )}
                       </h4>
                     </div>
                   </div>
@@ -1395,7 +1339,7 @@ export const RegistrationSection = () => {
                 <span className="text-[#6B7280]">Modalidad Kit:</span>
                 <strong className="text-[#EF007E] font-bold">
                   {registeredData.kit_type === "premium"
-                    ? `Kit Premium ($15)${registeredData.shirt_size ? ` - Talla ${registeredData.shirt_size}` : ""}`
+                    ? "Kit Premium ($15)"
                     : "Kit Básico ($10)"}
                 </strong>
               </div>
