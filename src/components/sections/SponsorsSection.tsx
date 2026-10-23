@@ -4,32 +4,123 @@ import { Button } from "@/components/ui/button"
 
 interface SponsorItem {
   id: number
-  tier: "ORO" | "PLATA" | "DIAMANTE" | "HIDRATACIÓN" | "ALIADO"
   name: string
-  category: string
+  logo: string
+  /** Fondos oscuros: contenedor negro para logos blancos/con fondo negro */
+  darkBg?: boolean
 }
 
-const SPONSORS_ROW_1: SponsorItem[] = [
-  { id: 1, tier: "DIAMANTE", name: "Dream Home", category: "Inmobiliaria Oficial" },
-  { id: 2, tier: "ORO", name: "Dream Home", category: "Valles del Tuy" },
-  { id: 3, tier: "HIDRATACIÓN", name: "Dream Home", category: "Puntos de Hidratación" },
-  { id: 4, tier: "PLATA", name: "Dream Home", category: "Aliado Comercial" },
-  { id: 5, tier: "ALIADO", name: "Dream Home", category: "Charallave Centro" },
-  { id: 6, tier: "ORO", name: "Dream Home", category: "División Inversiones" },
-  { id: 7, tier: "DIAMANTE", name: "Dream Home", category: "Sponsor Principal" },
-  { id: 8, tier: "ALIADO", name: "Dream Home", category: "Comunidad Rosa" },
+const SPONSORS: SponsorItem[] = [
+  { id: 1, name: "Dream Home", logo: "/sponsors/dream-home.png" },
+  { id: 2, name: "Cuchitur@s", logo: "/sponsors/cuchituras.jpg" },
+  { id: 3, name: "slash", logo: "/sponsors/slash.png" },
+  { id: 4, name: "Pacheco, Marcano & Asociados", logo: "/sponsors/pacheco-marcano.jpg" },
+  {
+    id: 5,
+    name: "Tecnológico Antonio José de Sucre — Ampliación Charallave",
+    logo: "/sponsors/uts-charallave.png",
+    darkBg: true,
+  },
+  { id: 6, name: "Hospital Clinic Venezuela", logo: "/sponsors/hospital-clinic.png" },
+  {
+    id: 7,
+    name: "Canaima Discoteca",
+    logo: "/sponsors/canaima-discoteca.png",
+    darkBg: true,
+  },
+  {
+    id: 8,
+    name: "Valles del Tuy Impresa",
+    logo: "/sponsors/valles-del-tuy-impresa.png",
+    darkBg: true,
+  },
+  {
+    id: 9,
+    name: "Norte",
+    logo: "/sponsors/norte.png",
+    darkBg: true,
+  },
+  { id: 10, name: "CIAR Group", logo: "/sponsors/ciar-group.png" },
+  { id: 11, name: "MediCare+", logo: "/sponsors/medicare.png" },
 ]
 
-const SPONSORS_ROW_2: SponsorItem[] = [
-  { id: 9, tier: "ORO", name: "Dream Home", category: "Bienes Raíces" },
-  { id: 10, tier: "ALIADO", name: "Dream Home", category: "Desarrollo Social" },
-  { id: 11, tier: "DIAMANTE", name: "Dream Home", category: "Líder Inmobiliario" },
-  { id: 12, tier: "HIDRATACIÓN", name: "Dream Home", category: "Salud Integral" },
-  { id: 13, tier: "PLATA", name: "Dream Home", category: "Patrocinante Oficial" },
-  { id: 14, tier: "ORO", name: "Dream Home", category: "Miranda & Tuy" },
-  { id: 15, tier: "ALIADO", name: "Dream Home", category: "Campaña Rosa" },
-  { id: 16, tier: "PLATA", name: "Dream Home", category: "Compromiso Social" },
-]
+/** Misma lista en ambas filas; la segunda va invertida para variar el ritmo visual */
+const SPONSORS_ROW_1 = SPONSORS
+const SPONSORS_ROW_2 = [...SPONSORS].reverse()
+
+/** 3 copias idénticas → el CSS desplaza exactamente 1/3 sin salto ni hueco */
+const MARQUEE_COPIES = [0, 1, 2] as const
+
+const SponsorLogoCard = ({
+  sponsor,
+  accent,
+}: {
+  sponsor: SponsorItem
+  accent: "celeste" | "fucsia"
+}) => {
+  const borderClass =
+    accent === "celeste"
+      ? "border-[#AEEAF7] hover:border-[#2FC7EA]"
+      : "border-[#F8BFDC] hover:border-[#EF007E]"
+
+  return (
+    <div
+      className={`flex-shrink-0 w-44 sm:w-52 h-28 sm:h-32 rounded-2xl border bg-white/95 backdrop-blur-sm p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all group cursor-default ${borderClass}`}
+    >
+      <div
+        className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl p-2 transition-transform group-hover:scale-[1.02] ${
+          sponsor.darkBg ? "bg-[#121316]" : "bg-white"
+        }`}
+      >
+        <img
+          src={sponsor.logo}
+          alt={sponsor.name}
+          className="max-h-full max-w-full object-contain"
+          loading="lazy"
+          draggable={false}
+        />
+      </div>
+    </div>
+  )
+}
+
+const MarqueeTrack = ({
+  sponsors,
+  accent,
+  direction,
+}: {
+  sponsors: SponsorItem[]
+  accent: "celeste" | "fucsia"
+  direction: "left" | "right"
+}) => {
+  const animationClass =
+    direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
+
+  return (
+    <div className="relative w-full overflow-hidden py-3">
+      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-r from-white to-transparent" />
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-l from-white to-transparent" />
+
+      <div className={animationClass}>
+        {MARQUEE_COPIES.map((copy) => (
+          <div
+            key={`copy-${copy}`}
+            className="flex shrink-0 items-center gap-4 sm:gap-6 pr-4 sm:pr-6"
+            aria-hidden={copy > 0 ? true : undefined}
+          >
+            {sponsors.map((sponsor) => (
+              <SponsorLogoCard
+                key={`${copy}-${sponsor.id}`}
+                sponsor={sponsor}
+                accent={accent}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export const SponsorsSection = () => {
   const handleContactSponsor = () => {
@@ -40,25 +131,31 @@ export const SponsorsSection = () => {
   }
 
   return (
-    <section id="patrocinantes" className="py-16 md:py-24 bg-white relative overflow-hidden border-y border-[#F8BFDC]/60">
-      {/* Background soft secondary celeste and primary fucsia glows */}
+    <section
+      id="patrocinantes"
+      className="py-16 md:py-24 bg-white relative overflow-hidden border-y border-[#F8BFDC]/60"
+    >
       <div className="pointer-events-none absolute top-1/2 left-0 -translate-y-1/2 h-72 w-72 rounded-full bg-[#E8FAFD] blur-3xl opacity-70" />
       <div className="pointer-events-none absolute top-1/2 right-0 -translate-y-1/2 h-72 w-72 rounded-full bg-[#FDF0F6] blur-3xl opacity-70" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mb-10 text-center">
-        {/* Badges */}
         <div className="flex items-center justify-center gap-2 mb-3">
-          <Badge variant="celeste" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
+          <Badge
+            variant="celeste"
+            className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold"
+          >
             <Building2 className="h-3.5 w-3.5 mr-1 text-[#2FC7EA]" />
             Alianzas Comerciales
           </Badge>
-          <Badge variant="blush" className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold">
+          <Badge
+            variant="blush"
+            className="px-3.5 py-1 text-xs uppercase tracking-wider font-extrabold"
+          >
             <Sparkles className="h-3.5 w-3.5 mr-1 text-[#EF007E]" />
             Sponsors Oficiales
           </Badge>
         </div>
 
-        {/* Section Heading with athletic condensed font */}
         <h2 className="font-sport uppercase text-4xl sm:text-5xl md:text-6xl font-black text-[#121316] tracking-tight leading-tight">
           MARCAS QUE RENACEN
           <span className="block text-transparent bg-gradient-to-r from-[#2FC7EA] via-[#18A9CC] to-[#EF007E] bg-clip-text">
@@ -67,87 +164,14 @@ export const SponsorsSection = () => {
         </h2>
 
         <p className="mt-3 text-sm sm:text-base text-[#525866] max-w-2xl mx-auto leading-relaxed">
-          Agradecemos a las empresas, marcas aliadas y comercios de los Valles del Tuy que se suman como patrocinantes oficiales de la salud integral y la prevención.
+          Agradecemos a las empresas, marcas aliadas y comercios de los Valles del Tuy que se
+          suman como patrocinantes oficiales de la salud integral y la prevención.
         </p>
       </div>
 
-      {/* Infinite Auto-Scrolling Marquee Carousel Row 1 (Leftward) */}
-      <div className="relative w-full overflow-hidden py-3">
-        {/* Side fade masks for seamless visual blend */}
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-l from-white to-transparent" />
+      <MarqueeTrack sponsors={SPONSORS_ROW_1} accent="celeste" direction="left" />
+      <MarqueeTrack sponsors={SPONSORS_ROW_2} accent="fucsia" direction="right" />
 
-        <div className="animate-marquee-left flex gap-4 sm:gap-6 items-center">
-          {/* Double array for seamless infinite marquee loop */}
-          {[...SPONSORS_ROW_1, ...SPONSORS_ROW_1].map((sponsor, index) => (
-            <div
-              key={`row1-${sponsor.id}-${index}`}
-              className="flex-shrink-0 w-56 sm:w-64 h-24 sm:h-28 rounded-2xl border border-[#AEEAF7] bg-white/95 backdrop-blur-sm p-3.5 flex items-center gap-3.5 shadow-sm hover:border-[#2FC7EA] hover:shadow-md transition-all group cursor-default"
-            >
-              <div className="relative flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-[#E8FAFD] p-1 border border-[#AEEAF7] shadow-inner transition-transform group-hover:scale-105">
-                <img
-                  src="/logo-dream-home.png"
-                  alt={sponsor.name}
-                  className="h-full w-full object-contain rounded-full"
-                />
-              </div>
-              <div className="flex flex-col text-left overflow-hidden">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="h-2 w-2 rounded-full bg-[#2FC7EA]" />
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#0E8EA8]">
-                    {sponsor.tier}
-                  </span>
-                </div>
-                <span className="font-sport uppercase text-base sm:text-lg font-black text-[#121316] leading-tight truncate group-hover:text-[#2FC7EA] transition-colors">
-                  {sponsor.name}
-                </span>
-                <span className="text-[10px] text-[#6B7280] font-medium tracking-wide truncate">
-                  {sponsor.category}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Infinite Auto-Scrolling Marquee Carousel Row 2 (Rightward) */}
-      <div className="relative w-full overflow-hidden py-3 mt-1">
-        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-l from-white to-transparent" />
-
-        <div className="animate-marquee-right flex gap-4 sm:gap-6 items-center">
-          {[...SPONSORS_ROW_2, ...SPONSORS_ROW_2].map((sponsor, index) => (
-            <div
-              key={`row2-${sponsor.id}-${index}`}
-              className="flex-shrink-0 w-56 sm:w-64 h-24 sm:h-28 rounded-2xl border border-[#F8BFDC] bg-white/95 backdrop-blur-sm p-3.5 flex items-center gap-3.5 shadow-sm hover:border-[#EF007E] hover:shadow-md transition-all group cursor-default"
-            >
-              <div className="relative flex h-14 w-14 sm:h-16 sm:w-16 shrink-0 items-center justify-center rounded-full bg-[#FDF0F6] p-1 border border-[#F8BFDC] shadow-inner transition-transform group-hover:scale-105">
-                <img
-                  src="/logo-dream-home.png"
-                  alt={sponsor.name}
-                  className="h-full w-full object-contain rounded-full"
-                />
-              </div>
-              <div className="flex flex-col text-left overflow-hidden">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <span className="h-2 w-2 rounded-full bg-[#EF007E]" />
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#EF007E]">
-                    {sponsor.tier}
-                  </span>
-                </div>
-                <span className="font-sport uppercase text-base sm:text-lg font-black text-[#121316] leading-tight truncate group-hover:text-[#EF007E] transition-colors">
-                  {sponsor.name}
-                </span>
-                <span className="text-[10px] text-[#6B7280] font-medium tracking-wide truncate">
-                  {sponsor.category}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Sponsor Invitation Callout Card */}
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-10">
         <div className="rounded-3xl border border-[#AEEAF7] bg-gradient-to-r from-[#E8FAFD] via-white to-[#FDF0F6] p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-5">
           <div className="space-y-1 text-center sm:text-left">
@@ -159,7 +183,8 @@ export const SponsorsSection = () => {
               ¿QUIERES SER PATROCINADOR OFICIAL DE LA CAMINATA 5K?
             </h4>
             <p className="text-xs sm:text-sm text-[#525866]">
-              Posiciona tu marca ante cientos de familias y deportistas de los Valles del Tuy junto a Inmobiliaria Dream Home.
+              Posiciona tu marca ante cientos de familias y deportistas de los Valles del Tuy junto
+              a Inmobiliaria Dream Home.
             </p>
           </div>
 
