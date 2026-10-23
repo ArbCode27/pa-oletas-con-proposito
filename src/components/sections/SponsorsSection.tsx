@@ -6,8 +6,6 @@ interface SponsorItem {
   id: number
   name: string
   logo: string
-  /** Fondos oscuros: contenedor negro para logos blancos/con fondo negro */
-  darkBg?: boolean
 }
 
 const SPONSORS: SponsorItem[] = [
@@ -19,108 +17,31 @@ const SPONSORS: SponsorItem[] = [
     id: 5,
     name: "Tecnológico Antonio José de Sucre — Ampliación Charallave",
     logo: "/sponsors/uts-charallave.png",
-    darkBg: true,
   },
   { id: 6, name: "Hospital Clinic Venezuela", logo: "/sponsors/hospital-clinic.png" },
-  {
-    id: 7,
-    name: "Canaima Discoteca",
-    logo: "/sponsors/canaima-discoteca.png",
-    darkBg: true,
-  },
-  {
-    id: 8,
-    name: "Valles del Tuy Impresa",
-    logo: "/sponsors/valles-del-tuy-impresa.png",
-    darkBg: true,
-  },
-  {
-    id: 9,
-    name: "Norte",
-    logo: "/sponsors/norte.png",
-    darkBg: true,
-  },
+  { id: 7, name: "Canaima Discoteca", logo: "/sponsors/canaima-discoteca.png" },
+  { id: 8, name: "Valles del Tuy Impresa", logo: "/sponsors/valles-del-tuy-impresa.png" },
+  { id: 9, name: "Norte", logo: "/sponsors/norte.png" },
   { id: 10, name: "CIAR Group", logo: "/sponsors/ciar-group.png" },
   { id: 11, name: "MediCare+", logo: "/sponsors/medicare.png" },
 ]
 
-/** Misma lista en ambas filas; la segunda va invertida para variar el ritmo visual */
-const SPONSORS_ROW_1 = SPONSORS
-const SPONSORS_ROW_2 = [...SPONSORS].reverse()
-
 /** 3 copias idénticas → el CSS desplaza exactamente 1/3 sin salto ni hueco */
 const MARQUEE_COPIES = [0, 1, 2] as const
 
-const SponsorLogoCard = ({
-  sponsor,
-  accent,
-}: {
-  sponsor: SponsorItem
-  accent: "celeste" | "fucsia"
-}) => {
-  const borderClass =
-    accent === "celeste"
-      ? "border-[#AEEAF7] hover:border-[#2FC7EA]"
-      : "border-[#F8BFDC] hover:border-[#EF007E]"
-
-  return (
-    <div
-      className={`flex-shrink-0 w-44 sm:w-52 h-28 sm:h-32 rounded-2xl border bg-white/95 backdrop-blur-sm p-4 flex items-center justify-center shadow-sm hover:shadow-md transition-all group cursor-default ${borderClass}`}
-    >
-      <div
-        className={`relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl p-2 transition-transform group-hover:scale-[1.02] ${
-          sponsor.darkBg ? "bg-[#121316]" : "bg-white"
-        }`}
-      >
-        <img
-          src={sponsor.logo}
-          alt={sponsor.name}
-          className="max-h-full max-w-full object-contain"
-          loading="lazy"
-          draggable={false}
-        />
-      </div>
+const SponsorLogoCard = ({ sponsor }: { sponsor: SponsorItem }) => (
+  <div className="flex-shrink-0 w-44 sm:w-52 h-28 sm:h-32 rounded-2xl border border-[#AEEAF7] bg-white/95 backdrop-blur-sm p-4 flex items-center justify-center shadow-sm hover:border-[#2FC7EA] hover:shadow-md transition-all group cursor-default">
+    <div className="relative flex h-full w-full items-center justify-center overflow-hidden rounded-xl bg-white p-2 transition-transform group-hover:scale-[1.02]">
+      <img
+        src={sponsor.logo}
+        alt={sponsor.name}
+        className="max-h-full max-w-full object-contain"
+        loading="lazy"
+        draggable={false}
+      />
     </div>
-  )
-}
-
-const MarqueeTrack = ({
-  sponsors,
-  accent,
-  direction,
-}: {
-  sponsors: SponsorItem[]
-  accent: "celeste" | "fucsia"
-  direction: "left" | "right"
-}) => {
-  const animationClass =
-    direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
-
-  return (
-    <div className="relative w-full overflow-hidden py-3">
-      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-r from-white to-transparent" />
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-l from-white to-transparent" />
-
-      <div className={animationClass}>
-        {MARQUEE_COPIES.map((copy) => (
-          <div
-            key={`copy-${copy}`}
-            className="flex shrink-0 items-center gap-4 sm:gap-6 pr-4 sm:pr-6"
-            aria-hidden={copy > 0 ? true : undefined}
-          >
-            {sponsors.map((sponsor) => (
-              <SponsorLogoCard
-                key={`${copy}-${sponsor.id}`}
-                sponsor={sponsor}
-                accent={accent}
-              />
-            ))}
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+  </div>
+)
 
 export const SponsorsSection = () => {
   const handleContactSponsor = () => {
@@ -169,8 +90,25 @@ export const SponsorsSection = () => {
         </p>
       </div>
 
-      <MarqueeTrack sponsors={SPONSORS_ROW_1} accent="celeste" direction="left" />
-      <MarqueeTrack sponsors={SPONSORS_ROW_2} accent="fucsia" direction="right" />
+      {/* Un solo carrusel infinito */}
+      <div className="relative w-full overflow-hidden py-3">
+        <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 sm:w-28 z-10 bg-gradient-to-l from-white to-transparent" />
+
+        <div className="animate-marquee-left">
+          {MARQUEE_COPIES.map((copy) => (
+            <div
+              key={`copy-${copy}`}
+              className="flex shrink-0 items-center gap-4 sm:gap-6 pr-4 sm:pr-6"
+              aria-hidden={copy > 0 ? true : undefined}
+            >
+              {SPONSORS.map((sponsor) => (
+                <SponsorLogoCard key={`${copy}-${sponsor.id}`} sponsor={sponsor} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
       <div className="relative mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 mt-10">
         <div className="rounded-3xl border border-[#AEEAF7] bg-gradient-to-r from-[#E8FAFD] via-white to-[#FDF0F6] p-6 sm:p-8 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-5">
