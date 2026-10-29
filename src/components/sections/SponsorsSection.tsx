@@ -24,6 +24,35 @@ const SPONSORS: SponsorItem[] = [
   { id: 9, name: "Canaima Discoteca", logo: "/sponsors/canaima-discoteca.jpg" },
   { id: 10, name: "CIAR Group", logo: "/sponsors/ciar-group.png" },
   { id: 11, name: "MediCare+", logo: "/sponsors/medicare.png" },
+  { id: 12, name: "JBY 2616", logo: "/sponsors/1_20261027_231242_0000.png" },
+  { id: 13, name: "Galope", logo: "/sponsors/2_20261027_231242_0001.png" },
+  { id: 14, name: "Valle Agro Ranch", logo: "/sponsors/3_20261027_231243_0002.png" },
+  { id: 15, name: "Alineal", logo: "/sponsors/4_20261027_231243_0003.png" },
+  { id: 16, name: "Neumocard 33", logo: "/sponsors/5_20261027_231243_0004.png" },
+  {
+    id: 17,
+    name: "Dream Home Santa Teresa",
+    logo: "/sponsors/6_20261027_231243_0005.png",
+  },
+  { id: 18, name: "Dream Home Maracay", logo: "/sponsors/7_20261027_231243_0006.png" },
+  { id: 19, name: "Dream Home VIP", logo: "/sponsors/8_20261027_231243_0007.png" },
+  { id: 20, name: "Dream Home Caracas", logo: "/sponsors/9_20261027_231243_0008.png" },
+  {
+    id: 21,
+    name: "Yelitza Matamoros Rehabilitación Integral",
+    logo: "/sponsors/10_20261027_231848_0000.png",
+  },
+  { id: 22, name: "Grupo Catedral", logo: "/sponsors/11_20261027_231848_0001.png" },
+  {
+    id: 23,
+    name: "Forum SuperMayorista",
+    logo: "/sponsors/12_20261027_231848_0002.png",
+  },
+  {
+    id: 24,
+    name: "Rigney Pérez Bañadores",
+    logo: "/sponsors/13_20261027_231848_0003.png",
+  },
 ]
 
 /** 3 copias idénticas → el CSS desplaza exactamente 1/3 sin salto ni hueco */

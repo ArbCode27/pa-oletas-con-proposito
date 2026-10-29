@@ -111,7 +111,7 @@ body {
   display: flex;
   width: max-content;
   will-change: transform;
-  animation: marquee-scroll-left 40s linear infinite;
+  animation: marquee-scroll-left 60s linear infinite;
 }
 
 .animate-marquee-left:hover {
