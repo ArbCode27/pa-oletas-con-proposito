@@ -26,14 +26,15 @@ import {
   FileDown,
   FileText,
   Paperclip,
-  Share2,
   Loader2,
   Send,
   Pencil,
   Trash2,
-  AlertTriangle,
   Save,
   User,
+  ChevronDown,
+  Filter,
+  Layers,
 } from "lucide-react"
 import {
   getRegistrations,
@@ -48,8 +49,11 @@ import {
   downloadTicketPdf,
   generateTicketPdfFile,
 } from "@/lib/generateTicketPdf"
+import {
+  exportRegistrationsToExcel,
+  exportRegistrationsToCSV,
+} from "@/lib/exportExcel"
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 
 interface AdminDashboardProps {
   onBack: () => void
@@ -93,6 +97,10 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
   // Estados para modal de confirmación de eliminación
   const [recordToDelete, setRecordToDelete] = useState<RegistrationRecord | null>(null)
   const [isDeleting, setIsDeleting] = useState(false)
+
+  // Estados para exportación profesional a Excel
+  const [isExporting, setIsExporting] = useState(false)
+  const [exportModalOpen, setExportModalOpen] = useState(false)
 
   // Carga de registros
   const handleFetchRecords = useCallback(async () => {
@@ -367,60 +375,81 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
     }
   }
 
-  // Exportar lista a archivo CSV (Excel compatible)
-  const handleExportCSV = () => {
+  // Descripción legible del filtro actualmente activo en pantalla
+  const activeFilterDescription = useMemo(() => {
+    const parts: string[] = []
+    if (searchQuery.trim()) {
+      parts.push(`Búsqueda: "${searchQuery.trim()}"`)
+    }
+    if (statusFilter !== "all") {
+      parts.push(
+        statusFilter === "approved"
+          ? "Estado: Aprobados"
+          : statusFilter === "pending"
+          ? "Estado: Pendientes"
+          : "Estado: Rechazados"
+      )
+    }
+    if (kitFilter !== "all") {
+      parts.push(kitFilter === "premium" ? "Kit: Premium ($15)" : "Kit: Básico ($10)")
+    }
+    return parts.length > 0 ? parts.join(" • ") : null
+  }, [searchQuery, statusFilter, kitFilter])
+
+  // Ejecutar exportación profesional a Microsoft Excel (.xlsx)
+  const handleExecuteExcelExport = async (
+    recordsToExport: RegistrationRecord[],
+    filterDesc?: string
+  ) => {
+    if (recordsToExport.length === 0) {
+      alert("No hay registros disponibles para exportar con los filtros seleccionados.")
+      return
+    }
+
+    try {
+      setIsExporting(true)
+      const dateStr = new Date().toISOString().slice(0, 10)
+      const isFiltered = Boolean(filterDesc && recordsToExport.length !== records.length)
+      const filename = isFiltered
+        ? `Inscripciones_5K_Dream_Home_Filtrado_${dateStr}.xlsx`
+        : `Inscripciones_Caminata_5K_Dream_Home_${dateStr}.xlsx`
+
+      await exportRegistrationsToExcel({
+        records: recordsToExport,
+        filename,
+        filterDescription: filterDesc,
+      })
+      setExportModalOpen(false)
+    } catch (err) {
+      console.error("Error al exportar a Excel:", err)
+      alert("Ocurrió un error al generar el archivo Excel. Por favor intenta de nuevo.")
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
+  // Ejecutar exportación alternativa a CSV estructurado (BOM UTF-8 y delimitador ;)
+  const handleExecuteCSVExport = (recordsToExport: RegistrationRecord[]) => {
+    if (recordsToExport.length === 0) return
+    const dateStr = new Date().toISOString().slice(0, 10)
+    exportRegistrationsToCSV({
+      records: recordsToExport,
+      filename: `inscripciones_caminata_5k_dream_home_${dateStr}.csv`,
+    })
+    setExportModalOpen(false)
+  }
+
+  // Acción al hacer clic en el botón principal de Exportar Excel
+  const handleTriggerExport = () => {
     if (records.length === 0) return
 
-    const headers = [
-      "ID",
-      "Fecha Registro",
-      "Modalidad Kit",
-      "Inversión $",
-      "Ref. Bancaria",
-      "Nombres",
-      "Apellidos",
-      "Cédula",
-      "Fecha Nacimiento",
-      "Teléfono",
-      "Correo Electrónico",
-      "Contacto Emergencia",
-      "Tel. Emergencia",
-      "Estado",
-      "Dorsal Oficial",
-      "Notas / Observaciones",
-      "URL Comprobante",
-    ]
-
-    const rows = records.map((r) => [
-      r.id || "",
-      r.created_at ? new Date(r.created_at).toLocaleString("es-VE") : "",
-      r.kit_type === "premium" ? "Kit Premium" : "Kit Básico",
-      r.payment_amount || (r.kit_type === "premium" ? 15 : 10),
-      `"${r.payment_reference || ""}"`,
-      `"${r.first_name.replace(/"/g, '""')}"`,
-      `"${r.last_name.replace(/"/g, '""')}"`,
-      `"${r.cedula}"`,
-      r.birth_date || "",
-      `"${r.phone}"`,
-      `"${r.email}"`,
-      `"${r.emergency_contact_name.replace(/"/g, '""')}"`,
-      `"${r.emergency_contact_phone}"`,
-      r.status || "pending",
-      r.bib_number ? `#${formatBibNumber(r.bib_number)}` : "",
-      `"${(r.notes || "").replace(/"/g, '""')}"`,
-      `"${r.payment_proof_url}"`,
-    ])
-
-    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map((e) => e.join(","))].join("\n")
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.setAttribute("href", url)
-    link.setAttribute("download", `inscripciones_caminata_5k_dream_home_${new Date().toISOString().slice(0, 10)}.csv`)
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+    // Si el administrador tiene filtros o búsquedas aplicadas, abrir modal para darle la opción
+    if (activeFilterDescription) {
+      setExportModalOpen(true)
+    } else {
+      // Si no hay ningún filtro, exportar inmediatamente el padrón completo
+      handleExecuteExcelExport(records, "Padrón Completo")
+    }
   }
 
   // Filtrado y ordenamiento de registros
@@ -550,16 +579,46 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
               <span className="hidden sm:inline">Refrescar</span>
             </Button>
 
-            <Button
-              variant="default"
-              size="sm"
-              onClick={handleExportCSV}
-              disabled={records.length === 0}
-              className="bg-[#EF007E] hover:bg-[#C9006A] text-white h-9 gap-1.5 font-bold shadow-md shadow-[#EF007E]/20"
-            >
-              <Download className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Exportar CSV</span>
-            </Button>
+            {/* Botón Profesional de Exportación a Excel */}
+            <div className="inline-flex items-center rounded-xl shadow-md shadow-[#EF007E]/20 overflow-hidden">
+              <Button
+                variant="default"
+                size="sm"
+                onClick={handleTriggerExport}
+                disabled={records.length === 0 || isExporting}
+                className="bg-[#EF007E] hover:bg-[#C9006A] text-white h-9 px-3 gap-1.5 font-bold rounded-r-none border-r border-[#C9006A] transition-all cursor-pointer disabled:opacity-60"
+                title="Exportar a Microsoft Excel (.xlsx) con diseño corporativo y casillas estructuradas"
+              >
+                {isExporting ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <FileSpreadsheet className="h-3.5 w-3.5" />
+                )}
+                <span className="hidden sm:inline">
+                  {isExporting ? "Generando..." : "Exportar Excel"}
+                </span>
+                <span className="sm:hidden">Excel</span>
+                {activeFilterDescription && (
+                  <span
+                    className="ml-0.5 px-1.5 py-0.5 text-[10px] bg-white/20 rounded font-black tracking-tight"
+                    title={`Filtros aplicados: ${activeFilterDescription}`}
+                  >
+                    {filteredAndSortedRecords.length}
+                  </span>
+                )}
+              </Button>
+
+              <Button
+                variant="default"
+                size="sm"
+                onClick={() => setExportModalOpen(true)}
+                disabled={records.length === 0 || isExporting}
+                className="bg-[#EF007E] hover:bg-[#C9006A] text-white h-9 px-2 rounded-l-none font-bold transition-all cursor-pointer disabled:opacity-60"
+                title="Opciones de exportación (filtrados, total o CSV)"
+              >
+                <ChevronDown className="h-3.5 w-3.5" />
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -1849,6 +1908,199 @@ export const AdminDashboard = ({ onBack }: AdminDashboardProps) => {
                 className="w-full border-[#F4D7DE] hover:bg-[#FAF7F8] text-[#525866] text-xs font-bold py-2.5 rounded-xl cursor-pointer"
               >
                 Cancelar
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL 5: OPCIONES DE EXPORTACIÓN A EXCEL (.XLSX) / CSV */}
+      {/* ============================================================== */}
+      {exportModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in-0 duration-200">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border-2 border-[#F8BFDC] relative overflow-hidden animate-in zoom-in-95 duration-200">
+            {/* Brillo de fondo decorativo */}
+            <div className="absolute -top-12 -right-12 w-32 h-32 bg-[#FDF0F6] rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute -bottom-12 -left-12 w-32 h-32 bg-[#E8FAFD] rounded-full blur-2xl pointer-events-none" />
+
+            {/* Cabecera del modal */}
+            <div className="flex items-start justify-between pb-4 border-b border-[#F4D7DE]">
+              <div className="flex items-center gap-3">
+                <div className="h-11 w-11 rounded-2xl bg-[#FDF0F6] border border-[#F8BFDC] flex items-center justify-center text-[#EF007E] shrink-0 shadow-sm">
+                  <FileSpreadsheet className="h-6 w-6 stroke-[2.2]" />
+                </div>
+                <div>
+                  <h3 className="font-sport uppercase text-2xl font-black text-[#121316] leading-none">
+                    EXPORTAR A EXCEL (.XLSX)
+                  </h3>
+                  <p className="text-xs text-[#525866] mt-1">
+                    Libro oficial con colores de marca, casillas estructuradas e hipervínculos.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setExportModalOpen(false)}
+                className="h-8 w-8 rounded-full bg-[#FAF7F8] hover:bg-[#FDF0F6] text-[#6B7280] hover:text-[#121316] flex items-center justify-center transition-colors font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Lista de mejoras visuales incluidas */}
+            <div className="my-4 p-3.5 rounded-2xl bg-gradient-to-br from-[#FAF7F8] to-[#FDF0F6] border border-[#F8BFDC]/80 space-y-2 text-xs">
+              <span className="font-bold uppercase tracking-wider text-[10px] text-[#EF007E] block">
+                Características del Diseño Generado:
+              </span>
+              <ul className="space-y-1.5 text-[11px] text-[#525866]">
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#EF007E]" />
+                  <span><strong>Formato Nativo .xlsx:</strong> Información dividida en columnas independientes y autoajustadas (sin apiñarse).</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#2FC7EA]" />
+                  <span><strong>Colores de la Marca:</strong> Cabeceras en Fucsia Dream Home (#EF007E) y acentos en Celeste (#0E8EA8).</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                  <span><strong>Badges de Estado:</strong> Aprobados, Pendientes y Rechazados destacados con colores visuales.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#0284C7]" />
+                  <span><strong>Hipervínculos a Recibos:</strong> Enlaces directos para abrir los captures de pago en el navegador.</span>
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#EF007E]" />
+                  <span><strong>Hoja 2 (Resumen Ejecutivo):</strong> Desglose por Kits (Básico / Premium) y métricas de recaudación.</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Aviso de filtro activo si corresponde */}
+            {activeFilterDescription && (
+              <div className="mb-4 p-2.5 rounded-xl bg-[#E8FAFD] border border-[#AEEAF7] text-xs text-[#072430] flex items-center gap-2">
+                <Filter className="h-3.5 w-3.5 text-[#0E8EA8] shrink-0" />
+                <span className="text-[11px] font-medium leading-snug">
+                  Filtro activo en pantalla: <strong>{activeFilterDescription}</strong>
+                </span>
+              </div>
+            )}
+
+            {/* Botones de acción */}
+            <div className="space-y-2.5">
+              {/* Opción 1: Exportar filtrados (si hay filtro activo) */}
+              {activeFilterDescription && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    handleExecuteExcelExport(
+                      filteredAndSortedRecords,
+                      activeFilterDescription
+                    )
+                  }
+                  disabled={isExporting || filteredAndSortedRecords.length === 0}
+                  className="w-full text-left p-3.5 rounded-2xl bg-gradient-to-r from-[#EF007E] to-[#C9006A] text-white hover:brightness-105 transition-all shadow-md shadow-[#EF007E]/25 cursor-pointer disabled:opacity-60 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="h-9 w-9 rounded-xl bg-white/20 flex items-center justify-center">
+                      {isExporting ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-white" />
+                      ) : (
+                        <Filter className="h-4 w-4 text-white" />
+                      )}
+                    </div>
+                    <div>
+                      <strong className="block text-xs font-bold">
+                        Exportar Vista Filtrada Actual
+                      </strong>
+                      <span className="text-[11px] text-white/80 block mt-0.5">
+                        {filteredAndSortedRecords.length} participantes que coinciden con los filtros aplicados
+                      </span>
+                    </div>
+                  </div>
+                  <Download className="h-4 w-4 text-white shrink-0 ml-2" />
+                </button>
+              )}
+
+              {/* Opción 2: Exportar Todo el Padrón */}
+              <button
+                type="button"
+                onClick={() => handleExecuteExcelExport(records, "Padrón Completo")}
+                disabled={isExporting || records.length === 0}
+                className={`w-full text-left p-3.5 rounded-2xl transition-all cursor-pointer disabled:opacity-60 flex items-center justify-between ${
+                  activeFilterDescription
+                    ? "bg-[#FAF7F8] hover:bg-[#FDF0F6] border border-[#F8BFDC] text-[#121316]"
+                    : "bg-gradient-to-r from-[#EF007E] to-[#C9006A] text-white shadow-md shadow-[#EF007E]/25 hover:brightness-105"
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`h-9 w-9 rounded-xl flex items-center justify-center ${
+                      activeFilterDescription
+                        ? "bg-[#FDF0F6] text-[#EF007E]"
+                        : "bg-white/20 text-white"
+                    }`}
+                  >
+                    {isExporting ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <Layers className="h-4 w-4" />
+                    )}
+                  </div>
+                  <div>
+                    <strong className="block text-xs font-bold">
+                      Exportar Padrón Completo
+                    </strong>
+                    <span
+                      className={`text-[11px] block mt-0.5 ${
+                        activeFilterDescription ? "text-[#525866]" : "text-white/80"
+                      }`}
+                    >
+                      Todos los {records.length} participantes registrados en el sistema
+                    </span>
+                  </div>
+                </div>
+                <Download
+                  className={`h-4 w-4 shrink-0 ml-2 ${
+                    activeFilterDescription ? "text-[#EF007E]" : "text-white"
+                  }`}
+                />
+              </button>
+
+              {/* Opción 3: Exportar CSV como alternativa */}
+              <button
+                type="button"
+                onClick={() =>
+                  handleExecuteCSVExport(
+                    activeFilterDescription ? filteredAndSortedRecords : records
+                  )
+                }
+                disabled={isExporting || records.length === 0}
+                className="w-full text-left p-3 rounded-xl bg-white hover:bg-[#FAF7F8] border border-[#F4D7DE] text-[#525866] transition-colors cursor-pointer flex items-center justify-between text-xs"
+              >
+                <div className="flex items-center gap-2.5">
+                  <FileText className="h-4 w-4 text-[#6B7280]" />
+                  <span>
+                    Descargar en formato alternativo <strong>CSV (.csv)</strong>
+                  </span>
+                </div>
+                <span className="text-[10px] uppercase font-bold text-[#9CA3AF]">
+                  BOM UTF-8
+                </span>
+              </button>
+            </div>
+
+            {/* Botón Cerrar */}
+            <div className="mt-4 pt-3 border-t border-[#F4D7DE]">
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => setExportModalOpen(false)}
+                className="w-full text-[#6B7280] hover:text-[#121316] text-xs font-semibold py-2 rounded-xl cursor-pointer"
+              >
+                Cerrar Ventana
               </Button>
             </div>
           </div>
