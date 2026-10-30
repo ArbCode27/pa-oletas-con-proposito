@@ -71,7 +71,7 @@ const App = () => {
         <SponsorsSection />
         <PurposeSection />
         <RouteSection />
-        {/* <RegistrationSection /> */}
+        <RegistrationSection />
         <EventScheduleSection />
         <FAQSection />
       </main>
