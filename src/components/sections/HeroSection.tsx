@@ -1,21 +1,31 @@
-import { ArrowRight, Calendar, MapPin, Heart, Sparkles, Activity, ShieldCheck, ChevronRight, Building2, Droplets } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { RibbonDecor } from "@/components/animations/RibbonDecor"
+import {
+  ArrowRight,
+  Calendar,
+  MapPin,
+  Heart,
+  Sparkles,
+  Activity,
+  ShieldCheck,
+  ChevronRight,
+  Building2,
+  Droplets,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { RibbonDecor } from "@/components/animations/RibbonDecor";
 
 export const HeroSection = () => {
   const handleScrollTo = (id: string) => {
-    const el = document.getElementById(id)
+    const el = document.getElementById(id);
     if (el) {
-      el.scrollIntoView({ behavior: "smooth" })
+      el.scrollIntoView({ behavior: "smooth" });
     }
-  }
+  };
 
   return (
     <section
       id="hero"
-      className="relative min-h-screen pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-gradient-to-b from-[#E8FAFD]/70 via-[#FAF7F8] to-[#FDF0F6]"
-    >
+      className="relative min-h-screen pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-gradient-to-b from-[#E8FAFD]/70 via-[#FAF7F8] to-[#FDF0F6]">
       {/* Background ambient glows: Secondary Celeste & Primary Fucsia */}
       <div
         className="pointer-events-none absolute -top-40 -left-40 h-[600px] w-[600px] rounded-full bg-gradient-to-br from-[#2FC7EA]/25 via-[#FF3B9E]/15 to-[#EF007E]/15 blur-3xl"
@@ -37,16 +47,24 @@ export const HeroSection = () => {
         {/* Top Badges Row: Dream Home & Event Details */}
         <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-6 sm:mb-8">
           <div className="inline-flex items-center gap-2 rounded-full border border-[#AEEAF7] bg-white/95 px-3.5 py-1.5 text-xs font-extrabold text-[#0E8EA8] shadow-sm backdrop-blur-sm">
-            <img src="/logo-dream-home.png" alt="Dream Home" className="h-4.5 w-4.5 rounded-full object-contain" />
+            <img
+              src="/logo-dream-home.png"
+              alt="Dream Home"
+              className="h-4.5 w-4.5 rounded-full object-contain"
+            />
             <span>Inmobiliaria Dream Home Venezuela</span>
           </div>
 
-          <Badge variant="pink" className="gap-1.5 px-4 py-1.5 text-xs uppercase tracking-wider font-bold">
+          <Badge
+            variant="pink"
+            className="gap-1.5 px-4 py-1.5 text-xs uppercase tracking-wider font-bold">
             <Sparkles className="h-3.5 w-3.5" />
             <span>Campaña Oficial Mes Rosa 2026</span>
           </Badge>
 
-          <Badge variant="sport" className="px-3.5 py-1.5 text-[11px] bg-[#2FC7EA] text-white font-black tracking-wider uppercase shadow-sm shadow-[#2FC7EA]/30">
+          <Badge
+            variant="sport"
+            className="px-3.5 py-1.5 text-[11px] bg-[#2FC7EA] text-white font-black tracking-wider uppercase shadow-sm shadow-[#2FC7EA]/30">
             Caminata 5K Charallave
           </Badge>
         </div>
@@ -69,7 +87,11 @@ export const HeroSection = () => {
               </span>
               <span className="hidden sm:inline-block text-[#9CA3AF]">•</span>
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#E8FAFD] px-3.5 py-1 text-xs sm:text-sm font-bold text-[#0E8EA8] border border-[#AEEAF7]">
-                <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 rounded-full object-contain" />
+                <img
+                  src="/logo-dream-home.png"
+                  alt="Dream Home"
+                  className="h-4 w-4 rounded-full object-contain"
+                />
                 Inmobiliaria Dream Home
               </span>
             </div>
@@ -78,9 +100,12 @@ export const HeroSection = () => {
           {/* Subtitle / Key Details Bar */}
           <div className="mt-6 max-w-3xl mx-auto">
             <p className="text-base sm:text-lg text-[#525866] leading-relaxed font-normal">
-              <strong className="font-bold text-[#121316]">Inmobiliaria Dream Home Venezuela</strong> te invita a la gran
-              caminata deportiva y familiar por la salud integral, el renacer de la esperanza y la prevención del cáncer de mama
-              en las calles de Charallave.
+              <strong className="font-bold text-[#121316]">
+                Inmobiliaria Dream Home Venezuela
+              </strong>{" "}
+              te invita a la gran caminata deportiva y familiar por la salud
+              integral, el renacer de la esperanza y la prevención del cáncer de
+              mama en las calles de Charallave.
             </p>
 
             {/* Event Key Highlights Grid with Fucsia & Celeste Accents */}
@@ -130,7 +155,7 @@ export const HeroSection = () => {
 
             {/* CTAs Row */}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Button
+              {/* <Button
                 size="xl"
                 variant="sport"
                 onClick={() => handleScrollTo("registro")}
@@ -138,14 +163,13 @@ export const HeroSection = () => {
               >
                 <span>Inscríbete Aquí</span>
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
-              </Button>
+              </Button> */}
 
               <Button
                 size="lg"
                 variant="celeste"
                 onClick={() => handleScrollTo("ruta")}
-                className="w-full sm:w-auto font-bold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-3"
-              >
+                className="w-full sm:w-auto font-bold text-xs sm:text-sm tracking-wide px-5 sm:px-7 py-3">
                 <Droplets className="mr-1.5 h-4 w-4 shrink-0" />
                 <span>Ver Recorrido & Puntos</span>
               </Button>
@@ -154,8 +178,7 @@ export const HeroSection = () => {
                 size="lg"
                 variant="glass"
                 onClick={() => handleScrollTo("patrocinantes")}
-                className="w-full sm:w-auto font-bold text-xs sm:text-sm text-[#121316] hover:text-[#2FC7EA] border border-[#AEEAF7] px-5 sm:px-7 py-3"
-              >
+                className="w-full sm:w-auto font-bold text-xs sm:text-sm text-[#121316] hover:text-[#2FC7EA] border border-[#AEEAF7] px-5 sm:px-7 py-3">
                 <span>Patrocinadores</span>
                 <ChevronRight className="ml-1 h-4 w-4 shrink-0" />
               </Button>
@@ -181,7 +204,11 @@ export const HeroSection = () => {
                     <span>Caminata con Sentido Benéfico</span>
                   </div>
                   <div className="inline-flex items-center gap-1.5 rounded-full bg-[#E8FAFD] px-3 py-1 text-xs font-bold text-[#0E8EA8] border border-[#AEEAF7]">
-                    <img src="/logo-dream-home.png" alt="Dream Home" className="h-4 w-4 rounded-full object-contain" />
+                    <img
+                      src="/logo-dream-home.png"
+                      alt="Dream Home"
+                      className="h-4 w-4 rounded-full object-contain"
+                    />
                     <span>Inmobiliaria Dream Home</span>
                   </div>
                 </div>
@@ -191,8 +218,10 @@ export const HeroSection = () => {
                 </h2>
 
                 <p className="text-[#525866] text-sm sm:text-base leading-relaxed">
-                  Lleva tu pañoleta rosa con orgullo en las calles de Charallave. Celebramos la resiliencia de las guerreras,
-                  fomentamos la prevención temprana y cerramos con una explosiva sesión de bailoterapia en la meta.
+                  Lleva tu pañoleta rosa con orgullo en las calles de
+                  Charallave. Celebramos la resiliencia de las guerreras,
+                  fomentamos la prevención temprana y cerramos con una explosiva
+                  sesión de bailoterapia en la meta.
                 </p>
 
                 {/* Micro Stats with Celeste + Fucsia highlights */}
@@ -273,5 +302,5 @@ export const HeroSection = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
