@@ -1,20 +1,20 @@
-import { useState, useEffect, useCallback } from "react"
-import { Navbar } from "@/components/sections/Navbar"
-import { HeroSection } from "@/components/sections/HeroSection"
-import { SponsorsSection } from "@/components/sections/SponsorsSection"
-import { PurposeSection } from "@/components/sections/PurposeSection"
-import { RouteSection } from "@/components/sections/RouteSection"
-import { RegistrationSection } from "@/components/sections/RegistrationSection"
-import { EventScheduleSection } from "@/components/sections/EventScheduleSection"
-import { FAQSection } from "@/components/sections/FAQSection"
-import { Footer } from "@/components/sections/Footer"
-import { AdminDashboard } from "@/components/admin/AdminDashboard"
+import { useState, useEffect, useCallback } from "react";
+import { Navbar } from "@/components/sections/Navbar";
+import { HeroSection } from "@/components/sections/HeroSection";
+import { SponsorsSection } from "@/components/sections/SponsorsSection";
+import { PurposeSection } from "@/components/sections/PurposeSection";
+import { RouteSection } from "@/components/sections/RouteSection";
+import { RegistrationSection } from "@/components/sections/RegistrationSection";
+import { EventScheduleSection } from "@/components/sections/EventScheduleSection";
+import { FAQSection } from "@/components/sections/FAQSection";
+import { Footer } from "@/components/sections/Footer";
+import { AdminDashboard } from "@/components/admin/AdminDashboard";
 
 const checkIsAdminRoute = () => {
-  if (typeof window === "undefined") return false
-  const hash = window.location.hash.toLowerCase()
-  const pathname = window.location.pathname.toLowerCase()
-  const search = window.location.search.toLowerCase()
+  if (typeof window === "undefined") return false;
+  const hash = window.location.hash.toLowerCase();
+  const pathname = window.location.pathname.toLowerCase();
+  const search = window.location.search.toLowerCase();
 
   return (
     hash === "#/admin" ||
@@ -22,43 +22,45 @@ const checkIsAdminRoute = () => {
     pathname === "/admin" ||
     pathname.startsWith("/admin") ||
     search.includes("admin=true")
-  )
-}
+  );
+};
 
 const App = () => {
-  const [isAdminView, setIsAdminView] = useState<boolean>(() => checkIsAdminRoute())
+  const [isAdminView, setIsAdminView] = useState<boolean>(() =>
+    checkIsAdminRoute(),
+  );
 
   const handleHashChange = useCallback(() => {
-    const shouldBeAdmin = checkIsAdminRoute()
-    setIsAdminView(shouldBeAdmin)
-  }, [])
+    const shouldBeAdmin = checkIsAdminRoute();
+    setIsAdminView(shouldBeAdmin);
+  }, []);
 
   useEffect(() => {
-    window.addEventListener("hashchange", handleHashChange)
-    window.addEventListener("popstate", handleHashChange)
+    window.addEventListener("hashchange", handleHashChange);
+    window.addEventListener("popstate", handleHashChange);
 
     return () => {
-      window.removeEventListener("hashchange", handleHashChange)
-      window.removeEventListener("popstate", handleHashChange)
-    }
-  }, [handleHashChange])
+      window.removeEventListener("hashchange", handleHashChange);
+      window.removeEventListener("popstate", handleHashChange);
+    };
+  }, [handleHashChange]);
 
   const handleOpenAdmin = () => {
-    window.location.hash = "#/admin"
-    setIsAdminView(true)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+    window.location.hash = "#/admin";
+    setIsAdminView(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const handleBackToLanding = () => {
     if (window.location.hash.includes("admin")) {
-      window.location.hash = ""
+      window.location.hash = "";
     }
-    setIsAdminView(false)
-    window.scrollTo({ top: 0, behavior: "smooth" })
-  }
+    setIsAdminView(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   if (isAdminView) {
-    return <AdminDashboard onBack={handleBackToLanding} />
+    return <AdminDashboard onBack={handleBackToLanding} />;
   }
 
   return (
@@ -69,13 +71,13 @@ const App = () => {
         <SponsorsSection />
         <PurposeSection />
         <RouteSection />
-        <RegistrationSection />
+        {/* <RegistrationSection /> */}
         <EventScheduleSection />
         <FAQSection />
       </main>
       <Footer onOpenAdmin={handleOpenAdmin} />
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
