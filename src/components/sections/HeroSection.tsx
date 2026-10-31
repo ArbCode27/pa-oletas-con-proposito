@@ -155,15 +155,14 @@ export const HeroSection = () => {
 
             {/* CTAs Row */}
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
-              {/* <Button
+              <Button
                 size="xl"
                 variant="sport"
                 onClick={() => handleScrollTo("registro")}
-                className="w-full sm:w-auto text-sm sm:text-lg font-black tracking-normal sm:tracking-wider py-3.5 sm:py-4 px-6 sm:px-9 shadow-xl shadow-[#EF007E]/30 hover:shadow-2xl hover:shadow-[#EF007E]/50 group"
-              >
+                className="w-full sm:w-auto text-sm sm:text-lg font-black tracking-normal sm:tracking-wider py-3.5 sm:py-4 px-6 sm:px-9 shadow-xl shadow-[#EF007E]/30 hover:shadow-2xl hover:shadow-[#EF007E]/50 group">
                 <span>Inscríbete Aquí</span>
                 <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
-              </Button> */}
+              </Button>
 
               <Button
                 size="lg"

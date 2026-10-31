@@ -144,15 +144,14 @@ export const Navbar = () => {
             </div>
 
             {/* Registration CTA button (more compact on mobile) */}
-            {/* <Button
+            <Button
               variant="sport"
               size="default"
               onClick={() => handleNavClick("registro")}
-              className="shadow-md h-8 sm:h-11 px-3.5 sm:px-6 py-1 sm:py-2.5 text-[11px] sm:text-sm font-bold tracking-normal sm:tracking-wider"
-            >
+              className="shadow-md h-8 sm:h-11 px-3.5 sm:px-6 py-1 sm:py-2.5 text-[11px] sm:text-sm font-bold tracking-normal sm:tracking-wider">
               <span>Inscríbete Aquí</span>
               <ArrowRight className="ml-1 sm:ml-1.5 h-3.5 w-3.5 sm:h-4 sm:w-4" />
-            </Button> */}
+            </Button>
 
             {/* Mobile menu toggle (eliminated on mobile phones, tablet only) */}
             <button
